@@ -7,7 +7,7 @@ import 'package:contacts/core/domain/model/enums.dart';
 import 'package:contacts/core/domain/model/phone_number.dart';
 import 'package:contacts/core/domain/model/postal_address.dart';
 import 'package:contacts/core/domain/model/relation.dart';
-import 'package:contacts/core/domain/model/uuid_value.dart';
+import 'package:contacts/core/domain/model/entity_id.dart';
 import 'package:contacts/core/domain/model/website.dart';
 import 'package:contacts/core/domain/services/contact.repository.dart';
 import 'package:contacts/core/domain/services/label.repository.dart';
@@ -50,13 +50,13 @@ class DemoSeed {
       List<ContactEvent> events = const [],
       List<Relation> relations = const [],
       String? notes,
-      Set<UuidValue> labelIds = const {},
+      Set<EntityId> labelIds = const {},
       bool starred = false,
       int agedDays = 0,
     }) {
       final created = at.subtract(Duration(days: agedDays));
       return Contact(
-        id: UuidValue.generate(),
+        id: EntityId.generate(),
         name: ContactName(first: first, last: last),
         company: company,
         jobTitle: jobTitle,

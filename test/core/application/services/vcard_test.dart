@@ -8,7 +8,7 @@ import 'package:contacts/core/domain/model/email_address.dart';
 import 'package:contacts/core/domain/model/enums.dart';
 import 'package:contacts/core/domain/model/phone_number.dart';
 import 'package:contacts/core/domain/model/postal_address.dart';
-import 'package:contacts/core/domain/model/uuid_value.dart';
+import 'package:contacts/core/domain/model/entity_id.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import '../../../support/fixtures.dart';
@@ -17,7 +17,7 @@ void main() {
   group('VCard export', () {
     test('écrit une fiche complète en vCard 3.0', () {
       final contact = Contact(
-        id: UuidValue.generate(),
+        id: EntityId.generate(),
         name: const ContactName(first: 'Marie', last: 'Dupont'),
         company: 'BNP Paribas',
         jobTitle: 'Conseillère',
@@ -55,7 +55,7 @@ void main() {
   group('VCard import', () {
     test('relit ce qu\'il a écrit', () {
       final original = Contact(
-        id: UuidValue.generate(),
+        id: EntityId.generate(),
         name: const ContactName(first: 'Élodie', last: 'Charpentier', nickname: 'Élo'),
         company: 'Clinique du Parc',
         jobTitle: 'Kinésithérapeute',
@@ -96,7 +96,7 @@ void main() {
 
     test('conserve un libellé personnalisé via X-ABLabel', () {
       final contact = Contact(
-        id: UuidValue.generate(),
+        id: EntityId.generate(),
         name: const ContactName(first: 'Pierre'),
         phones: [
           PhoneNumber.create(

@@ -1,12 +1,12 @@
 import 'package:contacts/core/domain/model/enums.dart';
-import 'package:contacts/core/domain/model/uuid_value.dart';
+import 'package:contacts/core/domain/model/entity_id.dart';
 
 /// Date importante (anniversaire, anniversaire de mariage…).
 ///
 /// L'année est facultative : Google Contacts accepte « 14 février » sans année.
 /// On la matérialise par [year] nul, la date restant portée par [month]/[day].
 class ContactEvent {
-  final UuidValue id;
+  final EntityId id;
   final int? year;
   final int month;
   final int day;
@@ -30,7 +30,7 @@ class ContactEvent {
     EventType type = EventType.anniversaire,
     String? customLabel,
   }) => ContactEvent(
-    id: UuidValue.generate(),
+    id: EntityId.generate(),
     month: month,
     day: day,
     year: year,

@@ -7,7 +7,7 @@ import 'package:contacts/core/domain/model/email_address.dart';
 import 'package:contacts/core/domain/model/enums.dart';
 import 'package:contacts/core/domain/model/phone_number.dart';
 import 'package:contacts/core/domain/model/postal_address.dart';
-import 'package:contacts/core/domain/model/uuid_value.dart';
+import 'package:contacts/core/domain/model/entity_id.dart';
 import 'package:contacts/core/domain/model/website.dart';
 
 /// Contact importé et les noms d'étiquettes qu'il portait (`CATEGORIES`), que
@@ -249,7 +249,7 @@ abstract final class VCard {
 
     return (
       contact: Contact(
-        id: UuidValue.generate(),
+        id: EntityId.generate(),
         name: name,
         company: company,
         department: department,
@@ -314,7 +314,7 @@ abstract final class VCard {
         if (_unescape(value).trim().isEmpty) return;
         phones.add(
           PhoneNumber(
-            id: UuidValue.generate(),
+            id: EntityId.generate(),
             value: _unescape(value).trim(),
             type: customLabel != null ? PhoneType.personnalise : _phoneFromWire(types),
             customLabel: customLabel,
@@ -324,7 +324,7 @@ abstract final class VCard {
         if (_unescape(value).trim().isEmpty) return;
         emails.add(
           EmailAddress(
-            id: UuidValue.generate(),
+            id: EntityId.generate(),
             value: _unescape(value).trim(),
             type: customLabel != null ? EmailType.personnalise : _emailFromWire(types),
             customLabel: customLabel,
@@ -334,7 +334,7 @@ abstract final class VCard {
         final p = value.split(';').map(_unescape).toList();
         String? at(int i) => i < p.length && p[i].trim().isNotEmpty ? p[i].trim() : null;
         final address = PostalAddress(
-          id: UuidValue.generate(),
+          id: EntityId.generate(),
           poBox: at(0),
           street: at(2),
           city: at(3),
@@ -349,7 +349,7 @@ abstract final class VCard {
         if (_unescape(value).trim().isEmpty) return;
         websites.add(
           Website(
-            id: UuidValue.generate(),
+            id: EntityId.generate(),
             value: _unescape(value).trim(),
             type: customLabel != null ? WebsiteType.personnalise : WebsiteType.profil,
             customLabel: customLabel,
@@ -378,7 +378,7 @@ abstract final class VCard {
     final withYear = RegExp(r'^(\d{4})-?(\d{2})-?(\d{2})$').firstMatch(value);
     if (withYear != null) {
       return ContactEvent(
-        id: UuidValue.generate(),
+        id: EntityId.generate(),
         year: int.parse(withYear.group(1)!),
         month: int.parse(withYear.group(2)!),
         day: int.parse(withYear.group(3)!),
@@ -389,7 +389,7 @@ abstract final class VCard {
     final noYear = RegExp(r'^--(\d{2})-?(\d{2})$').firstMatch(value);
     if (noYear != null) {
       return ContactEvent(
-        id: UuidValue.generate(),
+        id: EntityId.generate(),
         month: int.parse(noYear.group(1)!),
         day: int.parse(noYear.group(2)!),
         type: type,

@@ -1,9 +1,9 @@
 import 'package:contacts/core/domain/model/enums.dart';
-import 'package:contacts/core/domain/model/uuid_value.dart';
+import 'package:contacts/core/domain/model/entity_id.dart';
 
 /// Site web associé à un contact.
 class Website {
-  final UuidValue id;
+  final EntityId id;
   final String value;
   final WebsiteType type;
   final String? customLabel;
@@ -15,7 +15,7 @@ class Website {
     String value, {
     WebsiteType type = WebsiteType.profil,
     String? customLabel,
-  }) => Website(id: UuidValue.generate(), value: value, type: type, customLabel: customLabel);
+  }) => Website(id: EntityId.generate(), value: value, type: type, customLabel: customLabel);
 
   String get label => type == WebsiteType.personnalise && (customLabel?.trim().isNotEmpty ?? false)
       ? customLabel!.trim()

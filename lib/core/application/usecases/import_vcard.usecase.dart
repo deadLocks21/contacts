@@ -1,7 +1,7 @@
 import 'package:contacts/core/application/services/text_normalizer.service.dart';
 import 'package:contacts/core/application/services/vcard.service.dart';
 import 'package:contacts/core/domain/model/contact_label.dart';
-import 'package:contacts/core/domain/model/uuid_value.dart';
+import 'package:contacts/core/domain/model/entity_id.dart';
 import 'package:contacts/core/domain/services/contact.repository.dart';
 import 'package:contacts/core/domain/services/label.repository.dart';
 
@@ -45,7 +45,7 @@ class ImportVCardUseCase {
     final contacts = [
       for (final entry in parsed)
         entry.contact.copyWith(
-          labelIds: <UuidValue>{
+          labelIds: <EntityId>{
             for (final name in entry.labelNames)
               if (byName[TextNormalizer.normalize(name)] != null)
                 byName[TextNormalizer.normalize(name)]!.id,

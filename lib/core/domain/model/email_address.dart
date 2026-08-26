@@ -1,9 +1,9 @@
 import 'package:contacts/core/domain/model/enums.dart';
-import 'package:contacts/core/domain/model/uuid_value.dart';
+import 'package:contacts/core/domain/model/entity_id.dart';
 
 /// Adresse e-mail d'un contact, avec son libellé.
 class EmailAddress {
-  final UuidValue id;
+  final EntityId id;
   final String value;
   final EmailType type;
   final String? customLabel;
@@ -19,7 +19,7 @@ class EmailAddress {
     String value, {
     EmailType type = EmailType.domicile,
     String? customLabel,
-  }) => EmailAddress(id: UuidValue.generate(), value: value, type: type, customLabel: customLabel);
+  }) => EmailAddress(id: EntityId.generate(), value: value, type: type, customLabel: customLabel);
 
   String get label => type == EmailType.personnalise && (customLabel?.trim().isNotEmpty ?? false)
       ? customLabel!.trim()

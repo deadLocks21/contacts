@@ -3,7 +3,7 @@ import 'package:contacts/core/domain/model/contact_name.dart';
 import 'package:contacts/core/domain/model/email_address.dart';
 import 'package:contacts/core/domain/model/enums.dart';
 import 'package:contacts/core/domain/model/phone_number.dart';
-import 'package:contacts/core/domain/model/uuid_value.dart';
+import 'package:contacts/core/domain/model/entity_id.dart';
 
 /// Horodatage fixe : les tests ne doivent pas dépendre de l'heure qu'il est.
 final testNow = DateTime.utc(2026, 3, 15, 10);
@@ -18,13 +18,13 @@ Contact aContact({
   List<String> emails = const [],
   String? notes,
   bool starred = false,
-  Set<UuidValue> labelIds = const {},
+  Set<EntityId> labelIds = const {},
   DateTime? createdAt,
   DateTime? deletedAt,
 }) {
   final at = createdAt ?? testNow;
   return Contact(
-    id: UuidValue.generate(),
+    id: EntityId.generate(),
     name: ContactName(first: first, last: last),
     company: company,
     jobTitle: jobTitle,

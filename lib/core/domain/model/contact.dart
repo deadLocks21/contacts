@@ -6,7 +6,7 @@ import 'package:contacts/core/domain/model/enums.dart';
 import 'package:contacts/core/domain/model/phone_number.dart';
 import 'package:contacts/core/domain/model/postal_address.dart';
 import 'package:contacts/core/domain/model/relation.dart';
-import 'package:contacts/core/domain/model/uuid_value.dart';
+import 'package:contacts/core/domain/model/entity_id.dart';
 import 'package:contacts/core/domain/model/website.dart';
 
 /// Une fiche du carnet d'adresses.
@@ -14,7 +14,7 @@ import 'package:contacts/core/domain/model/website.dart';
 /// Suppression **logique** : [deletedAt] non nul = le contact est à la
 /// corbeille, d'où il est restaurable pendant 30 jours (cf. [trashRetention]).
 class Contact {
-  final UuidValue id;
+  final EntityId id;
   final ContactName name;
   final String? company;
   final String? jobTitle;
@@ -32,7 +32,7 @@ class Contact {
   final List<Relation> relations;
   final List<ChatAddress> chats;
   final String? notes;
-  final Set<UuidValue> labelIds;
+  final Set<EntityId> labelIds;
   final bool starred;
 
   /// Sonnerie propre au contact (réglage de la fiche, menu « ⋮ »).
@@ -79,12 +79,12 @@ class Contact {
     String? jobTitle,
     List<PhoneNumber> phones = const [],
     List<EmailAddress> emails = const [],
-    Set<UuidValue> labelIds = const {},
+    Set<EntityId> labelIds = const {},
     DateTime? now,
   }) {
     final at = now ?? DateTime.now();
     return Contact(
-      id: UuidValue.generate(),
+      id: EntityId.generate(),
       name: name,
       company: company,
       jobTitle: jobTitle,
@@ -160,7 +160,7 @@ class Contact {
     List<Relation>? relations,
     List<ChatAddress>? chats,
     String? notes,
-    Set<UuidValue>? labelIds,
+    Set<EntityId>? labelIds,
     bool? starred,
     String? customRingtone,
     bool? sendToVoicemail,

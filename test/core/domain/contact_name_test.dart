@@ -1,7 +1,7 @@
 import 'package:contacts/core/domain/model/contact.dart';
 import 'package:contacts/core/domain/model/contact_name.dart';
 import 'package:contacts/core/domain/model/enums.dart';
-import 'package:contacts/core/domain/model/uuid_value.dart';
+import 'package:contacts/core/domain/model/entity_id.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
@@ -50,7 +50,7 @@ void main() {
   group('Contact', () {
     Contact build({ContactName name = ContactName.empty, String? company, String? jobTitle}) =>
         Contact(
-          id: UuidValue.generate(),
+          id: EntityId.generate(),
           name: name,
           company: company,
           jobTitle: jobTitle,

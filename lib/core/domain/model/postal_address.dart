@@ -1,9 +1,9 @@
 import 'package:contacts/core/domain/model/enums.dart';
-import 'package:contacts/core/domain/model/uuid_value.dart';
+import 'package:contacts/core/domain/model/entity_id.dart';
 
 /// Adresse postale structurée — les six champs du formulaire Google Contacts.
 class PostalAddress {
-  final UuidValue id;
+  final EntityId id;
   final String? street;
   final String? city;
   final String? postcode;
@@ -35,7 +35,7 @@ class PostalAddress {
     AddressType type = AddressType.domicile,
     String? customLabel,
   }) => PostalAddress(
-    id: UuidValue.generate(),
+    id: EntityId.generate(),
     street: street,
     city: city,
     postcode: postcode,

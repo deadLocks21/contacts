@@ -7,7 +7,7 @@ import 'package:contacts/core/domain/model/email_address.dart';
 import 'package:contacts/core/domain/model/phone_number.dart';
 import 'package:contacts/core/domain/model/postal_address.dart';
 import 'package:contacts/core/domain/model/relation.dart';
-import 'package:contacts/core/domain/model/uuid_value.dart';
+import 'package:contacts/core/domain/model/entity_id.dart';
 import 'package:contacts/core/domain/model/website.dart';
 
 /// Fusionne plusieurs fiches en une seule.
@@ -89,7 +89,7 @@ abstract final class ContactMerge {
   }
 
   /// Identifiants des fiches absorbées, à supprimer après la fusion.
-  static List<UuidValue> absorbedIds(List<Contact> contacts) {
+  static List<EntityId> absorbedIds(List<Contact> contacts) {
     final ordered = [...contacts]..sort((a, b) => a.createdAt.compareTo(b.createdAt));
     return [for (final c in ordered.skip(1)) c.id];
   }

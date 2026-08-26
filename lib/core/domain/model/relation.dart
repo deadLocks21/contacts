@@ -1,11 +1,11 @@
 import 'package:contacts/core/domain/model/enums.dart';
-import 'package:contacts/core/domain/model/uuid_value.dart';
+import 'package:contacts/core/domain/model/entity_id.dart';
 
 /// Lien déclaré vers une autre personne (« Conjoint : Marie »).
 /// La personne est un simple texte libre — Google Contacts ne référence pas
 /// un autre contact ici.
 class Relation {
-  final UuidValue id;
+  final EntityId id;
   final String value;
   final RelationType type;
   final String? customLabel;
@@ -17,7 +17,7 @@ class Relation {
     String value, {
     RelationType type = RelationType.ami,
     String? customLabel,
-  }) => Relation(id: UuidValue.generate(), value: value, type: type, customLabel: customLabel);
+  }) => Relation(id: EntityId.generate(), value: value, type: type, customLabel: customLabel);
 
   String get label => type == RelationType.personnalise && (customLabel?.trim().isNotEmpty ?? false)
       ? customLabel!.trim()

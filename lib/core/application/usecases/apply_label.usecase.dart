@@ -1,4 +1,4 @@
-import 'package:contacts/core/domain/model/uuid_value.dart';
+import 'package:contacts/core/domain/model/entity_id.dart';
 import 'package:contacts/core/domain/services/contact.repository.dart';
 
 /// Pose ou retire une étiquette sur un lot de fiches (sélection multiple, ou
@@ -15,7 +15,7 @@ class ApplyLabelUseCase {
     DateTime? now,
   }) async {
     final wanted = contactIds.toSet();
-    final label = UuidValue.parse(labelId);
+    final label = EntityId(labelId);
     final all = await _contacts.listAll(includeTrashed: true);
 
     final updates = [

@@ -1,9 +1,9 @@
 import 'package:contacts/core/domain/model/enums.dart';
-import 'package:contacts/core/domain/model/uuid_value.dart';
+import 'package:contacts/core/domain/model/entity_id.dart';
 
 /// Numéro de téléphone d'un contact, avec son libellé.
 class PhoneNumber {
-  final UuidValue id;
+  final EntityId id;
   final String value;
   final PhoneType type;
 
@@ -21,7 +21,7 @@ class PhoneNumber {
     String value, {
     PhoneType type = PhoneType.mobile,
     String? customLabel,
-  }) => PhoneNumber(id: UuidValue.generate(), value: value, type: type, customLabel: customLabel);
+  }) => PhoneNumber(id: EntityId.generate(), value: value, type: type, customLabel: customLabel);
 
   String get label => type == PhoneType.personnalise && (customLabel?.trim().isNotEmpty ?? false)
       ? customLabel!.trim()

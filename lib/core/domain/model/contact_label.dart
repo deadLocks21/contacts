@@ -1,9 +1,9 @@
-import 'package:contacts/core/domain/model/uuid_value.dart';
+import 'package:contacts/core/domain/model/entity_id.dart';
 
 /// Étiquette (« label » Google) — un groupe nommé auquel des contacts
 /// appartiennent. Un contact peut porter plusieurs étiquettes.
 class ContactLabel {
-  final UuidValue id;
+  final EntityId id;
   final String name;
   final DateTime createdAt;
   final DateTime updatedAt;
@@ -17,7 +17,7 @@ class ContactLabel {
 
   factory ContactLabel.create(String name, {DateTime? now}) {
     final at = now ?? DateTime.now();
-    return ContactLabel(id: UuidValue.generate(), name: name.trim(), createdAt: at, updatedAt: at);
+    return ContactLabel(id: EntityId.generate(), name: name.trim(), createdAt: at, updatedAt: at);
   }
 
   ContactLabel rename(String newName, {DateTime? now}) => ContactLabel(

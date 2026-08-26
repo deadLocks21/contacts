@@ -9,7 +9,7 @@ import 'package:contacts/core/domain/model/enums.dart';
 import 'package:contacts/core/domain/model/phone_number.dart';
 import 'package:contacts/core/domain/model/postal_address.dart';
 import 'package:contacts/core/domain/model/relation.dart';
-import 'package:contacts/core/domain/model/uuid_value.dart';
+import 'package:contacts/core/domain/model/entity_id.dart';
 import 'package:contacts/core/domain/model/website.dart';
 
 /// Codecs JSON des entités persistées. Dates en **ISO-8601 UTC**, enums par
@@ -121,7 +121,7 @@ class _ContactCodec implements RecordCodec<Contact> {
   Contact fromJson(Map<String, Object?> json) {
     final name = (json['name'] as Map? ?? const {}).cast<String, Object?>();
     return Contact(
-      id: UuidValue.parse(json['id']! as String),
+      id: EntityId(json['id']! as String),
       name: ContactName(
         prefix: _str(name['prefix']),
         first: _str(name['first']),
@@ -140,7 +140,7 @@ class _ContactCodec implements RecordCodec<Contact> {
       phones: [
         for (final p in _list(json['phones']))
           PhoneNumber(
-            id: UuidValue.parse(p['id']! as String),
+            id: EntityId(p['id']! as String),
             value: p['value']! as String,
             type: PhoneType.fromWire(_str(p['type'])),
             customLabel: _str(p['custom_label']),
@@ -149,7 +149,7 @@ class _ContactCodec implements RecordCodec<Contact> {
       emails: [
         for (final e in _list(json['emails']))
           EmailAddress(
-            id: UuidValue.parse(e['id']! as String),
+            id: EntityId(e['id']! as String),
             value: e['value']! as String,
             type: EmailType.fromWire(_str(e['type'])),
             customLabel: _str(e['custom_label']),
@@ -158,7 +158,7 @@ class _ContactCodec implements RecordCodec<Contact> {
       addresses: [
         for (final a in _list(json['addresses']))
           PostalAddress(
-            id: UuidValue.parse(a['id']! as String),
+            id: EntityId(a['id']! as String),
             street: _str(a['street']),
             city: _str(a['city']),
             postcode: _str(a['postcode']),
@@ -172,7 +172,7 @@ class _ContactCodec implements RecordCodec<Contact> {
       websites: [
         for (final w in _list(json['websites']))
           Website(
-            id: UuidValue.parse(w['id']! as String),
+            id: EntityId(w['id']! as String),
             value: w['value']! as String,
             type: WebsiteType.fromWire(_str(w['type'])),
             customLabel: _str(w['custom_label']),
@@ -181,7 +181,7 @@ class _ContactCodec implements RecordCodec<Contact> {
       events: [
         for (final e in _list(json['events']))
           ContactEvent(
-            id: UuidValue.parse(e['id']! as String),
+            id: EntityId(e['id']! as String),
             year: e['year'] as int?,
             month: e['month']! as int,
             day: e['day']! as int,
@@ -192,7 +192,7 @@ class _ContactCodec implements RecordCodec<Contact> {
       relations: [
         for (final r in _list(json['relations']))
           Relation(
-            id: UuidValue.parse(r['id']! as String),
+            id: EntityId(r['id']! as String),
             value: r['value']! as String,
             type: RelationType.fromWire(_str(r['type'])),
             customLabel: _str(r['custom_label']),
@@ -201,7 +201,7 @@ class _ContactCodec implements RecordCodec<Contact> {
       chats: [
         for (final c in _list(json['chats']))
           ChatAddress(
-            id: UuidValue.parse(c['id']! as String),
+            id: EntityId(c['id']! as String),
             value: c['value']! as String,
             type: ChatType.fromWire(_str(c['type'])),
             customLabel: _str(c['custom_label']),
@@ -209,7 +209,7 @@ class _ContactCodec implements RecordCodec<Contact> {
       ],
       notes: _str(json['notes']),
       labelIds: {
-        for (final l in (json['label_ids'] as List? ?? const [])) UuidValue.parse(l as String),
+        for (final l in (json['label_ids'] as List? ?? const [])) EntityId(l as String),
       },
       starred: json['starred'] as bool? ?? false,
       customRingtone: _str(json['custom_ringtone']),
@@ -246,7 +246,7 @@ class _LabelCodec implements RecordCodec<ContactLabel> {
 
   @override
   ContactLabel fromJson(Map<String, Object?> json) => ContactLabel(
-    id: UuidValue.parse(json['id']! as String),
+    id: EntityId(json['id']! as String),
     name: json['name']! as String,
     createdAt: _date(json['created_at']),
     updatedAt: _date(json['updated_at']),

@@ -1,9 +1,9 @@
 import 'package:contacts/core/domain/model/enums.dart';
-import 'package:contacts/core/domain/model/uuid_value.dart';
+import 'package:contacts/core/domain/model/entity_id.dart';
 
 /// Identifiant de messagerie instantanée.
 class ChatAddress {
-  final UuidValue id;
+  final EntityId id;
   final String value;
   final ChatType type;
   final String? customLabel;
@@ -19,7 +19,7 @@ class ChatAddress {
     String value, {
     ChatType type = ChatType.hangouts,
     String? customLabel,
-  }) => ChatAddress(id: UuidValue.generate(), value: value, type: type, customLabel: customLabel);
+  }) => ChatAddress(id: EntityId.generate(), value: value, type: type, customLabel: customLabel);
 
   String get label => type == ChatType.personnalise && (customLabel?.trim().isNotEmpty ?? false)
       ? customLabel!.trim()

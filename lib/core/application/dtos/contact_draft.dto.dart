@@ -7,7 +7,7 @@ import 'package:contacts/core/domain/model/enums.dart';
 import 'package:contacts/core/domain/model/phone_number.dart';
 import 'package:contacts/core/domain/model/postal_address.dart';
 import 'package:contacts/core/domain/model/relation.dart';
-import 'package:contacts/core/domain/model/uuid_value.dart';
+import 'package:contacts/core/domain/model/entity_id.dart';
 import 'package:contacts/core/domain/model/website.dart';
 
 /// Brouillon d'un champ libellé (téléphone, e-mail, site…).
@@ -225,7 +225,7 @@ class ContactDraft {
 
   static String? _clean(String s) => s.trim().isEmpty ? null : s.trim();
 
-  static UuidValue _idOf(String? id) => id == null ? UuidValue.generate() : UuidValue.parse(id);
+  static EntityId _idOf(String? id) => id == null ? EntityId.generate() : EntityId(id);
 
   /// Applique le brouillon sur [base] (édition) ou construit une fiche neuve
   /// (création). Les lignes vides sont écartées.
@@ -313,14 +313,14 @@ class ContactDraft {
           customLabel: _clean(c.customLabel),
         ),
     ];
-    final builtLabels = {for (final l in labelIds) UuidValue.parse(l)};
+    final builtLabels = {for (final l in labelIds) EntityId(l)};
 
     // Construction explicite plutôt que `copyWith` : le formulaire doit pouvoir
     // *vider* un champ, ce qu'un `copyWith` à paramètres nullables ne sait pas
     // exprimer (null y signifie « inchangé »). On repart donc de zéro en ne
     // reprenant de [base] que ce que le formulaire n'expose pas.
     return Contact(
-      id: base?.id ?? (id == null ? UuidValue.generate() : UuidValue.parse(id!)),
+      id: base?.id ?? (id == null ? EntityId.generate() : EntityId(id!)),
       name: name,
       company: _clean(company),
       jobTitle: _clean(jobTitle),
