@@ -146,6 +146,19 @@ void main() {
       expect((await harness.contacts.getById(contact.id.value))!.company, isNull);
     });
 
+    test('retirer la photo la retire vraiment de la fiche', () async {
+      final contact = aContact(first: 'Marie').copyWith(photoPath: '/photos/marie.jpg');
+      await harness.contacts.save(contact);
+
+      final draft = await LoadContactDraftUseCase(
+        harness.contacts,
+      ).execute(contactId: contact.id.value);
+      draft.photoPath = null;
+      await SaveContactUseCase(harness.contacts).execute(draft, now: testNow);
+
+      expect((await harness.contacts.getById(contact.id.value))!.photoPath, isNull);
+    });
+
     test('conserve identifiant, création et favori lors d\'une modification', () async {
       final contact = aContact(first: 'Marie', starred: true, createdAt: DateTime.utc(2024));
       await harness.contacts.save(contact);
