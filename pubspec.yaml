@@ -1,0 +1,50 @@
+name: contacts
+description: "Contacts — carnet d'adresses, réplique de Google Contacts."
+publish_to: 'none'
+
+version: 0.1.0+1
+
+environment:
+  sdk: ^3.11.5
+
+dependencies:
+  flutter:
+    sdk: flutter
+  flutter_localizations:
+    sdk: flutter
+
+  cupertino_icons: ^1.0.8
+
+  # State / DI
+  flutter_riverpod: ^3.3.1
+  riverpod_annotation: ^4.0.2
+
+  # Navigation
+  go_router: ^16.2.4
+
+  # Persistance locale (source de vérité) + préférences
+  sqflite: ^2.4.2
+  sqflite_common_ffi: ^2.3.7+1
+  path_provider: ^2.1.5
+  path: ^1.9.1
+  shared_preferences: ^2.5.4
+
+  # Divers
+  uuid: ^4.5.1
+  intl: ^0.20.2
+  diacritic: ^0.1.6
+  google_fonts: ^6.2.1
+  image_picker: ^1.1.2
+  file_picker: ^9.0.0
+  share_plus: ^12.0.2
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^6.0.0
+  riverpod_generator: ^4.0.3
+  build_runner: ^2.15.0
+  flutter_launcher_icons: ^0.14.4
+
+flutter:
+  uses-material-design: true
