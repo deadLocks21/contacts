@@ -24,7 +24,8 @@ UI → Application → Domain ← Infrastructure
    - `providers/` : providers Riverpod (`@riverpod`, `*.g.dart`) — assemblage des dépendances.
 4. **UI** (`lib/ui/`) ne dépend que d'Application (et des interfaces Domain via providers).
    - `pages/<feature>/*.page.dart`, `widgets/*.widget.dart`, `providers/*.provider.dart`.
-   - `router/` : go_router + `AppRoutes`.
+   - `router/` : go_router + `AppRoutes` + `StatefulShellRoute` pour les trois onglets
+     (Contacts, Faits marquants, Organiser), chacun gardant sa pile et son défilement.
    - `theme/` : `AppThemeData` + `ContactsPalette` + `AppColors` (ThemeExtension) +
      `context.appColors`.
 
