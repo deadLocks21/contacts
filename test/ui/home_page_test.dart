@@ -136,4 +136,14 @@ void main() {
     expect(find.text('Favoris'), findsOneWidget);
     expect(find.text('Marie'), findsOneWidget);
   });
+
+  testWidgets('l\'avatar du compte ouvre les paramètres', (tester) async {
+    await pumpContactsApp(tester, contacts: [aContact(first: 'Marie')]);
+
+    await tester.tap(find.byKey(const Key('accountAvatar')));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Paramètres'), findsOneWidget);
+    expect(find.text('Format des noms'), findsOneWidget);
+  });
 }

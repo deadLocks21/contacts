@@ -32,7 +32,10 @@ class HighlightsPage extends ConsumerWidget {
           data: (highlights) => ListView(
             padding: const EdgeInsets.only(bottom: 24),
             children: [
-              ContactsSearchBar(onTap: () => context.push(AppRoutes.search)),
+              ContactsSearchBar(
+                onTap: () => context.push(AppRoutes.search),
+                onAvatarTap: () => context.push(AppRoutes.settings),
+              ),
               _SectionHeader(
                 'Favoris',
                 action: highlights.favorites.isEmpty ? null : 'Voir tout',

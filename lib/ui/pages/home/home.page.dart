@@ -52,7 +52,10 @@ class HomePage extends ConsumerWidget {
             header: selection.isEmpty
                 ? Column(
                     children: [
-                      ContactsSearchBar(onTap: () => context.push(AppRoutes.search)),
+                      ContactsSearchBar(
+                        onTap: () => context.push(AppRoutes.search),
+                        onAvatarTap: () => context.push(AppRoutes.settings),
+                      ),
                       const ContactsFilterBar(),
                     ],
                   )
