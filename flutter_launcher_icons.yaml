@@ -1,0 +1,10 @@
+# Icône de l'app : silhouette bleue sur fond blanc, comme Google Contacts.
+# Régénérer après modification de assets/icon.png :
+#   dart run flutter_launcher_icons
+flutter_launcher_icons:
+  image_path: "assets/icon.png"
+  android: true
+  ios: true
+  remove_alpha_ios: true
+  adaptive_icon_background: "#FFFFFF"
+  adaptive_icon_foreground: "assets/icon.png"
