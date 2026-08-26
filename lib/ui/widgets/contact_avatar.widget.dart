@@ -1,4 +1,4 @@
-import 'dart:io';
+import 'dart:typed_data';
 
 import 'package:contacts/core/application/services/avatar_color.service.dart';
 import 'package:contacts/ui/theme/app_colors.dart';
@@ -16,7 +16,7 @@ class ContactAvatar extends StatelessWidget {
     super.key,
     required this.initials,
     required this.colorKey,
-    this.photoPath,
+    this.photo,
     this.size = 40,
     this.selected = false,
   });
@@ -26,7 +26,8 @@ class ContactAvatar extends StatelessWidget {
   /// Texte dont on dérive la couleur — le nom affiché du contact.
   final String colorKey;
 
-  final String? photoPath;
+  /// Photo de la fiche, telle que le carnet du système la rend.
+  final Uint8List? photo;
   final double size;
   final bool selected;
 
@@ -43,16 +44,17 @@ class ContactAvatar extends StatelessWidget {
       );
     }
 
-    // Une photo dont le fichier a disparu (restauration partielle, nettoyage
-    // système) ne doit pas laisser un trou : on retombe sur les initiales.
-    final photo = photoPath;
-    if (photo != null && photo.isNotEmpty && File(photo).existsSync()) {
+    // Une photo illisible (format inattendu venu d'une autre app) ne doit pas
+    // laisser un trou : on retombe sur les initiales.
+    final bytes = photo;
+    if (bytes != null && bytes.isNotEmpty) {
       return ClipOval(
-        child: Image.file(
-          File(photo),
+        child: Image.memory(
+          bytes,
           width: size,
           height: size,
           fit: BoxFit.cover,
+          gaplessPlayback: true,
           errorBuilder: (_, _, _) => _initialsCircle(colors),
         ),
       );

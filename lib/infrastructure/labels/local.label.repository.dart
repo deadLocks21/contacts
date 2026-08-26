@@ -3,8 +3,8 @@ import 'package:contacts/core/domain/model/contact_label.dart';
 import 'package:contacts/core/domain/services/label.repository.dart';
 import 'package:contacts/infrastructure/persistence/local_record_store.dart';
 
-/// Étiquettes adossées au store local. Une étiquette supprimée l'est vraiment :
-/// il n'y a pas de corbeille pour les étiquettes.
+/// Étiquettes simulées, adossées au store local — doublure des groupes du
+/// carnet du système pour le développement sur desktop et les tests.
 class LocalLabelRepository implements LabelRepository {
   LocalLabelRepository(this._store);
 

@@ -67,7 +67,7 @@ void main() {
   testWidgets('la corbeille annonce le compte à rebours et restaure', (tester) async {
     await pumpContactsApp(
       tester,
-      contacts: [aContact(first: 'Marie', deletedAt: DateTime.now())],
+      trashed: [aContact(first: 'Marie', deletedAt: DateTime.now())],
     );
 
     await openOrganize(tester);

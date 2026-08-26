@@ -22,60 +22,66 @@ void main() {
   const settings = AppSettings.defaults;
 
   group('Corbeille', () {
-    test('supprimer met à la corbeille sans effacer', () async {
+    test('supprimer retire du carnet et recopie dans la corbeille', () async {
       final contact = aContact(first: 'Marie');
       await harness.contacts.save(contact);
 
-      await MoveToTrashUseCase(harness.contacts).execute([contact.id.value], now: testNow);
+      await MoveToTrashUseCase(
+        harness.contacts,
+        harness.trash,
+      ).execute([contact.id.value], now: testNow);
 
       expect(await harness.contacts.listAll(), isEmpty);
-      expect((await harness.contacts.listTrashed()).single.id, contact.id);
+      expect((await harness.trash.listAll()).single.id, contact.id);
+      expect((await harness.trash.listAll()).single.deletedAt, isNotNull);
     });
 
     test('annonce le temps restant avant purge', () async {
-      await harness.contacts.save(aContact(first: 'Marie', deletedAt: testNow));
+      await harness.trash.put([aContact(first: 'Marie', deletedAt: testNow)]);
 
       final entries = await ListTrashUseCase(
-        harness.contacts,
+        harness.trash,
       ).execute(settings: settings, now: testNow.add(const Duration(days: 18)));
 
       expect(entries.single.daysLeft, 12);
       expect(entries.single.countdown, 'Suppression définitive dans 12 jours');
     });
 
-    test('restaurer remet la fiche dans le carnet', () async {
+    test('restaurer réinsère la fiche dans le carnet', () async {
       final contact = aContact(first: 'Marie', deletedAt: testNow);
-      await harness.contacts.save(contact);
+      await harness.trash.put([contact]);
 
-      await RestoreFromTrashUseCase(harness.contacts).execute([contact.id.value], now: testNow);
+      await RestoreFromTrashUseCase(
+        harness.contacts,
+        harness.trash,
+      ).execute([contact.id.value], now: testNow);
 
-      expect((await harness.contacts.listAll()).single.id, contact.id);
-      expect(await harness.contacts.listTrashed(), isEmpty);
+      final restored = (await harness.contacts.listAll()).single;
+      expect(restored.name.first, 'Marie');
+      expect(restored.deletedAt, isNull);
+      expect(await harness.trash.listAll(), isEmpty);
     });
 
-    test('la suppression définitive efface aussi la photo devenue orpheline', () async {
-      final contact = aContact(first: 'Marie').copyWith(photoPath: '/photos/marie.jpg');
-      await harness.contacts.save(contact);
+    test('la suppression définitive ne laisse rien', () async {
+      final contact = aContact(first: 'Marie', deletedAt: testNow);
+      await harness.trash.put([contact]);
 
-      await DeleteForeverUseCase(harness.contacts, harness.photos).execute([contact.id.value]);
+      await DeleteForeverUseCase(harness.trash).execute([contact.id.value]);
 
-      expect(await harness.contacts.listAll(includeTrashed: true), isEmpty);
-      expect(harness.photos.removed, ['/photos/marie.jpg']);
+      expect(await harness.trash.listAll(), isEmpty);
+      expect(await harness.contacts.listAll(), isEmpty);
     });
 
     test('purge ce qui a dépassé trente jours, et rien d\'autre', () async {
-      await harness.contacts.saveAll([
+      await harness.trash.put([
         aContact(first: 'Vieux', deletedAt: testNow.subtract(const Duration(days: 31))),
         aContact(first: 'Récent', deletedAt: testNow.subtract(const Duration(days: 3))),
       ]);
 
-      final purged = await PurgeExpiredTrashUseCase(
-        harness.contacts,
-        harness.photos,
-      ).execute(now: testNow);
+      final purged = await PurgeExpiredTrashUseCase(harness.trash).execute(now: testNow);
 
       expect(purged, 1);
-      expect((await harness.contacts.listTrashed()).single.name.first, 'Récent');
+      expect((await harness.trash.listAll()).single.name.first, 'Récent');
     });
   });
 
@@ -133,15 +139,12 @@ void main() {
   });
 
   group('Import / export vCard', () {
-    test('exporte tout le carnet, corbeille exclue', () async {
-      await harness.contacts.saveAll([
-        aContact(first: 'Marie'),
-        aContact(first: 'Fantôme', deletedAt: testNow),
-      ]);
+    test('exporte tout le carnet', () async {
+      await harness.contacts.saveAll([aContact(first: 'Marie'), aContact(first: 'Marc')]);
 
       final vcf = await ExportVCardUseCase(harness.contacts, harness.labels).execute();
 
-      expect('BEGIN:VCARD'.allMatches(vcf).length, 1);
+      expect('BEGIN:VCARD'.allMatches(vcf).length, 2);
       expect(vcf, contains('FN:Marie'));
     });
 

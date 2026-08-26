@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'package:contacts/core/application/services/text_normalizer.service.dart';
 import 'package:contacts/core/domain/model/chat_address.dart';
 import 'package:contacts/core/domain/model/contact.dart';
@@ -56,7 +58,7 @@ abstract final class ContactMerge {
       company: firstOf((c) => c.company),
       jobTitle: firstOf((c) => c.jobTitle),
       department: firstOf((c) => c.department),
-      photoPath: firstOf((c) => c.photoPath),
+      photo: ordered.map((c) => c.photo).whereType<Uint8List>().firstOrNull,
       phones: _dedupe([
         for (final c in ordered) ...c.phones,
       ], (PhoneNumber p) => p.digits.isEmpty ? p.value : p.digits),

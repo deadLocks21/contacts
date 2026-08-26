@@ -142,7 +142,7 @@ class _ContactEditPageState extends ConsumerState<ContactEditPage> {
             ContactAvatar(
               initials: _initialsPreview(draft),
               colorKey: '${draft.first} ${draft.last}',
-              photoPath: draft.photoPath,
+              photo: draft.photo,
               size: 112,
             ),
             Material(
@@ -188,7 +188,7 @@ class _ContactEditPageState extends ConsumerState<ContactEditPage> {
               title: const Text('Prendre une photo'),
               onTap: () => Navigator.pop(context, _PhotoAction.appareilPhoto),
             ),
-            if (draft.photoPath != null)
+            if (draft.photo != null)
               ListTile(
                 leading: const Icon(Icons.delete_outline),
                 title: const Text('Supprimer la photo'),
@@ -203,7 +203,7 @@ class _ContactEditPageState extends ConsumerState<ContactEditPage> {
     if (action == null) return;
 
     if (action == _PhotoAction.supprimer) {
-      draft.photoPath = null;
+      draft.photo = null;
       _touch();
       return;
     }
@@ -211,11 +211,9 @@ class _ContactEditPageState extends ConsumerState<ContactEditPage> {
     final source = action == _PhotoAction.galerie ? ImageSource.gallery : ImageSource.camera;
     final picked = await ImagePicker().pickImage(source: source, maxWidth: 1024, imageQuality: 85);
     if (picked == null) return;
-    final stored = await ref
-        .read(contactsServiceProvider)
-        .setPhoto
-        .execute(picked.path, contactId: draft.id ?? 'nouveau');
-    draft.photoPath = stored;
+    // La photo part dans la fiche du carnet système, en octets : l'app ne
+    // garde aucun fichier à elle, donc rien à nettoyer ni à voir disparaître.
+    draft.photo = await picked.readAsBytes();
     _touch();
   }
 

@@ -6,7 +6,6 @@ import 'package:contacts/core/application/usecases/move_to_trash.usecase.dart';
 import 'package:contacts/core/application/usecases/save_contact.usecase.dart';
 import 'package:contacts/core/application/usecases/search_contacts.usecase.dart';
 import 'package:contacts/core/application/usecases/set_contact_options.usecase.dart';
-import 'package:contacts/core/application/usecases/set_contact_photo.usecase.dart';
 import 'package:contacts/core/application/usecases/toggle_star.usecase.dart';
 
 /// Les cas d'usage du carnet lui-même — lecture, édition, favoris, corbeille.
@@ -21,7 +20,6 @@ class ContactsApplicationService {
     required this.search,
     required this.toggleStar,
     required this.moveToTrash,
-    required this.setPhoto,
     required this.setOptions,
   });
 
@@ -33,6 +31,5 @@ class ContactsApplicationService {
   final SearchContactsUseCase search;
   final ToggleStarUseCase toggleStar;
   final MoveToTrashUseCase moveToTrash;
-  final SetContactPhotoUseCase setPhoto;
   final SetContactOptionsUseCase setOptions;
 }

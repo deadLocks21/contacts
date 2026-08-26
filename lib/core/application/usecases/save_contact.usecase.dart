@@ -16,7 +16,8 @@ class SaveContactUseCase {
     final base = draft.id == null ? null : await _contacts.getById(draft.id!);
     final contact = draft.toDomain(base: base, now: now);
     if (contact.isBlank) throw const BlankContactException();
-    await _contacts.save(contact);
-    return contact.id.value;
+    // C'est le carnet qui alloue l'identifiant d'une fiche neuve : on rend le
+    // sien, pas celui du brouillon.
+    return _contacts.save(contact);
   }
 }

@@ -3,18 +3,18 @@ import 'package:contacts/core/application/services/contact_mapper.service.dart';
 import 'package:contacts/core/application/services/date_label.service.dart';
 import 'package:contacts/core/domain/model/app_settings.dart';
 import 'package:contacts/core/domain/model/contact.dart';
-import 'package:contacts/core/domain/services/contact.repository.dart';
+import 'package:contacts/core/domain/services/trash.repository.dart';
 
 /// Le contenu de la corbeille, du plus récemment supprimé au plus ancien.
 class ListTrashUseCase {
-  const ListTrashUseCase(this._contacts);
+  const ListTrashUseCase(this._trash);
 
-  final ContactRepository _contacts;
+  final TrashRepository _trash;
 
   Future<List<TrashEntryDto>> execute({required AppSettings settings, DateTime? now}) async {
     final at = now ?? DateTime.now();
-    final trashed = await _contacts.listTrashed();
-    trashed.sort((a, b) => b.deletedAt!.compareTo(a.deletedAt!));
+    final trashed = await _trash.listAll();
+    trashed.sort((a, b) => (b.deletedAt ?? b.updatedAt).compareTo(a.deletedAt ?? a.updatedAt));
 
     return [
       for (final c in trashed)

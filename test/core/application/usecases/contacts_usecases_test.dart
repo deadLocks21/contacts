@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'package:contacts/core/application/dtos/contact_draft.dto.dart';
 import 'package:contacts/core/application/usecases/get_contact.usecase.dart';
 import 'package:contacts/core/application/usecases/list_contacts.usecase.dart';
@@ -46,17 +48,6 @@ void main() {
       ).execute(settings: settings.copyWith(sortOrder: ContactSortOrder.nom));
 
       expect([for (final c in parNom.all) c.displayName], ['Bruno Alric', 'Alice Zola']);
-    });
-
-    test('exclut la corbeille', () async {
-      await harness.contacts.saveAll([
-        aContact(first: 'Visible'),
-        aContact(first: 'Supprimé', deletedAt: testNow),
-      ]);
-
-      final list = await ListContactsUseCase(harness.contacts).execute(settings: settings);
-
-      expect(list.total, 1);
     });
 
     test('filtre sur une étiquette', () async {
@@ -147,16 +138,16 @@ void main() {
     });
 
     test('retirer la photo la retire vraiment de la fiche', () async {
-      final contact = aContact(first: 'Marie').copyWith(photoPath: '/photos/marie.jpg');
+      final contact = aContact(first: 'Marie').copyWith(photo: Uint8List.fromList([1, 2, 3]));
       await harness.contacts.save(contact);
 
       final draft = await LoadContactDraftUseCase(
         harness.contacts,
       ).execute(contactId: contact.id.value);
-      draft.photoPath = null;
+      draft.photo = null;
       await SaveContactUseCase(harness.contacts).execute(draft, now: testNow);
 
-      expect((await harness.contacts.getById(contact.id.value))!.photoPath, isNull);
+      expect((await harness.contacts.getById(contact.id.value))!.photo, isNull);
     });
 
     test('conserve identifiant, création et favori lors d\'une modification', () async {
@@ -215,14 +206,17 @@ void main() {
   });
 
   group('SearchContactsUseCase', () {
-    test('ne cherche pas dans la corbeille', () async {
-      await harness.contacts.save(aContact(first: 'Marie', deletedAt: testNow));
+    test('ne trouve que ce que porte le carnet', () async {
+      await harness.contacts.save(aContact(first: 'Marie'));
 
-      final results = await SearchContactsUseCase(
-        harness.contacts,
-      ).execute('marie', settings: settings);
-
-      expect(results, isEmpty);
+      expect(
+        await SearchContactsUseCase(harness.contacts).execute('marie', settings: settings),
+        hasLength(1),
+      );
+      expect(
+        await SearchContactsUseCase(harness.contacts).execute('paul', settings: settings),
+        isEmpty,
+      );
     });
   });
 }

@@ -48,7 +48,7 @@ class ContactTile extends StatelessWidget {
               ContactAvatar(
                 initials: contact.initials,
                 colorKey: contact.displayName,
-                photoPath: contact.photoPath,
+                photo: contact.photo,
                 selected: selected,
               ),
               const SizedBox(width: 16),

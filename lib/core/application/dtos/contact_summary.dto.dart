@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'package:contacts/core/domain/model/contact.dart';
 import 'package:contacts/core/domain/model/enums.dart';
 
@@ -9,7 +11,7 @@ class ContactSummaryDto {
   /// « Poste, Société » — deuxième ligne, vide s'il n'y a rien à dire.
   final String subtitle;
   final String initials;
-  final String? photoPath;
+  final Uint8List? photo;
   final bool starred;
 
   /// Lettre de section (« A », « B »… « # » pour ce qui ne commence pas par
@@ -26,7 +28,7 @@ class ContactSummaryDto {
     required this.initials,
     required this.sectionKey,
     required this.sortKey,
-    this.photoPath,
+    this.photo,
     this.starred = false,
   });
 
@@ -40,7 +42,7 @@ class ContactSummaryDto {
     displayName: contact.displayName(nameFormat),
     subtitle: contact.subtitle,
     initials: contact.initials,
-    photoPath: contact.photoPath,
+    photo: contact.photo,
     starred: contact.starred,
     sectionKey: sectionKey,
     sortKey: sortKey,
@@ -54,10 +56,10 @@ class ContactSummaryDto {
           id == other.id &&
           displayName == other.displayName &&
           subtitle == other.subtitle &&
-          photoPath == other.photoPath &&
+          photo == other.photo &&
           starred == other.starred &&
           sectionKey == other.sectionKey;
 
   @override
-  int get hashCode => Object.hash(id, displayName, subtitle, photoPath, starred, sectionKey);
+  int get hashCode => Object.hash(id, displayName, subtitle, photo, starred, sectionKey);
 }

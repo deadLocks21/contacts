@@ -24,7 +24,6 @@ import 'package:contacts/core/application/usecases/restore_from_trash.usecase.da
 import 'package:contacts/core/application/usecases/save_contact.usecase.dart';
 import 'package:contacts/core/application/usecases/search_contacts.usecase.dart';
 import 'package:contacts/core/application/usecases/set_contact_options.usecase.dart';
-import 'package:contacts/core/application/usecases/set_contact_photo.usecase.dart';
 import 'package:contacts/core/application/usecases/toggle_star.usecase.dart';
 import 'package:contacts/core/application/usecases/update_settings.usecase.dart';
 import 'package:contacts/infrastructure/providers/infra_providers.dart';
@@ -47,8 +46,7 @@ ContactsApplicationService contactsService(Ref ref) {
     save: SaveContactUseCase(contacts),
     search: SearchContactsUseCase(contacts),
     toggleStar: ToggleStarUseCase(contacts),
-    moveToTrash: MoveToTrashUseCase(contacts),
-    setPhoto: SetContactPhotoUseCase(ref.watch(photoStoreProvider)),
+    moveToTrash: MoveToTrashUseCase(contacts, ref.watch(trashRepositoryProvider)),
     setOptions: SetContactOptionsUseCase(contacts),
   );
 }
@@ -70,16 +68,16 @@ LabelsApplicationService labelsService(Ref ref) {
 OrganizeApplicationService organizeService(Ref ref) {
   final contacts = ref.watch(contactRepositoryProvider);
   final labels = ref.watch(labelRepositoryProvider);
-  final photos = ref.watch(photoStoreProvider);
+  final trash = ref.watch(trashRepositoryProvider);
   return OrganizeApplicationService(
     listDuplicates: ListDuplicatesUseCase(contacts),
     merge: MergeContactsUseCase(contacts),
     importVCard: ImportVCardUseCase(contacts, labels),
     exportVCard: ExportVCardUseCase(contacts, labels),
-    listTrash: ListTrashUseCase(contacts),
-    restore: RestoreFromTrashUseCase(contacts),
-    deleteForever: DeleteForeverUseCase(contacts, photos),
-    purgeExpired: PurgeExpiredTrashUseCase(contacts, photos),
+    listTrash: ListTrashUseCase(trash),
+    restore: RestoreFromTrashUseCase(contacts, trash),
+    deleteForever: DeleteForeverUseCase(trash),
+    purgeExpired: PurgeExpiredTrashUseCase(trash),
   );
 }
 

@@ -41,7 +41,7 @@ abstract final class ContactMapper {
       displayName: contact.displayName(nameFormat),
       nickname: (nickname?.isNotEmpty ?? false) ? nickname : null,
       initials: contact.initials,
-      photoPath: contact.photoPath,
+      photo: contact.photo,
       starred: contact.starred,
       subtitle: contact.subtitle,
       phones: [

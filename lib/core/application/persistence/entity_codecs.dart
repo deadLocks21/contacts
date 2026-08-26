@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:contacts/core/application/persistence/record_codec.dart';
 import 'package:contacts/core/domain/model/chat_address.dart';
 import 'package:contacts/core/domain/model/contact.dart';
@@ -56,7 +58,7 @@ class _ContactCodec implements RecordCodec<Contact> {
     'company': c.company,
     'job_title': c.jobTitle,
     'department': c.department,
-    'photo_path': c.photoPath,
+    'photo': c.photo == null ? null : base64Encode(c.photo!),
     'phones': [
       for (final p in c.phones)
         {'id': p.id.value, 'value': p.value, 'type': p.type.wire, 'custom_label': p.customLabel},
@@ -136,7 +138,7 @@ class _ContactCodec implements RecordCodec<Contact> {
       company: _str(json['company']),
       jobTitle: _str(json['job_title']),
       department: _str(json['department']),
-      photoPath: _str(json['photo_path']),
+      photo: json['photo'] == null ? null : base64Decode(json['photo']! as String),
       phones: [
         for (final p in _list(json['phones']))
           PhoneNumber(
@@ -208,9 +210,7 @@ class _ContactCodec implements RecordCodec<Contact> {
           ),
       ],
       notes: _str(json['notes']),
-      labelIds: {
-        for (final l in (json['label_ids'] as List? ?? const [])) EntityId(l as String),
-      },
+      labelIds: {for (final l in (json['label_ids'] as List? ?? const [])) EntityId(l as String)},
       starred: json['starred'] as bool? ?? false,
       customRingtone: _str(json['custom_ringtone']),
       sendToVoicemail: json['send_to_voicemail'] as bool? ?? false,

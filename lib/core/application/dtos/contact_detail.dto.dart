@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'package:contacts/core/application/dtos/contact_field.dto.dart';
 import 'package:contacts/core/application/dtos/label.dto.dart';
 
@@ -10,7 +12,7 @@ class ContactDetailDto {
   /// (surnom, nom phonétique) — vide sinon.
   final String? nickname;
   final String initials;
-  final String? photoPath;
+  final Uint8List? photo;
   final bool starred;
 
   /// « Poste, Société », ou vide.
@@ -56,7 +58,7 @@ class ContactDetailDto {
     required this.initials,
     required this.subtitle,
     this.nickname,
-    this.photoPath,
+    this.photo,
     this.starred = false,
     this.phones = const [],
     this.emails = const [],

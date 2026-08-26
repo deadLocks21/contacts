@@ -22,7 +22,10 @@ dependencies:
   # Navigation
   go_router: ^16.2.4
 
-  # Persistance locale (source de vérité) + préférences
+  # Carnet d'adresses du système — la source de vérité
+  flutter_contacts: ^1.1.9
+
+  # Corbeille locale + préférences
   sqflite: ^2.4.2
   sqflite_common_ffi: ^2.3.7+1
   path_provider: ^2.1.5

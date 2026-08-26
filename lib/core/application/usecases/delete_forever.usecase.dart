@@ -1,31 +1,16 @@
-import 'package:contacts/core/domain/services/contact.repository.dart';
-import 'package:contacts/core/domain/services/photo.store.dart';
+import 'package:contacts/core/domain/services/trash.repository.dart';
 
-/// Supprime définitivement des fiches, et les photos qu'elles étaient seules
-/// à utiliser — sans quoi l'espace de l'app se remplirait d'orphelines.
+/// Vide définitivement des fiches de la corbeille.
+///
+/// La fiche a déjà quitté le carnet du système au moment de sa mise à la
+/// corbeille : il ne reste que la copie locale à effacer.
 class DeleteForeverUseCase {
-  const DeleteForeverUseCase(this._contacts, this._photos);
+  const DeleteForeverUseCase(this._trash);
 
-  final ContactRepository _contacts;
-  final PhotoStore _photos;
+  final TrashRepository _trash;
 
   Future<void> execute(Iterable<String> ids) async {
-    final wanted = ids.toSet();
-    if (wanted.isEmpty) return;
-    final all = await _contacts.listAll(includeTrashed: true);
-
-    final doomedPhotos = <String>{
-      for (final c in all)
-        if (wanted.contains(c.id.value) && c.photoPath != null) c.photoPath!,
-    };
-    final keptPhotos = <String>{
-      for (final c in all)
-        if (!wanted.contains(c.id.value) && c.photoPath != null) c.photoPath!,
-    };
-
-    await _contacts.purge(wanted);
-    for (final path in doomedPhotos.difference(keptPhotos)) {
-      await _photos.remove(path);
-    }
+    if (ids.isEmpty) return;
+    await _trash.remove(ids);
   }
 }

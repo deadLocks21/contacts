@@ -6,7 +6,7 @@ import 'package:contacts/core/application/dtos/highlights.dto.dart';
 import 'package:contacts/core/application/dtos/label.dto.dart';
 import 'package:contacts/core/application/dtos/trash_entry.dto.dart';
 import 'package:contacts/core/domain/model/enums.dart';
-import 'package:contacts/infrastructure/providers/infra_providers.dart';
+import 'package:contacts/infrastructure/providers/repository_providers.dart';
 import 'package:contacts/infrastructure/providers/service_providers.dart';
 import 'package:contacts/infrastructure/providers/settings_providers.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';

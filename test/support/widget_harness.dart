@@ -3,7 +3,6 @@ import 'package:contacts/core/domain/model/contact.dart';
 import 'package:contacts/core/domain/model/contact_label.dart';
 import 'package:contacts/core/domain/services/settings.repository.dart';
 import 'package:contacts/infrastructure/persistence/local_record_store.dart';
-import 'package:contacts/infrastructure/photos/local_file.photo.store.dart';
 import 'package:contacts/infrastructure/providers/infra_providers.dart';
 import 'package:contacts/infrastructure/settings/shared_prefs.settings.repository.dart';
 import 'package:contacts/ui/router/app_router.dart';
@@ -21,12 +20,23 @@ import 'package:flutter_test/flutter_test.dart';
 Future<ProviderContainer> pumpContactsApp(
   WidgetTester tester, {
   List<Contact> contacts = const [],
+  List<Contact> trashed = const [],
   List<ContactLabel> labels = const [],
   SettingsRepository? settings,
 }) async {
   final store = InMemoryLocalRecordStore();
   await store.upsert(contactCodec.resource, [
     for (final c in contacts)
+      (
+        id: contactCodec.idOf(c),
+        payload: contactCodec.toJson(c),
+        updatedAt: contactCodec.updatedAtOf(c),
+        deletedAt: contactCodec.deletedAtOf(c),
+      ),
+  ]);
+  // La corbeille est une ressource à part : le carnet ne la porte plus.
+  await store.upsert('trash', [
+    for (final c in trashed)
       (
         id: contactCodec.idOf(c),
         payload: contactCodec.toJson(c),
@@ -46,8 +56,11 @@ Future<ProviderContainer> pumpContactsApp(
 
   final container = ProviderContainer(
     overrides: [
+      // `defaultTargetPlatform` vaut Android dans les tests de widgets : sans
+      // cette bascule, l'app irait interroger le carnet du système, dont le
+      // canal natif n'existe pas ici.
+      useDeviceContactsProvider.overrideWithValue(false),
       localRecordStoreProvider.overrideWithValue(store),
-      photoStoreProvider.overrideWithValue(InMemoryPhotoStore()),
       settingsRepositoryProvider.overrideWithValue(settings ?? InMemorySettingsRepository()),
     ],
   );

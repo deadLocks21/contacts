@@ -8,20 +8,70 @@ part of 'infra_providers.dart';
 
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // ignore_for_file: type=lint, type=warning
+/// Le carnet d'adresses du système n'existe que sur mobile. Ailleurs (desktop,
+/// tests), l'app tourne sur un carnet simulé, alimenté par [DemoSeed] : l'UI
+/// reste travaillable et testable sans téléphone.
+
+@ProviderFor(useDeviceContacts)
+final useDeviceContactsProvider = UseDeviceContactsProvider._();
+
+/// Le carnet d'adresses du système n'existe que sur mobile. Ailleurs (desktop,
+/// tests), l'app tourne sur un carnet simulé, alimenté par [DemoSeed] : l'UI
+/// reste travaillable et testable sans téléphone.
+
+final class UseDeviceContactsProvider extends $FunctionalProvider<bool, bool, bool>
+    with $Provider<bool> {
+  /// Le carnet d'adresses du système n'existe que sur mobile. Ailleurs (desktop,
+  /// tests), l'app tourne sur un carnet simulé, alimenté par [DemoSeed] : l'UI
+  /// reste travaillable et testable sans téléphone.
+  UseDeviceContactsProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'useDeviceContactsProvider',
+        isAutoDispose: false,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$useDeviceContactsHash();
+
+  @$internal
+  @override
+  $ProviderElement<bool> $createElement($ProviderPointer pointer) => $ProviderElement(pointer);
+
+  @override
+  bool create(Ref ref) {
+    return useDeviceContacts(ref);
+  }
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(bool value) {
+    return $ProviderOverride(origin: this, providerOverride: $SyncValueProvider<bool>(value));
+  }
+}
+
+String _$useDeviceContactsHash() => r'4ce800a8558cf95b19416c98025dc3a816fe7f83';
+
 /// Store local — implémentation mémoire par défaut, **surchargée** dans
-/// `main()` par l'implémentation sqflite sur mobile et desktop.
+/// `main()` par l'implémentation sqflite. Il porte la corbeille, et le carnet
+/// simulé là où il n'y a pas de carnet système.
 
 @ProviderFor(localRecordStore)
 final localRecordStoreProvider = LocalRecordStoreProvider._();
 
 /// Store local — implémentation mémoire par défaut, **surchargée** dans
-/// `main()` par l'implémentation sqflite sur mobile et desktop.
+/// `main()` par l'implémentation sqflite. Il porte la corbeille, et le carnet
+/// simulé là où il n'y a pas de carnet système.
 
 final class LocalRecordStoreProvider
     extends $FunctionalProvider<LocalRecordStore, LocalRecordStore, LocalRecordStore>
     with $Provider<LocalRecordStore> {
   /// Store local — implémentation mémoire par défaut, **surchargée** dans
-  /// `main()` par l'implémentation sqflite sur mobile et desktop.
+  /// `main()` par l'implémentation sqflite. Il porte la corbeille, et le carnet
+  /// simulé là où il n'y a pas de carnet système.
   LocalRecordStoreProvider._()
     : super(
         from: null,
@@ -56,86 +106,6 @@ final class LocalRecordStoreProvider
 }
 
 String _$localRecordStoreHash() => r'd832c6a563a2bce73733f058b5bb873f63d5af83';
-
-/// Émet à chaque écriture du store : les providers de données s'y abonnent
-/// pour se recalculer. Le flux porte une révision monotone, sans quoi Riverpod
-/// ne renotifierait qu'au premier changement.
-
-@ProviderFor(storeChanges)
-final storeChangesProvider = StoreChangesProvider._();
-
-/// Émet à chaque écriture du store : les providers de données s'y abonnent
-/// pour se recalculer. Le flux porte une révision monotone, sans quoi Riverpod
-/// ne renotifierait qu'au premier changement.
-
-final class StoreChangesProvider extends $FunctionalProvider<AsyncValue<int>, int, Stream<int>>
-    with $FutureModifier<int>, $StreamProvider<int> {
-  /// Émet à chaque écriture du store : les providers de données s'y abonnent
-  /// pour se recalculer. Le flux porte une révision monotone, sans quoi Riverpod
-  /// ne renotifierait qu'au premier changement.
-  StoreChangesProvider._()
-    : super(
-        from: null,
-        argument: null,
-        retry: null,
-        name: r'storeChangesProvider',
-        isAutoDispose: true,
-        dependencies: null,
-        $allTransitiveDependencies: null,
-      );
-
-  @override
-  String debugGetCreateSourceHash() => _$storeChangesHash();
-
-  @$internal
-  @override
-  $StreamProviderElement<int> $createElement($ProviderPointer pointer) =>
-      $StreamProviderElement(pointer);
-
-  @override
-  Stream<int> create(Ref ref) {
-    return storeChanges(ref);
-  }
-}
-
-String _$storeChangesHash() => r'b513add5175e724332e5117c11dcbf2c1569f7da';
-
-@ProviderFor(photoStore)
-final photoStoreProvider = PhotoStoreProvider._();
-
-final class PhotoStoreProvider extends $FunctionalProvider<PhotoStore, PhotoStore, PhotoStore>
-    with $Provider<PhotoStore> {
-  PhotoStoreProvider._()
-    : super(
-        from: null,
-        argument: null,
-        retry: null,
-        name: r'photoStoreProvider',
-        isAutoDispose: false,
-        dependencies: null,
-        $allTransitiveDependencies: null,
-      );
-
-  @override
-  String debugGetCreateSourceHash() => _$photoStoreHash();
-
-  @$internal
-  @override
-  $ProviderElement<PhotoStore> $createElement($ProviderPointer pointer) =>
-      $ProviderElement(pointer);
-
-  @override
-  PhotoStore create(Ref ref) {
-    return photoStore(ref);
-  }
-
-  /// {@macro riverpod.override_with_value}
-  Override overrideWithValue(PhotoStore value) {
-    return $ProviderOverride(origin: this, providerOverride: $SyncValueProvider<PhotoStore>(value));
-  }
-}
-
-String _$photoStoreHash() => r'aa992fa70ca1684cfe509e0503f3bd1b9052b92a';
 
 @ProviderFor(settingsRepository)
 final settingsRepositoryProvider = SettingsRepositoryProvider._();

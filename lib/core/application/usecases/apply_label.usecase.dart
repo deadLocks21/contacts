@@ -16,7 +16,7 @@ class ApplyLabelUseCase {
   }) async {
     final wanted = contactIds.toSet();
     final label = EntityId(labelId);
-    final all = await _contacts.listAll(includeTrashed: true);
+    final all = await _contacts.listAll();
 
     final updates = [
       for (final c in all)

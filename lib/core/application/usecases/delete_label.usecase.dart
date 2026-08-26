@@ -11,7 +11,7 @@ class DeleteLabelUseCase {
   final ContactRepository _contacts;
 
   Future<void> execute(String id, {DateTime? now}) async {
-    final all = await _contacts.listAll(includeTrashed: true);
+    final all = await _contacts.listAll();
     final touched = [
       for (final c in all)
         if (c.labelIds.any((l) => l.value == id))

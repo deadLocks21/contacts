@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'package:contacts/core/domain/model/chat_address.dart';
 import 'package:contacts/core/domain/model/contact.dart';
 import 'package:contacts/core/domain/model/contact_event.dart';
@@ -97,7 +99,7 @@ class ContactDraft {
   String jobTitle;
   String department;
 
-  String? photoPath;
+  Uint8List? photo;
 
   List<FieldDraft<PhoneType>> phones;
   List<FieldDraft<EmailType>> emails;
@@ -125,7 +127,7 @@ class ContactDraft {
     this.company = '',
     this.jobTitle = '',
     this.department = '',
-    this.photoPath,
+    this.photo,
     List<FieldDraft<PhoneType>>? phones,
     List<FieldDraft<EmailType>>? emails,
     List<AddressDraft>? addresses,
@@ -167,7 +169,7 @@ class ContactDraft {
     company: c.company ?? '',
     jobTitle: c.jobTitle ?? '',
     department: c.department ?? '',
-    photoPath: c.photoPath,
+    photo: c.photo,
     phones: [
       for (final p in c.phones)
         FieldDraft(id: p.id.value, value: p.value, type: p.type, customLabel: p.customLabel ?? ''),
@@ -325,7 +327,7 @@ class ContactDraft {
       company: _clean(company),
       jobTitle: _clean(jobTitle),
       department: _clean(department),
-      photoPath: photoPath,
+      photo: photo,
       phones: builtPhones,
       emails: builtEmails,
       addresses: builtAddresses,

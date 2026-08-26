@@ -23,8 +23,8 @@ class MergeContactsUseCase {
 
     final merged = ContactMerge.merge(members, now: now);
     final absorbed = ContactMerge.absorbedIds(members).map((id) => id.value);
-    await _contacts.save(merged);
-    await _contacts.purge(absorbed);
-    return merged.id.value;
+    final id = await _contacts.save(merged);
+    await _contacts.delete(absorbed);
+    return id;
   }
 }

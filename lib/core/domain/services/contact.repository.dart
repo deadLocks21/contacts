@@ -1,31 +1,32 @@
 import 'package:contacts/core/domain/model/contact.dart';
 
-/// Port d'accès aux contacts. Le store local est la source de vérité :
-/// toutes les lectures viennent de lui.
+/// Port d'accès au **carnet d'adresses**.
 ///
-/// La suppression logique (corbeille) n'est **pas** une opération du port :
-/// c'est un `deletedAt` posé par le cas d'usage puis un [save] ordinaire.
-/// [purge] est la seule suppression réelle.
+/// L'implémentation réelle s'adosse au carnet du système (`ContactsContract`
+/// sur Android, `Contacts` sur iOS) : c'est lui la source de vérité, partagée
+/// avec le composeur, la messagerie et toutes les autres apps de l'appareil.
+/// L'app ne tient donc pas sa propre base de contacts.
+///
+/// La corbeille n'est pas de son ressort : le carnet du système n'en a pas
+/// (cf. [TrashRepository]). Ici, supprimer supprime.
 abstract interface class ContactRepository {
   /// Émet un numéro de révision monotone à chaque écriture — l'UI s'y abonne
-  /// pour se rafraîchir (un compteur, pas un booléen, pour que Riverpod
-  /// renotifie à *chaque* changement et pas seulement au premier).
+  /// pour se rafraîchir, y compris quand le carnet change depuis une **autre**
+  /// application.
   Stream<int> get changes;
 
-  /// Tous les contacts ; ceux à la corbeille sont exclus sauf demande contraire.
-  Future<List<Contact>> listAll({bool includeTrashed = false});
-
-  /// Les contacts à la corbeille, uniquement.
-  Future<List<Contact>> listTrashed();
+  /// Rend une liste vide si la permission n'est pas accordée : ce n'est pas une
+  /// erreur, l'UI propose alors d'ouvrir l'accès.
+  Future<List<Contact>> listAll();
 
   Future<Contact?> getById(String id);
 
-  /// Upsert.
-  Future<void> save(Contact contact);
+  /// Insère ou met à jour. Rend l'identifiant **retenu par le carnet**, qui
+  /// n'est pas celui de la fiche à l'insertion : c'est le système qui l'alloue.
+  Future<String> save(Contact contact);
 
-  /// Upsert en lot — une seule notification de changement.
   Future<void> saveAll(Iterable<Contact> contacts);
 
-  /// Suppression définitive (vidage de la corbeille, purge des 30 jours).
-  Future<void> purge(Iterable<String> ids);
+  /// Suppression réelle. Les cas d'usage passent d'abord par la corbeille.
+  Future<void> delete(Iterable<String> ids);
 }

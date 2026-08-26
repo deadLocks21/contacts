@@ -11,7 +11,7 @@ class ToggleStarUseCase {
 
   Future<void> execute(Iterable<String> ids, {required bool starred, DateTime? now}) async {
     final wanted = ids.toSet();
-    final all = await _contacts.listAll(includeTrashed: true);
+    final all = await _contacts.listAll();
     final touched = [
       for (final c in all)
         if (wanted.contains(c.id.value) && c.starred != starred)

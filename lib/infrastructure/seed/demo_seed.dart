@@ -26,7 +26,7 @@ class DemoSeed {
   final LabelRepository _labels;
 
   Future<bool> runIfEmpty({DateTime? now}) async {
-    final existing = await _contacts.listAll(includeTrashed: true);
+    final existing = await _contacts.listAll();
     if (existing.isNotEmpty) return false;
     if ((await _labels.listAll()).isNotEmpty) return false;
 

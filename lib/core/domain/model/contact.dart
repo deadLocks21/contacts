@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'package:contacts/core/domain/model/chat_address.dart';
 import 'package:contacts/core/domain/model/contact_event.dart';
 import 'package:contacts/core/domain/model/contact_name.dart';
@@ -20,9 +22,9 @@ class Contact {
   final String? jobTitle;
   final String? department;
 
-  /// Chemin local de la photo, ou null (l'UI affiche alors une pastille colorée
-  /// portant les initiales).
-  final String? photoPath;
+  /// Photo de la fiche, telle que la rend le carnet du système (JPEG/PNG), ou
+  /// null — l'UI affiche alors une pastille colorée portant les initiales.
+  final Uint8List? photo;
 
   final List<PhoneNumber> phones;
   final List<EmailAddress> emails;
@@ -57,7 +59,7 @@ class Contact {
     this.company,
     this.jobTitle,
     this.department,
-    this.photoPath,
+    this.photo,
     this.phones = const [],
     this.emails = const [],
     this.addresses = const [],
@@ -151,7 +153,7 @@ class Contact {
     String? company,
     String? jobTitle,
     String? department,
-    String? photoPath,
+    Uint8List? photo,
     List<PhoneNumber>? phones,
     List<EmailAddress>? emails,
     List<PostalAddress>? addresses,
@@ -176,7 +178,7 @@ class Contact {
       company: company ?? this.company,
       jobTitle: jobTitle ?? this.jobTitle,
       department: department ?? this.department,
-      photoPath: clearPhoto ? null : (photoPath ?? this.photoPath),
+      photo: clearPhoto ? null : (photo ?? this.photo),
       phones: phones ?? this.phones,
       emails: emails ?? this.emails,
       addresses: addresses ?? this.addresses,

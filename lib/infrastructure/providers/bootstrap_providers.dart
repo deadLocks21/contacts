@@ -1,3 +1,4 @@
+import 'package:contacts/infrastructure/providers/infra_providers.dart';
 import 'package:contacts/infrastructure/providers/repository_providers.dart';
 import 'package:contacts/infrastructure/providers/service_providers.dart';
 import 'package:contacts/infrastructure/providers/settings_providers.dart';
@@ -17,8 +18,13 @@ part 'bootstrap_providers.g.dart';
 Future<void> bootstrap(Ref ref) async {
   await ref.watch(settingsControllerProvider.future);
   await ref.watch(organizeServiceProvider).purgeExpired.execute();
-  await DemoSeed(
-    ref.watch(contactRepositoryProvider),
-    ref.watch(labelRepositoryProvider),
-  ).runIfEmpty();
+  // Le carnet de démonstration n'a de sens que sur le carnet simulé : sur un
+  // téléphone, ce sont les vrais contacts de l'utilisateur qui s'affichent, et
+  // y écrire des fiches inventées serait indélicat.
+  if (!ref.watch(useDeviceContactsProvider)) {
+    await DemoSeed(
+      ref.watch(contactRepositoryProvider),
+      ref.watch(labelRepositoryProvider),
+    ).runIfEmpty();
+  }
 }

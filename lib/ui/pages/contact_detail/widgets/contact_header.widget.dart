@@ -28,7 +28,7 @@ class ContactHeader extends StatelessWidget {
         ContactAvatar(
           initials: contact.initials,
           colorKey: contact.displayName,
-          photoPath: contact.photoPath,
+          photo: contact.photo,
           size: 112,
         ),
         const SizedBox(height: 20),
