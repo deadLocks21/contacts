@@ -31,6 +31,7 @@ class ContactListView extends ConsumerStatefulWidget {
     this.starredOnly = false,
     this.filters = const {},
     this.header,
+    this.headerHeight = 0,
     this.emptyState,
   });
 
@@ -40,6 +41,10 @@ class ContactListView extends ConsumerStatefulWidget {
 
   /// Contenu défilant posé au-dessus de la liste (la barre de recherche).
   final Widget? header;
+
+  /// Hauteur de ce contenu : l'index alphabétique démarre en dessous, sans
+  /// quoi ses premières lettres se poseraient sur la barre de recherche.
+  final double headerHeight;
 
   final Widget? emptyState;
 
@@ -153,9 +158,7 @@ class _ContactListViewState extends ConsumerState<ContactListView> {
               ],
             ),
             Positioned(
-              // Sous la barre de recherche et la barre de filtres : l'index ne
-              // doit recouvrir ni l'avatar du compte ni les boutons de filtre.
-              top: 136,
+              top: widget.headerHeight + 8,
               bottom: 96,
               right: 2,
               child: AlphabetIndex(

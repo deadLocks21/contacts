@@ -49,6 +49,9 @@ class HomePage extends ConsumerWidget {
             labelId: view.labelId,
             starredOnly: view.starredOnly,
             filters: view.filters,
+            headerHeight: selection.isEmpty
+                ? searchBarHeight + filterBarHeight + (view.filtersVisible ? filterChipsHeight : 0)
+                : 0,
             header: selection.isEmpty
                 ? Column(
                     children: [

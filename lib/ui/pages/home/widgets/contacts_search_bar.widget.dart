@@ -2,6 +2,10 @@ import 'package:contacts/ui/theme/app_colors.dart';
 import 'package:contacts/ui/widgets/contact_avatar.widget.dart';
 import 'package:flutter/material.dart';
 
+/// Hauteur totale de la barre de recherche, marges comprises. Publiée parce
+/// que l'index alphabétique doit démarrer en dessous.
+const searchBarHeight = 68.0;
+
 /// La barre de recherche en pilule de l'écran d'accueil.
 ///
 /// Ce n'est pas un champ de saisie : la frappe se fait sur l'écran de

@@ -6,6 +6,12 @@ import 'package:contacts/ui/theme/app_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+/// Hauteur de la rangée « Tous les contacts / étiquettes / filtres ».
+const filterBarHeight = 64.0;
+
+/// Hauteur de la rangée de puces, quand elle est dépliée.
+const filterChipsHeight = 56.0;
+
 /// La barre sous la recherche : le sélecteur de vue à gauche (« Tous les
 /// contacts »), l'accès aux étiquettes et le dépliage des puces de filtre à
 /// droite.
@@ -89,7 +95,7 @@ class ContactsFilterBar extends ConsumerWidget {
         ),
         if (view.filtersVisible)
           SizedBox(
-            height: 56,
+            height: filterChipsHeight,
             child: ListView(
               scrollDirection: Axis.horizontal,
               padding: const EdgeInsets.symmetric(horizontal: 12),
