@@ -3,7 +3,6 @@ import 'package:contacts/core/domain/services/settings.repository.dart';
 import 'package:contacts/infrastructure/persistence/local_record_store.dart';
 import 'package:contacts/infrastructure/photos/local_file.photo.store.dart';
 import 'package:contacts/infrastructure/settings/shared_prefs.settings.repository.dart';
-import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'infra_providers.g.dart';
@@ -19,10 +18,8 @@ LocalRecordStore localRecordStore(Ref ref) => InMemoryLocalRecordStore();
 @riverpod
 Stream<int> storeChanges(Ref ref) => ref.watch(localRecordStoreProvider).changes;
 
-/// Sur le web il n'y a pas de système de fichiers à alimenter : le chemin
-/// choisi (une URL blob) est conservé tel quel.
 @Riverpod(keepAlive: true)
-PhotoStore photoStore(Ref ref) => kIsWeb ? InMemoryPhotoStore() : LocalFilePhotoStore();
+PhotoStore photoStore(Ref ref) => LocalFilePhotoStore();
 
 @Riverpod(keepAlive: true)
 SettingsRepository settingsRepository(Ref ref) => SharedPreferencesSettingsRepository();

@@ -33,13 +33,14 @@ UI → Application → Domain ← Infrastructure
 - **Imports absolus** (`package:contacts/...`), jamais de `../`.
 - **Modèles écrits à la main** — pas de freezed/json_serializable. `build_runner` seulement pour
   le codegen Riverpod. Lint : `flutter_lints` + `riverpod_lint`.
-- Chaque interface a une impl réelle **et** une impl `InMemory*` (tests + dev/web).
+- Chaque interface a une impl réelle **et** une impl `InMemory*` (tests, repli).
 - **Tests** : miroir de `lib/` avec les `InMemory*` comme doublures (pas de mockito).
 
 ## Persistance
 
-- **Source de vérité locale** : `sqflite` (init FFI sur desktop, mémoire sur le web). Toutes
-  les lectures viennent du local.
+- **Source de vérité locale** : `sqflite` (init FFI sur desktop). Toutes les lectures viennent
+  du local ; l'implémentation mémoire prend le relais si la base ne s'ouvre pas, et sert de
+  doublure aux tests.
 - IDs = **UUID générés côté client**.
 - Suppression **logique** : un contact supprimé part à la corbeille (`deleted_at`) et n'est
   purgé qu'au bout de 30 jours (comme Google Contacts).

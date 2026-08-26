@@ -8,7 +8,6 @@ import 'package:contacts/core/application/usecases/move_to_trash.usecase.dart';
 import 'package:contacts/core/application/usecases/purge_expired_trash.usecase.dart';
 import 'package:contacts/core/application/usecases/restore_from_trash.usecase.dart';
 import 'package:contacts/core/domain/model/app_settings.dart';
-import 'package:contacts/core/domain/model/contact.dart';
 import 'package:contacts/core/domain/model/contact_label.dart';
 import 'package:flutter_test/flutter_test.dart';
 
