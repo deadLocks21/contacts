@@ -162,6 +162,7 @@ class Contact {
     DateTime? deletedAt,
     bool clearPhoto = false,
     bool clearDeletedAt = false,
+    bool clearRingtone = false,
   }) {
     return Contact(
       id: id,
@@ -180,7 +181,7 @@ class Contact {
       notes: notes ?? this.notes,
       labelIds: labelIds ?? this.labelIds,
       starred: starred ?? this.starred,
-      customRingtone: customRingtone ?? this.customRingtone,
+      customRingtone: clearRingtone ? null : (customRingtone ?? this.customRingtone),
       sendToVoicemail: sendToVoicemail ?? this.sendToVoicemail,
       createdAt: createdAt,
       updatedAt: updatedAt ?? DateTime.now(),
