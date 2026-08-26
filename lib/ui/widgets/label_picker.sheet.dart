@@ -20,6 +20,8 @@ Future<void> showLabelPicker(
   await showModalBottomSheet<void>(
     context: context,
     isScrollControlled: true,
+    // Cf. `showLabelsSheet` : la feuille doit couvrir la barre d'onglets.
+    useRootNavigator: true,
     builder: (_) => _LabelPickerSheet(
       contactIds: contactIds,
       initiallyApplied: initiallyApplied,

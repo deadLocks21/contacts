@@ -8,8 +8,13 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 /// La feuille des étiquettes, ouverte par l'icône en forme d'étiquette :
 /// créer une étiquette, ou filtrer la liste sur l'une d'elles.
-Future<void> showLabelsSheet(BuildContext context, WidgetRef ref) =>
-    showModalBottomSheet<void>(context: context, builder: (_) => const _LabelsSheet());
+Future<void> showLabelsSheet(BuildContext context, WidgetRef ref) => showModalBottomSheet<void>(
+  context: context,
+  // Navigator racine : sans lui la feuille s'arrête au-dessus de la barre
+  // d'onglets, qui resterait allumée sous une feuille modale.
+  useRootNavigator: true,
+  builder: (_) => const _LabelsSheet(),
+);
 
 class _LabelsSheet extends ConsumerWidget {
   const _LabelsSheet();
