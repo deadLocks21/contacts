@@ -1,9 +1,9 @@
-import 'package:contacts/ui/pages/home/widgets/contacts_drawer.widget.dart';
 import 'package:contacts/ui/pages/home/widgets/contacts_search_bar.widget.dart';
 import 'package:contacts/ui/providers/contact_data_providers.dart';
 import 'package:contacts/ui/providers/selection.provider.dart';
 import 'package:contacts/ui/router/app_router.dart';
 import 'package:contacts/ui/theme/app_colors.dart';
+import 'package:contacts/ui/widgets/app_shell.widget.dart';
 import 'package:contacts/ui/widgets/contact_avatar.widget.dart';
 import 'package:contacts/ui/widgets/contact_list_view.widget.dart';
 import 'package:contacts/ui/widgets/selection_app_bar.widget.dart';
@@ -30,7 +30,6 @@ class HomePage extends ConsumerWidget {
         if (!didPop) ref.read(contactSelectionProvider.notifier).clear();
       },
       child: Scaffold(
-        drawer: const ContactsDrawer(),
         appBar: selection.isEmpty
             ? null
             : SelectionAppBar(allIds: [for (final c in list?.all ?? const []) c.id]),
@@ -39,15 +38,13 @@ class HomePage extends ConsumerWidget {
             header: selection.isEmpty
                 ? Padding(
                     padding: const EdgeInsets.only(top: 8, bottom: 8),
-                    child: Builder(
-                      builder: (context) => ContactsSearchBar(
-                        hint: 'Rechercher des contacts',
-                        onMenuPressed: Scaffold.of(context).openDrawer,
-                        onTap: () => context.push(AppRoutes.search),
-                        trailing: const Padding(
-                          padding: EdgeInsets.only(right: 12),
-                          child: ContactAvatar(initials: 'T', colorKey: 'moi', size: 32),
-                        ),
+                    child: ContactsSearchBar(
+                      hint: 'Rechercher des contacts',
+                      onMenuPressed: AppShellScope.maybeOf(context)?.openDrawer,
+                      onTap: () => context.push(AppRoutes.search),
+                      trailing: const Padding(
+                        padding: EdgeInsets.only(right: 12),
+                        child: ContactAvatar(initials: 'T', colorKey: 'moi', size: 32),
                       ),
                     ),
                   )

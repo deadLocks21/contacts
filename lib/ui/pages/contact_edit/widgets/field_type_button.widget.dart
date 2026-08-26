@@ -6,6 +6,10 @@ import 'package:flutter/material.dart';
 ///
 /// Choisir « Personnalisé » demande aussitôt l'intitulé : un libellé
 /// personnalisé vide n'aurait aucun sens et réafficherait « Personnalisé ».
+/// Largeur de la colonne des libellés, partagée par toutes les lignes du
+/// formulaire pour que les champs de saisie s'alignent verticalement.
+const labelColumnWidth = 128.0;
+
 class FieldTypeButton<T> extends StatelessWidget {
   const FieldTypeButton({
     super.key,
@@ -44,22 +48,26 @@ class FieldTypeButton<T> extends StatelessWidget {
       itemBuilder: (_) => [
         for (final v in values) PopupMenuItem(value: v, child: Text(labelOf(v))),
       ],
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 12),
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            ConstrainedBox(
-              constraints: const BoxConstraints(maxWidth: 96),
-              child: Text(
-                displayLabel,
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-                style: TextStyle(fontSize: 13, color: colors.textMuted),
+      // Largeur fixe : sans elle, « Mobile » et « Professionnel » donneraient
+      // deux largeurs de champ de saisie différentes d'une ligne à l'autre.
+      child: SizedBox(
+        width: labelColumnWidth,
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 12),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Expanded(
+                child: Text(
+                  displayLabel,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(fontSize: 13, color: colors.textMuted),
+                ),
               ),
-            ),
-            Icon(Icons.arrow_drop_down, size: 20, color: colors.textMuted),
-          ],
+              Icon(Icons.arrow_drop_down, size: 20, color: colors.textMuted),
+            ],
+          ),
         ),
       ),
     );

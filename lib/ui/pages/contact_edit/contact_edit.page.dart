@@ -258,25 +258,19 @@ class _ContactEditPageState extends ConsumerState<ContactEditPage> {
   // -------------------------------------------------------------------- nom
 
   List<Widget> _nameFields(ContactDraft draft) => [
-    Row(
-      children: [
-        Expanded(
-          child: _text(
-            icon: Icons.person_outline,
-            label: 'Prénom',
-            value: draft.first,
-            onChanged: (v) {
-              draft.first = v;
-              _touch();
-            },
-          ),
-        ),
-        IconButton(
-          tooltip: _nameExpanded ? 'Réduire' : 'Afficher tous les champs du nom',
-          icon: Icon(_nameExpanded ? Icons.expand_less : Icons.expand_more),
-          onPressed: () => setState(() => _nameExpanded = !_nameExpanded),
-        ),
-      ],
+    _text(
+      icon: Icons.person_outline,
+      label: 'Prénom',
+      value: draft.first,
+      onChanged: (v) {
+        draft.first = v;
+        _touch();
+      },
+      trailing: IconButton(
+        tooltip: _nameExpanded ? 'Réduire' : 'Afficher tous les champs du nom',
+        icon: Icon(_nameExpanded ? Icons.expand_less : Icons.expand_more),
+        onPressed: () => setState(() => _nameExpanded = !_nameExpanded),
+      ),
     ),
     _text(
       icon: null,
@@ -521,10 +515,11 @@ class _ContactEditPageState extends ConsumerState<ContactEditPage> {
     required String label,
     required String value,
     required ValueChanged<String> onChanged,
+    Widget? trailing,
   }) {
     final colors = context.appColors;
     return Padding(
-      padding: const EdgeInsets.fromLTRB(16, 4, 16, 4),
+      padding: const EdgeInsets.fromLTRB(16, 4, 8, 4),
       child: Row(
         children: [
           SizedBox(
@@ -539,6 +534,9 @@ class _ContactEditPageState extends ConsumerState<ContactEditPage> {
               onChanged: onChanged,
             ),
           ),
+          // Même colonne de droite que les lignes libellées : les champs
+          // s'alignent alors sur toute la hauteur du formulaire.
+          SizedBox(width: 48, child: trailing),
         ],
       ),
     );
