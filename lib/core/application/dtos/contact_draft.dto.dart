@@ -64,7 +64,14 @@ class EventDraft {
   EventType type;
   String customLabel;
 
-  EventDraft({this.id, this.year, this.month, this.day, this.type = EventType.anniversaire, this.customLabel = ''});
+  EventDraft({
+    this.id,
+    this.year,
+    this.month,
+    this.day,
+    this.type = EventType.anniversaire,
+    this.customLabel = '',
+  });
 
   bool get isEmpty => month == null || day == null;
 }
@@ -204,7 +211,12 @@ class ContactDraft {
     ],
     chats: [
       for (final ch in c.chats)
-        FieldDraft(id: ch.id.value, value: ch.value, type: ch.type, customLabel: ch.customLabel ?? ''),
+        FieldDraft(
+          id: ch.id.value,
+          value: ch.value,
+          type: ch.type,
+          customLabel: ch.customLabel ?? '',
+        ),
     ],
     notes: c.notes ?? '',
     labelIds: {for (final l in c.labelIds) l.value},

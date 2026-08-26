@@ -41,8 +41,9 @@ void main() {
         aContact(first: 'Alice', last: 'Zola'),
       ]);
 
-      final parNom = await ListContactsUseCase(harness.contacts)
-          .execute(settings: settings.copyWith(sortOrder: ContactSortOrder.nom));
+      final parNom = await ListContactsUseCase(
+        harness.contacts,
+      ).execute(settings: settings.copyWith(sortOrder: ContactSortOrder.nom));
 
       expect([for (final c in parNom.all) c.displayName], ['Bruno Alric', 'Alice Zola']);
     });
@@ -66,8 +67,9 @@ void main() {
         aContact(first: 'Autre'),
       ]);
 
-      final list = await ListContactsUseCase(harness.contacts)
-          .execute(settings: settings, labelId: travail.id.value);
+      final list = await ListContactsUseCase(
+        harness.contacts,
+      ).execute(settings: settings, labelId: travail.id.value);
 
       expect([for (final c in list.all) c.displayName], ['Collègue']);
     });
@@ -78,8 +80,9 @@ void main() {
         aContact(first: 'Autre'),
       ]);
 
-      final list = await ListContactsUseCase(harness.contacts)
-          .execute(settings: settings, starredOnly: true);
+      final list = await ListContactsUseCase(
+        harness.contacts,
+      ).execute(settings: settings, starredOnly: true);
 
       expect(list.total, 1);
       expect(list.sections.single.isFavorites, isFalse);
@@ -121,9 +124,9 @@ void main() {
       final contact = aContact(first: 'Marie', company: 'BNP');
       await harness.contacts.save(contact);
 
-      final draft = await LoadContactDraftUseCase(harness.contacts)
-          .execute(contactId: contact.id.value)
-        ..company = '';
+      final draft =
+          await LoadContactDraftUseCase(harness.contacts).execute(contactId: contact.id.value)
+            ..company = '';
       await SaveContactUseCase(harness.contacts).execute(draft, now: testNow);
 
       expect((await harness.contacts.getById(contact.id.value))!.company, isNull);
@@ -133,9 +136,9 @@ void main() {
       final contact = aContact(first: 'Marie', starred: true, createdAt: DateTime.utc(2024));
       await harness.contacts.save(contact);
 
-      final draft = await LoadContactDraftUseCase(harness.contacts)
-          .execute(contactId: contact.id.value)
-        ..last = 'Dupont';
+      final draft =
+          await LoadContactDraftUseCase(harness.contacts).execute(contactId: contact.id.value)
+            ..last = 'Dupont';
       final id = await SaveContactUseCase(harness.contacts).execute(draft, now: testNow);
 
       final saved = await harness.contacts.getById(id);
@@ -150,16 +153,20 @@ void main() {
       final contact = aContact(first: 'Marie', phones: ['0612345678']);
       await harness.contacts.save(contact);
 
-      final detail = await GetContactUseCase(harness.contacts, harness.labels)
-          .execute(contact.id.value, settings: settings);
+      final detail = await GetContactUseCase(
+        harness.contacts,
+        harness.labels,
+      ).execute(contact.id.value, settings: settings);
 
       expect(detail!.phones.single.value, '06 12 34 56 78');
       expect(detail.phones.single.rawValue, '0612345678');
     });
 
     test('rend null pour une fiche disparue', () async {
-      final detail = await GetContactUseCase(harness.contacts, harness.labels)
-          .execute('00000000-0000-4000-8000-000000000000', settings: settings);
+      final detail = await GetContactUseCase(
+        harness.contacts,
+        harness.labels,
+      ).execute('00000000-0000-4000-8000-000000000000', settings: settings);
 
       expect(detail, isNull);
     });
@@ -171,8 +178,9 @@ void main() {
       final b = aContact(first: 'B');
       await harness.contacts.saveAll([a, b]);
 
-      await ToggleStarUseCase(harness.contacts)
-          .execute([a.id.value, b.id.value], starred: true, now: testNow);
+      await ToggleStarUseCase(
+        harness.contacts,
+      ).execute([a.id.value, b.id.value], starred: true, now: testNow);
 
       final all = await harness.contacts.listAll();
       expect(all.every((c) => c.starred), isTrue);
@@ -183,8 +191,9 @@ void main() {
     test('ne cherche pas dans la corbeille', () async {
       await harness.contacts.save(aContact(first: 'Marie', deletedAt: testNow));
 
-      final results =
-          await SearchContactsUseCase(harness.contacts).execute('marie', settings: settings);
+      final results = await SearchContactsUseCase(
+        harness.contacts,
+      ).execute('marie', settings: settings);
 
       expect(results, isEmpty);
     });

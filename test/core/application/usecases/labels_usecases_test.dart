@@ -28,16 +28,19 @@ void main() {
     final create = CreateLabelUseCase(harness.labels);
     await create.execute('Élèves', now: testNow);
 
-    expect(() => create.execute('eleves', now: testNow),
-        throwsA(isA<LabelAlreadyExistsException>()));
+    expect(
+      () => create.execute('eleves', now: testNow),
+      throwsA(isA<LabelAlreadyExistsException>()),
+    );
   });
 
   test('compte les contacts de chaque étiquette', () async {
     final id = await CreateLabelUseCase(harness.labels).execute('Travail', now: testNow);
     final contact = aContact(first: 'Marie');
     await harness.contacts.save(contact);
-    await ApplyLabelUseCase(harness.contacts)
-        .execute([contact.id.value], id, apply: true, now: testNow);
+    await ApplyLabelUseCase(
+      harness.contacts,
+    ).execute([contact.id.value], id, apply: true, now: testNow);
 
     final labels = await ListLabelsUseCase(harness.labels, harness.contacts).execute();
 
@@ -61,16 +64,19 @@ void main() {
     final id = await create.execute('Travail', now: testNow);
     await create.execute('Amis', now: testNow);
 
-    expect(() => RenameLabelUseCase(harness.labels).execute(id, 'amis', now: testNow),
-        throwsA(isA<LabelAlreadyExistsException>()));
+    expect(
+      () => RenameLabelUseCase(harness.labels).execute(id, 'amis', now: testNow),
+      throwsA(isA<LabelAlreadyExistsException>()),
+    );
   });
 
   test('supprimer une étiquette conserve les contacts et retire la référence', () async {
     final id = await CreateLabelUseCase(harness.labels).execute('Travail', now: testNow);
     final contact = aContact(first: 'Marie');
     await harness.contacts.save(contact);
-    await ApplyLabelUseCase(harness.contacts)
-        .execute([contact.id.value], id, apply: true, now: testNow);
+    await ApplyLabelUseCase(
+      harness.contacts,
+    ).execute([contact.id.value], id, apply: true, now: testNow);
 
     await DeleteLabelUseCase(harness.labels, harness.contacts).execute(id, now: testNow);
 

@@ -19,10 +19,12 @@ class AlphabetIndex extends StatefulWidget {
 class _AlphabetIndexState extends State<AlphabetIndex> {
   int? _active;
 
-  void _selectAt(double localY, double height) {
+  void _selectAt(double localY, double height, double slot) {
     if (widget.letters.isEmpty) return;
-    final slot = height / widget.letters.length;
-    final index = (localY / slot).floor().clamp(0, widget.letters.length - 1);
+    // La bande de lettres est centrée verticalement : on ramène l'ordonnée du
+    // doigt dans son repère avant d'en déduire la lettre visée.
+    final top = (height - slot * widget.letters.length) / 2;
+    final index = ((localY - top) / slot).floor().clamp(0, widget.letters.length - 1);
     if (index == _active) return;
     setState(() => _active = index);
     widget.onSelected(widget.letters[index]);
@@ -36,30 +38,34 @@ class _AlphabetIndexState extends State<AlphabetIndex> {
     return LayoutBuilder(
       builder: (context, constraints) {
         final height = constraints.maxHeight;
+        // Les lettres se répartissent sur toute la hauteur de la liste, mais
+        // la taille du texte reste plafonnée : sans ce plafond, dix lettres sur
+        // un grand écran donneraient des capitales géantes par-dessus la liste.
+        final slot = height / widget.letters.length;
+        final fontSize = (slot - 4).clamp(9.0, 12.0);
         return GestureDetector(
           behavior: HitTestBehavior.opaque,
-          onTapDown: (d) => _selectAt(d.localPosition.dy, height),
-          onVerticalDragUpdate: (d) => _selectAt(d.localPosition.dy, height),
+          onTapDown: (d) => _selectAt(d.localPosition.dy, height, slot),
+          onVerticalDragUpdate: (d) => _selectAt(d.localPosition.dy, height, slot),
           onVerticalDragEnd: (_) => setState(() => _active = null),
           onTapUp: (_) => setState(() => _active = null),
           onTapCancel: () => setState(() => _active = null),
           child: SizedBox(
-            width: 28,
+            width: 24,
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 for (var i = 0; i < widget.letters.length; i++)
-                  Expanded(
-                    child: FittedBox(
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 1),
-                        child: Text(
-                          widget.letters[i],
-                          style: TextStyle(
-                            fontSize: 11,
-                            fontWeight: i == _active ? FontWeight.w700 : FontWeight.w500,
-                            color: i == _active ? colors.accent : colors.textMuted,
-                          ),
+                  SizedBox(
+                    height: slot,
+                    child: Center(
+                      child: Text(
+                        widget.letters[i],
+                        style: TextStyle(
+                          fontSize: fontSize,
+                          height: 1,
+                          fontWeight: i == _active ? FontWeight.w700 : FontWeight.w500,
+                          color: i == _active ? colors.accent : colors.textMuted,
                         ),
                       ),
                     ),

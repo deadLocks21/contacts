@@ -17,13 +17,15 @@ class PhoneNumber {
     this.customLabel,
   }) : assert(value.trim().isNotEmpty, 'phone number cannot be empty');
 
-  factory PhoneNumber.create(String value, {PhoneType type = PhoneType.mobile, String? customLabel}) =>
-      PhoneNumber(id: UuidValue.generate(), value: value, type: type, customLabel: customLabel);
+  factory PhoneNumber.create(
+    String value, {
+    PhoneType type = PhoneType.mobile,
+    String? customLabel,
+  }) => PhoneNumber(id: UuidValue.generate(), value: value, type: type, customLabel: customLabel);
 
-  String get label =>
-      type == PhoneType.personnalise && (customLabel?.trim().isNotEmpty ?? false)
-          ? customLabel!.trim()
-          : type.label;
+  String get label => type == PhoneType.personnalise && (customLabel?.trim().isNotEmpty ?? false)
+      ? customLabel!.trim()
+      : type.label;
 
   /// Chiffres seuls — sert à comparer deux numéros écrits différemment
   /// (« 06 12 34 56 78 » et « +33612345678 » partagent les 9 derniers chiffres).

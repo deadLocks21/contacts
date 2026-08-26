@@ -24,9 +24,7 @@ class ImportVCardUseCase {
     final parsed = VCard.parse(source, now: at);
 
     final existing = await _labels.listAll();
-    final byName = {
-      for (final l in existing) TextNormalizer.normalize(l.name): l,
-    };
+    final byName = {for (final l in existing) TextNormalizer.normalize(l.name): l};
     var labelsCreated = 0;
 
     final toSave = <ContactLabel>[];

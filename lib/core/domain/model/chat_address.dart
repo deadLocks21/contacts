@@ -15,13 +15,15 @@ class ChatAddress {
     this.customLabel,
   }) : assert(value.trim().isNotEmpty, 'chat address cannot be empty');
 
-  factory ChatAddress.create(String value, {ChatType type = ChatType.hangouts, String? customLabel}) =>
-      ChatAddress(id: UuidValue.generate(), value: value, type: type, customLabel: customLabel);
+  factory ChatAddress.create(
+    String value, {
+    ChatType type = ChatType.hangouts,
+    String? customLabel,
+  }) => ChatAddress(id: UuidValue.generate(), value: value, type: type, customLabel: customLabel);
 
-  String get label =>
-      type == ChatType.personnalise && (customLabel?.trim().isNotEmpty ?? false)
-          ? customLabel!.trim()
-          : type.label;
+  String get label => type == ChatType.personnalise && (customLabel?.trim().isNotEmpty ?? false)
+      ? customLabel!.trim()
+      : type.label;
 
   ChatAddress copyWith({String? value, ChatType? type, String? customLabel}) => ChatAddress(
     id: id,

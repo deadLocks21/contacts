@@ -17,13 +17,12 @@ part 'contact_data_providers.g.dart';
 
 /// La liste d'accueil, éventuellement restreinte à une étiquette ou aux favoris.
 @riverpod
-Future<ContactListDto> contactList(
-  Ref ref, {
-  String? labelId,
-  bool starredOnly = false,
-}) {
+Future<ContactListDto> contactList(Ref ref, {String? labelId, bool starredOnly = false}) {
   ref.watch(storeChangesProvider);
-  return ref.watch(contactsServiceProvider).list.execute(
+  return ref
+      .watch(contactsServiceProvider)
+      .list
+      .execute(
         settings: ref.watch(currentSettingsProvider),
         labelId: labelId,
         starredOnly: starredOnly,

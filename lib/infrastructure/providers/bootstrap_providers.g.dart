@@ -27,8 +27,7 @@ final bootstrapProvider = BootstrapProvider._();
 /// l'expiration : sans tâche de fond, une fiche supprimée il y a 31 jours ne
 /// disparaît qu'au prochain lancement.
 
-final class BootstrapProvider
-    extends $FunctionalProvider<AsyncValue<void>, void, FutureOr<void>>
+final class BootstrapProvider extends $FunctionalProvider<AsyncValue<void>, void, FutureOr<void>>
     with $FutureModifier<void>, $FutureProvider<void> {
   /// Démarrage de l'app, avant tout affichage : réglages relus, corbeille purgée
   /// de ce qui a dépassé 30 jours, carnet de démonstration écrit si le store est

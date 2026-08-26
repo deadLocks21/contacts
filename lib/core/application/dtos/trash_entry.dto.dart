@@ -10,9 +10,5 @@ class TrashEntryDto {
   /// Phrase affichée sous le nom (« Suppression définitive dans 12 jours »).
   final String countdown;
 
-  const TrashEntryDto({
-    required this.contact,
-    required this.daysLeft,
-    required this.countdown,
-  });
+  const TrashEntryDto({required this.contact, required this.daysLeft, required this.countdown});
 }

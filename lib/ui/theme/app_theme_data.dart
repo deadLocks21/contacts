@@ -12,8 +12,7 @@ abstract final class AppThemeData {
   static ThemeData buildLightTheme() =>
       _build(contactsLightScheme, AppColors.light, Brightness.light);
 
-  static ThemeData buildDarkTheme() =>
-      _build(contactsDarkScheme, AppColors.dark, Brightness.dark);
+  static ThemeData buildDarkTheme() => _build(contactsDarkScheme, AppColors.dark, Brightness.dark);
 
   static ThemeMode toFlutterThemeMode(AppThemeMode mode) => switch (mode) {
     AppThemeMode.clair => ThemeMode.light,

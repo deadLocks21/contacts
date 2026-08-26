@@ -45,7 +45,9 @@ class EditAddressRow extends StatelessWidget {
                 _line('Rue', draft.street, (v) => draft.street = v),
                 Row(
                   children: [
-                    Expanded(child: _line('Code postal', draft.postcode, (v) => draft.postcode = v)),
+                    Expanded(
+                      child: _line('Code postal', draft.postcode, (v) => draft.postcode = v),
+                    ),
                     const SizedBox(width: 8),
                     Expanded(flex: 2, child: _line('Ville', draft.city, (v) => draft.city = v)),
                   ],

@@ -10,20 +10,18 @@ class Relation {
   final RelationType type;
   final String? customLabel;
 
-  Relation({
-    required this.id,
-    required this.value,
-    this.type = RelationType.ami,
-    this.customLabel,
-  }) : assert(value.trim().isNotEmpty, 'relation cannot be empty');
+  Relation({required this.id, required this.value, this.type = RelationType.ami, this.customLabel})
+    : assert(value.trim().isNotEmpty, 'relation cannot be empty');
 
-  factory Relation.create(String value, {RelationType type = RelationType.ami, String? customLabel}) =>
-      Relation(id: UuidValue.generate(), value: value, type: type, customLabel: customLabel);
+  factory Relation.create(
+    String value, {
+    RelationType type = RelationType.ami,
+    String? customLabel,
+  }) => Relation(id: UuidValue.generate(), value: value, type: type, customLabel: customLabel);
 
-  String get label =>
-      type == RelationType.personnalise && (customLabel?.trim().isNotEmpty ?? false)
-          ? customLabel!.trim()
-          : type.label;
+  String get label => type == RelationType.personnalise && (customLabel?.trim().isNotEmpty ?? false)
+      ? customLabel!.trim()
+      : type.label;
 
   Relation copyWith({String? value, RelationType? type, String? customLabel}) => Relation(
     id: id,

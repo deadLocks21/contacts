@@ -20,8 +20,9 @@ const labelCodec = _LabelCodec();
 String? _str(Object? v) => v == null ? null : v as String;
 DateTime _date(Object? v) => DateTime.parse(v! as String).toLocal();
 DateTime? _dateOrNull(Object? v) => v == null ? null : DateTime.parse(v as String).toLocal();
-List<Map<String, Object?>> _list(Object? v) =>
-    [for (final e in (v as List? ?? const [])) (e as Map).cast<String, Object?>()];
+List<Map<String, Object?>> _list(Object? v) => [
+  for (final e in (v as List? ?? const [])) (e as Map).cast<String, Object?>(),
+];
 
 class _ContactCodec implements RecordCodec<Contact> {
   const _ContactCodec();
@@ -99,7 +100,12 @@ class _ContactCodec implements RecordCodec<Contact> {
     ],
     'chats': [
       for (final ch in c.chats)
-        {'id': ch.id.value, 'value': ch.value, 'type': ch.type.wire, 'custom_label': ch.customLabel},
+        {
+          'id': ch.id.value,
+          'value': ch.value,
+          'type': ch.type.wire,
+          'custom_label': ch.customLabel,
+        },
     ],
     'notes': c.notes,
     'label_ids': [for (final l in c.labelIds) l.value],

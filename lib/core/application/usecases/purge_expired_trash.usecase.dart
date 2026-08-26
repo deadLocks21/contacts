@@ -7,7 +7,7 @@ import 'package:contacts/core/application/usecases/delete_forever.usecase.dart';
 /// l'expiration, faute de tâche de fond.
 class PurgeExpiredTrashUseCase {
   PurgeExpiredTrashUseCase(this._contacts, PhotoStore photos)
-      : _deleteForever = DeleteForeverUseCase(_contacts, photos);
+    : _deleteForever = DeleteForeverUseCase(_contacts, photos);
 
   final ContactRepository _contacts;
   final DeleteForeverUseCase _deleteForever;

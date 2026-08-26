@@ -11,9 +11,5 @@ class ContactSectionDto {
   /// l'en-tête ne fait pas partie de l'index alphabétique latéral.
   final bool isFavorites;
 
-  const ContactSectionDto({
-    required this.header,
-    required this.contacts,
-    this.isFavorites = false,
-  });
+  const ContactSectionDto({required this.header, required this.contacts, this.isFavorites = false});
 }

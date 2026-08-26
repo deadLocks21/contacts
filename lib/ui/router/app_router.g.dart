@@ -19,8 +19,7 @@ final goRouterProvider = GoRouterProvider._();
 /// portés par un `StatefulShellRoute` : chacun garde sa pile et sa position de
 /// défilement quand on passe de l'un à l'autre, comme dans Google Contacts.
 
-final class GoRouterProvider
-    extends $FunctionalProvider<GoRouter, GoRouter, GoRouter>
+final class GoRouterProvider extends $FunctionalProvider<GoRouter, GoRouter, GoRouter>
     with $Provider<GoRouter> {
   /// Router unique. Les deux onglets du bas (« Contacts » et « Organiser ») sont
   /// portés par un `StatefulShellRoute` : chacun garde sa pile et sa position de
@@ -41,8 +40,7 @@ final class GoRouterProvider
 
   @$internal
   @override
-  $ProviderElement<GoRouter> $createElement($ProviderPointer pointer) =>
-      $ProviderElement(pointer);
+  $ProviderElement<GoRouter> $createElement($ProviderPointer pointer) => $ProviderElement(pointer);
 
   @override
   GoRouter create(Ref ref) {
@@ -51,10 +49,7 @@ final class GoRouterProvider
 
   /// {@macro riverpod.override_with_value}
   Override overrideWithValue(GoRouter value) {
-    return $ProviderOverride(
-      origin: this,
-      providerOverride: $SyncValueProvider<GoRouter>(value),
-    );
+    return $ProviderOverride(origin: this, providerOverride: $SyncValueProvider<GoRouter>(value));
   }
 }
 

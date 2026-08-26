@@ -20,11 +20,9 @@ abstract final class ContactGrouping {
     if (pinFavorites) {
       final favorites = sorted.where((c) => c.starred).toList();
       if (favorites.isNotEmpty) {
-        sections.add(ContactSectionDto(
-          header: favoritesHeader,
-          contacts: favorites,
-          isFavorites: true,
-        ));
+        sections.add(
+          ContactSectionDto(header: favoritesHeader, contacts: favorites, isFavorites: true),
+        );
       }
     }
 
@@ -57,6 +55,8 @@ abstract final class ContactGrouping {
 
   /// Index alphabétique latéral : les lettres réellement présentes, dans
   /// l'ordre où elles apparaissent (favoris exclus).
-  static List<String> alphabetIndex(List<ContactSectionDto> sections) =>
-      [for (final s in sections) if (!s.isFavorites) s.header];
+  static List<String> alphabetIndex(List<ContactSectionDto> sections) => [
+    for (final s in sections)
+      if (!s.isFavorites) s.header,
+  ];
 }

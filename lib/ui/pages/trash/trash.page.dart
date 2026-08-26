@@ -100,9 +100,8 @@ class TrashPage extends ConsumerWidget {
     );
     if (confirmed != true) return;
     final entries = ref.read(trashEntriesProvider).value ?? const [];
-    await ref
-        .read(organizeServiceProvider)
-        .deleteForever
-        .execute([for (final e in entries) e.contact.id]);
+    await ref.read(organizeServiceProvider).deleteForever.execute([
+      for (final e in entries) e.contact.id,
+    ]);
   }
 }

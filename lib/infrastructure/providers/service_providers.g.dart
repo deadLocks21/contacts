@@ -43,9 +43,8 @@ final class ContactsServiceProvider
 
   @$internal
   @override
-  $ProviderElement<ContactsApplicationService> $createElement(
-    $ProviderPointer pointer,
-  ) => $ProviderElement(pointer);
+  $ProviderElement<ContactsApplicationService> $createElement($ProviderPointer pointer) =>
+      $ProviderElement(pointer);
 
   @override
   ContactsApplicationService create(Ref ref) {
@@ -90,9 +89,8 @@ final class LabelsServiceProvider
 
   @$internal
   @override
-  $ProviderElement<LabelsApplicationService> $createElement(
-    $ProviderPointer pointer,
-  ) => $ProviderElement(pointer);
+  $ProviderElement<LabelsApplicationService> $createElement($ProviderPointer pointer) =>
+      $ProviderElement(pointer);
 
   @override
   LabelsApplicationService create(Ref ref) {
@@ -137,9 +135,8 @@ final class OrganizeServiceProvider
 
   @$internal
   @override
-  $ProviderElement<OrganizeApplicationService> $createElement(
-    $ProviderPointer pointer,
-  ) => $ProviderElement(pointer);
+  $ProviderElement<OrganizeApplicationService> $createElement($ProviderPointer pointer) =>
+      $ProviderElement(pointer);
 
   @override
   OrganizeApplicationService create(Ref ref) {
@@ -184,9 +181,8 @@ final class SettingsServiceProvider
 
   @$internal
   @override
-  $ProviderElement<SettingsApplicationService> $createElement(
-    $ProviderPointer pointer,
-  ) => $ProviderElement(pointer);
+  $ProviderElement<SettingsApplicationService> $createElement($ProviderPointer pointer) =>
+      $ProviderElement(pointer);
 
   @override
   SettingsApplicationService create(Ref ref) {

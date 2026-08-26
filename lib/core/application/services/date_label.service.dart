@@ -24,8 +24,7 @@ abstract final class DateLabel {
   }
 
   /// « 14/02/1990 ».
-  static String short(DateTime date) =>
-      '${_pad(date.day)}/${_pad(date.month)}/${date.year}';
+  static String short(DateTime date) => '${_pad(date.day)}/${_pad(date.month)}/${date.year}';
 
   /// Compte à rebours de la corbeille : « Suppression définitive dans 12 jours ».
   static String daysLeft(int days) => switch (days) {

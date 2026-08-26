@@ -5,7 +5,13 @@ import 'package:flutter_test/flutter_test.dart';
 void main() {
   group('ContactName', () {
     test('assemble le nom complet dans l\'ordre naturel', () {
-      const name = ContactName(prefix: 'Dr', first: 'Jean', middle: 'Paul', last: 'Martin', suffix: 'Jr');
+      const name = ContactName(
+        prefix: 'Dr',
+        first: 'Jean',
+        middle: 'Paul',
+        last: 'Martin',
+        suffix: 'Jr',
+      );
       expect(name.fullName, 'Dr Jean Paul Martin Jr');
     });
 

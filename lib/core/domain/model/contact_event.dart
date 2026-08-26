@@ -38,13 +38,20 @@ class ContactEvent {
     customLabel: customLabel,
   );
 
-  factory ContactEvent.fromDate(DateTime date, {EventType type = EventType.anniversaire, bool withYear = true}) =>
-      ContactEvent.create(month: date.month, day: date.day, year: withYear ? date.year : null, type: type);
+  factory ContactEvent.fromDate(
+    DateTime date, {
+    EventType type = EventType.anniversaire,
+    bool withYear = true,
+  }) => ContactEvent.create(
+    month: date.month,
+    day: date.day,
+    year: withYear ? date.year : null,
+    type: type,
+  );
 
-  String get label =>
-      type == EventType.personnalise && (customLabel?.trim().isNotEmpty ?? false)
-          ? customLabel!.trim()
-          : type.label;
+  String get label => type == EventType.personnalise && (customLabel?.trim().isNotEmpty ?? false)
+      ? customLabel!.trim()
+      : type.label;
 
   bool get isBirthday => type == EventType.anniversaire;
 

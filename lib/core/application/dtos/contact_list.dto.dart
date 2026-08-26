@@ -13,11 +13,7 @@ class ContactListDto {
   /// Lettres de l'index alphabétique latéral, dans l'ordre d'apparition.
   final List<String> alphabet;
 
-  const ContactListDto({
-    required this.sections,
-    required this.all,
-    required this.alphabet,
-  });
+  const ContactListDto({required this.sections, required this.all, required this.alphabet});
 
   static const empty = ContactListDto(sections: [], all: [], alphabet: []);
 

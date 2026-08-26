@@ -32,19 +32,29 @@ abstract final class DuplicateDetection {
       }
     }
 
-    collect(DuplicateReason.email, _bucketBy(contacts, (c) => [
-      for (final e in c.emails) TextNormalizer.normalize(e.value),
-    ]));
-    collect(DuplicateReason.telephone, _bucketBy(contacts, (c) => [
-      // Les 9 derniers chiffres suffisent à rapprocher « 06 12 34 56 78 » et
-      // « +33 6 12 34 56 78 », qui ne partagent ni préfixe ni longueur.
-      for (final p in c.phones)
-        if (p.digits.length >= 9) p.digits.substring(p.digits.length - 9),
-    ]));
-    collect(DuplicateReason.nom, _bucketBy(contacts, (c) {
-      final name = TextNormalizer.normalize(c.displayName(nameFormat));
-      return name.isEmpty ? const [] : [name];
-    }));
+    collect(
+      DuplicateReason.email,
+      _bucketBy(contacts, (c) => [for (final e in c.emails) TextNormalizer.normalize(e.value)]),
+    );
+    collect(
+      DuplicateReason.telephone,
+      _bucketBy(
+        contacts,
+        (c) => [
+          // Les 9 derniers chiffres suffisent à rapprocher « 06 12 34 56 78 » et
+          // « +33 6 12 34 56 78 », qui ne partagent ni préfixe ni longueur.
+          for (final p in c.phones)
+            if (p.digits.length >= 9) p.digits.substring(p.digits.length - 9),
+        ],
+      ),
+    );
+    collect(
+      DuplicateReason.nom,
+      _bucketBy(contacts, (c) {
+        final name = TextNormalizer.normalize(c.displayName(nameFormat));
+        return name.isEmpty ? const [] : [name];
+      }),
+    );
 
     return groups;
   }

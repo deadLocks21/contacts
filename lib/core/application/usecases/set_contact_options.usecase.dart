@@ -16,11 +16,13 @@ class SetContactOptionsUseCase {
   }) async {
     final contact = await _contacts.getById(id);
     if (contact == null) return;
-    await _contacts.save(contact.copyWith(
-      customRingtone: customRingtone,
-      clearRingtone: clearRingtone,
-      sendToVoicemail: sendToVoicemail ?? contact.sendToVoicemail,
-      updatedAt: now ?? DateTime.now(),
-    ));
+    await _contacts.save(
+      contact.copyWith(
+        customRingtone: customRingtone,
+        clearRingtone: clearRingtone,
+        sendToVoicemail: sendToVoicemail ?? contact.sendToVoicemail,
+        updatedAt: now ?? DateTime.now(),
+      ),
+    );
   }
 }

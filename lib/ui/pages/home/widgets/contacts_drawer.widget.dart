@@ -34,11 +34,7 @@ class ContactsDrawer extends ConsumerWidget {
               padding: const EdgeInsets.fromLTRB(28, 20, 16, 20),
               child: Text(
                 'Contacts',
-                style: TextStyle(
-                  fontSize: 22,
-                  color: colors.accent,
-                  fontWeight: FontWeight.w500,
-                ),
+                style: TextStyle(fontSize: 22, color: colors.accent, fontWeight: FontWeight.w500),
               ),
             ),
             _DrawerTile(
@@ -62,10 +58,7 @@ class ContactsDrawer extends ConsumerWidget {
             const Divider(indent: 28, endIndent: 28, height: 24),
             Padding(
               padding: const EdgeInsets.fromLTRB(28, 4, 16, 8),
-              child: Text(
-                'Étiquettes',
-                style: TextStyle(fontSize: 14, color: colors.textMuted),
-              ),
+              child: Text('Étiquettes', style: TextStyle(fontSize: 14, color: colors.textMuted)),
             ),
             for (final label in labels)
               _DrawerTile(
@@ -167,10 +160,7 @@ class _DrawerTile extends StatelessWidget {
                   ),
                 ),
                 if (trailing != null)
-                  Text(
-                    trailing!,
-                    style: TextStyle(fontSize: 13, color: colors.textMuted),
-                  ),
+                  Text(trailing!, style: TextStyle(fontSize: 13, color: colors.textMuted)),
               ],
             ),
           ),

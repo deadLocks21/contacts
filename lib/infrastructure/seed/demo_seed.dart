@@ -109,7 +109,9 @@ class DemoSeed {
         jobTitle: 'Développeur',
         agedDays: 290,
         phones: [PhoneNumber.create('06 88 21 45 63')],
-        emails: [EmailAddress.create('julien.mercier@studionord.io', type: EmailType.professionnel)],
+        emails: [
+          EmailAddress.create('julien.mercier@studionord.io', type: EmailType.professionnel),
+        ],
         labelIds: {travail.id},
       ),
       // Doublon volontaire : même numéro, fiche plus pauvre.
@@ -126,10 +128,18 @@ class DemoSeed {
         last: 'Lambert',
         starred: true,
         agedDays: 400,
-        phones: [PhoneNumber.create('06 34 56 12 78'), PhoneNumber.create('04 78 12 34 56', type: PhoneType.domicile)],
+        phones: [
+          PhoneNumber.create('06 34 56 12 78'),
+          PhoneNumber.create('04 78 12 34 56', type: PhoneType.domicile),
+        ],
         emails: [EmailAddress.create('sophie.lambert@free.fr')],
         addresses: [
-          PostalAddress.create(street: '5 quai Saint-Antoine', postcode: '69002', city: 'Lyon', country: 'France'),
+          PostalAddress.create(
+            street: '5 quai Saint-Antoine',
+            postcode: '69002',
+            city: 'Lyon',
+            country: 'France',
+          ),
         ],
         events: [ContactEvent.create(day: 2, month: 9, year: 1990)],
         relations: [Relation.create('Marc Lambert', type: RelationType.conjoint)],
@@ -195,7 +205,12 @@ class DemoSeed {
         agedDays: 95,
         phones: [PhoneNumber.create('02 40 12 78 56', type: PhoneType.professionnel)],
         addresses: [
-          PostalAddress.create(street: '9 rue du Calvaire', postcode: '44000', city: 'Nantes', country: 'France'),
+          PostalAddress.create(
+            street: '9 rue du Calvaire',
+            postcode: '44000',
+            city: 'Nantes',
+            country: 'France',
+          ),
         ],
         labelIds: {amis.id},
       ),

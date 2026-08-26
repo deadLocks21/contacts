@@ -20,8 +20,12 @@ class ContactLabel {
     return ContactLabel(id: UuidValue.generate(), name: name.trim(), createdAt: at, updatedAt: at);
   }
 
-  ContactLabel rename(String newName, {DateTime? now}) =>
-      ContactLabel(id: id, name: newName.trim(), createdAt: createdAt, updatedAt: now ?? DateTime.now());
+  ContactLabel rename(String newName, {DateTime? now}) => ContactLabel(
+    id: id,
+    name: newName.trim(),
+    createdAt: createdAt,
+    updatedAt: now ?? DateTime.now(),
+  );
 
   @override
   bool operator ==(Object other) =>

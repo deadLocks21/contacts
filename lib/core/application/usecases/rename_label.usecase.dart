@@ -16,8 +16,7 @@ class RenameLabelUseCase {
 
     final normalized = TextNormalizer.normalize(trimmed);
     final existing = await _labels.listAll();
-    if (existing.any((l) =>
-        l.id.value != id && TextNormalizer.normalize(l.name) == normalized)) {
+    if (existing.any((l) => l.id.value != id && TextNormalizer.normalize(l.name) == normalized)) {
       throw LabelAlreadyExistsException(trimmed);
     }
     await _labels.save(label.rename(trimmed, now: now));

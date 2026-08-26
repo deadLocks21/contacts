@@ -42,21 +42,14 @@ GoRouter goRouter(Ref ref) {
         builder: (_, _, shell) => AppShell(shell: shell),
         branches: [
           StatefulShellBranch(
-            routes: [
-              GoRoute(path: AppRoutes.contacts, builder: (_, _) => const HomePage()),
-            ],
+            routes: [GoRoute(path: AppRoutes.contacts, builder: (_, _) => const HomePage())],
           ),
           StatefulShellBranch(
-            routes: [
-              GoRoute(path: AppRoutes.organize, builder: (_, _) => const OrganizePage()),
-            ],
+            routes: [GoRoute(path: AppRoutes.organize, builder: (_, _) => const OrganizePage())],
           ),
         ],
       ),
-      GoRoute(
-        path: AppRoutes.search,
-        builder: (_, _) => const SearchPage(),
-      ),
+      GoRoute(path: AppRoutes.search, builder: (_, _) => const SearchPage()),
       GoRoute(path: AppRoutes.favorites, builder: (_, _) => const FavoritesPage()),
       GoRoute(
         path: AppRoutes.newContact,
@@ -80,8 +73,7 @@ GoRouter goRouter(Ref ref) {
       GoRoute(path: AppRoutes.trash, builder: (_, _) => const TrashPage()),
       GoRoute(path: AppRoutes.settings, builder: (_, _) => const SettingsPage()),
     ],
-    errorBuilder: (_, state) => Scaffold(
-      body: Center(child: Text('Page introuvable : ${state.uri}')),
-    ),
+    errorBuilder: (_, state) =>
+        Scaffold(body: Center(child: Text('Page introuvable : ${state.uri}'))),
   );
 }

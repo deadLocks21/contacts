@@ -22,8 +22,7 @@ final contactSelectionProvider = ContactSelectionProvider._();
 /// Un appui long ouvre le mode sélection ; la barre de titre bascule alors sur
 /// « N sélectionnés » et ses actions. Vider la sélection referme le mode — il
 /// n'y a donc pas de drapeau séparé à tenir synchronisé.
-final class ContactSelectionProvider
-    extends $NotifierProvider<ContactSelection, Set<String>> {
+final class ContactSelectionProvider extends $NotifierProvider<ContactSelection, Set<String>> {
   /// Sélection multiple de la liste de contacts.
   ///
   /// Un appui long ouvre le mode sélection ; la barre de titre bascule alors sur

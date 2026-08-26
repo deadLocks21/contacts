@@ -15,13 +15,15 @@ class EmailAddress {
     this.customLabel,
   }) : assert(value.trim().isNotEmpty, 'email cannot be empty');
 
-  factory EmailAddress.create(String value, {EmailType type = EmailType.domicile, String? customLabel}) =>
-      EmailAddress(id: UuidValue.generate(), value: value, type: type, customLabel: customLabel);
+  factory EmailAddress.create(
+    String value, {
+    EmailType type = EmailType.domicile,
+    String? customLabel,
+  }) => EmailAddress(id: UuidValue.generate(), value: value, type: type, customLabel: customLabel);
 
-  String get label =>
-      type == EmailType.personnalise && (customLabel?.trim().isNotEmpty ?? false)
-          ? customLabel!.trim()
-          : type.label;
+  String get label => type == EmailType.personnalise && (customLabel?.trim().isNotEmpty ?? false)
+      ? customLabel!.trim()
+      : type.label;
 
   EmailAddress copyWith({String? value, EmailType? type, String? customLabel}) => EmailAddress(
     id: id,

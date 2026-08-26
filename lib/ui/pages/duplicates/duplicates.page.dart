@@ -86,9 +86,7 @@ class DuplicatesPage extends ConsumerWidget {
     for (final group in groups) {
       await merge.execute([for (final c in group.contacts) c.id]);
     }
-    messenger.showSnackBar(
-      SnackBar(content: Text('${groups.length} groupes fusionnés.')),
-    );
+    messenger.showSnackBar(SnackBar(content: Text('${groups.length} groupes fusionnés.')));
   }
 }
 
@@ -126,10 +124,7 @@ class _DuplicateGroupCard extends ConsumerWidget {
                     ),
                   ),
                 ),
-                Text(
-                  group.reason.label,
-                  style: TextStyle(fontSize: 12, color: colors.textMuted),
-                ),
+                Text(group.reason.label, style: TextStyle(fontSize: 12, color: colors.textMuted)),
               ],
             ),
           ),
@@ -145,10 +140,9 @@ class _DuplicateGroupCard extends ConsumerWidget {
             child: Padding(
               padding: const EdgeInsets.fromLTRB(8, 4, 8, 8),
               child: TextButton.icon(
-                onPressed: () => ref
-                    .read(organizeServiceProvider)
-                    .merge
-                    .execute([for (final c in group.contacts) c.id]),
+                onPressed: () => ref.read(organizeServiceProvider).merge.execute([
+                  for (final c in group.contacts) c.id,
+                ]),
                 icon: const Icon(Icons.merge_type, size: 20),
                 label: const Text('Fusionner'),
               ),

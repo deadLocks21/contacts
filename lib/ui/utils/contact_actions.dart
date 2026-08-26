@@ -17,8 +17,7 @@ Future<void> sendSms(String number) => _launch(Uri(scheme: 'sms', path: number))
 Future<void> sendEmail(String address) => _launch(Uri(scheme: 'mailto', path: address));
 
 /// Ouvre une adresse dans le navigateur.
-Future<void> openUrl(String url) =>
-    _launch(Uri.parse(url.contains('://') ? url : 'https://$url'));
+Future<void> openUrl(String url) => _launch(Uri.parse(url.contains('://') ? url : 'https://$url'));
 
 /// Ouvre une adresse postale dans l'application de cartes.
 Future<void> openMap(String address) =>
@@ -33,9 +32,7 @@ Future<void> shareContacts(WidgetRef ref, {required Set<String> ids}) async {
 
 /// Confirme une mise à la corbeille. Renvoie vrai si l'utilisateur a accepté.
 Future<bool> confirmMoveToTrash(BuildContext context, {required int count, String? name}) async {
-  final title = count == 1
-      ? 'Supprimer ${name ?? 'ce contact'} ?'
-      : 'Supprimer $count contacts ?';
+  final title = count == 1 ? 'Supprimer ${name ?? 'ce contact'} ?' : 'Supprimer $count contacts ?';
   final confirmed = await showDialog<bool>(
     context: context,
     builder: (context) => AlertDialog(

@@ -85,17 +85,13 @@ class SqfliteLocalRecordStore with RevisionNotifier implements LocalRecordStore 
     if (records.isEmpty) return;
     final batch = _db.batch();
     for (final record in records) {
-      batch.insert(
-        'records',
-        {
-          'resource': resource,
-          'id': record.id,
-          'payload': jsonEncode(record.payload),
-          'updated_at': record.updatedAt.toUtc().toIso8601String(),
-          'deleted_at': record.deletedAt?.toUtc().toIso8601String(),
-        },
-        conflictAlgorithm: ConflictAlgorithm.replace,
-      );
+      batch.insert('records', {
+        'resource': resource,
+        'id': record.id,
+        'payload': jsonEncode(record.payload),
+        'updated_at': record.updatedAt.toUtc().toIso8601String(),
+        'deleted_at': record.deletedAt?.toUtc().toIso8601String(),
+      }, conflictAlgorithm: ConflictAlgorithm.replace);
     }
     await batch.commit(noResult: true);
     notifyChanged();

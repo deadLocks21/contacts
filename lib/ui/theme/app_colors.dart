@@ -108,8 +108,7 @@ class AppColors extends ThemeExtension<AppColors> {
   final Color danger;
 
   /// Couleur de la pastille d'initiales pour un index donné.
-  Color avatar(int index) =>
-      ContactsPalette.avatars[index % ContactsPalette.avatars.length];
+  Color avatar(int index) => ContactsPalette.avatars[index % ContactsPalette.avatars.length];
 
   static const AppColors light = AppColors(
     background: ContactsPalette.white,
@@ -218,38 +217,36 @@ extension AppColorsX on BuildContext {
 }
 
 /// Schémas Material 3 — bleu Google en `primary`.
-final ColorScheme contactsLightScheme =
-    ColorScheme.fromSeed(seedColor: ContactsPalette.blue).copyWith(
-  primary: ContactsPalette.blue,
-  onPrimary: ContactsPalette.white,
-  primaryContainer: ContactsPalette.blueContainer,
-  onPrimaryContainer: ContactsPalette.onBlueContainer,
-  secondaryContainer: ContactsPalette.blueSoft,
-  onSecondaryContainer: ContactsPalette.blue,
-  surface: ContactsPalette.white,
-  onSurface: ContactsPalette.ink,
-  onSurfaceVariant: ContactsPalette.inkMuted,
-  surfaceContainerHighest: ContactsPalette.grey100,
-  outline: ContactsPalette.outlineLight,
-  outlineVariant: ContactsPalette.grey200,
-  error: ContactsPalette.red,
-);
+final ColorScheme contactsLightScheme = ColorScheme.fromSeed(seedColor: ContactsPalette.blue)
+    .copyWith(
+      primary: ContactsPalette.blue,
+      onPrimary: ContactsPalette.white,
+      primaryContainer: ContactsPalette.blueContainer,
+      onPrimaryContainer: ContactsPalette.onBlueContainer,
+      secondaryContainer: ContactsPalette.blueSoft,
+      onSecondaryContainer: ContactsPalette.blue,
+      surface: ContactsPalette.white,
+      onSurface: ContactsPalette.ink,
+      onSurfaceVariant: ContactsPalette.inkMuted,
+      surfaceContainerHighest: ContactsPalette.grey100,
+      outline: ContactsPalette.outlineLight,
+      outlineVariant: ContactsPalette.grey200,
+      error: ContactsPalette.red,
+    );
 
-final ColorScheme contactsDarkScheme = ColorScheme.fromSeed(
-  seedColor: ContactsPalette.blue,
-  brightness: Brightness.dark,
-).copyWith(
-  primary: ContactsPalette.blueLight,
-  onPrimary: ContactsPalette.grey900,
-  primaryContainer: ContactsPalette.blueContainerDark,
-  onPrimaryContainer: ContactsPalette.onBlueContainerDark,
-  secondaryContainer: ContactsPalette.blueSoftDark,
-  onSecondaryContainer: ContactsPalette.blueLight,
-  surface: ContactsPalette.grey850,
-  onSurface: ContactsPalette.inkInverse,
-  onSurfaceVariant: ContactsPalette.inkMutedInverse,
-  surfaceContainerHighest: ContactsPalette.grey800,
-  outline: ContactsPalette.outlineDark,
-  outlineVariant: ContactsPalette.grey750,
-  error: ContactsPalette.redLight,
-);
+final ColorScheme contactsDarkScheme =
+    ColorScheme.fromSeed(seedColor: ContactsPalette.blue, brightness: Brightness.dark).copyWith(
+      primary: ContactsPalette.blueLight,
+      onPrimary: ContactsPalette.grey900,
+      primaryContainer: ContactsPalette.blueContainerDark,
+      onPrimaryContainer: ContactsPalette.onBlueContainerDark,
+      secondaryContainer: ContactsPalette.blueSoftDark,
+      onSecondaryContainer: ContactsPalette.blueLight,
+      surface: ContactsPalette.grey850,
+      onSurface: ContactsPalette.inkInverse,
+      onSurfaceVariant: ContactsPalette.inkMutedInverse,
+      surfaceContainerHighest: ContactsPalette.grey800,
+      outline: ContactsPalette.outlineDark,
+      outlineVariant: ContactsPalette.grey750,
+      error: ContactsPalette.redLight,
+    );

@@ -45,7 +45,10 @@ class _ContactEditPageState extends ConsumerState<ContactEditPage> {
   }
 
   Future<void> _load() async {
-    final draft = await ref.read(contactsServiceProvider).loadDraft.execute(
+    final draft = await ref
+        .read(contactsServiceProvider)
+        .loadDraft
+        .execute(
           contactId: widget.contactId,
           labelIds: {if (widget.labelId != null) widget.labelId!},
         );
@@ -202,10 +205,10 @@ class _ContactEditPageState extends ConsumerState<ContactEditPage> {
 
     final picked = await ImagePicker().pickImage(source: source, maxWidth: 1024, imageQuality: 85);
     if (picked == null) return;
-    final stored = await ref.read(contactsServiceProvider).setPhoto.execute(
-          picked.path,
-          contactId: draft.id ?? 'nouveau',
-        );
+    final stored = await ref
+        .read(contactsServiceProvider)
+        .setPhoto
+        .execute(picked.path, contactId: draft.id ?? 'nouveau');
     draft.photoPath = stored;
     _touch();
   }
@@ -286,9 +289,19 @@ class _ContactEditPageState extends ConsumerState<ContactEditPage> {
     ),
     if (_nameExpanded) ...[
       _text(icon: null, label: 'Préfixe', value: draft.prefix, onChanged: (v) => draft.prefix = v),
-      _text(icon: null, label: 'Deuxième prénom', value: draft.middle, onChanged: (v) => draft.middle = v),
+      _text(
+        icon: null,
+        label: 'Deuxième prénom',
+        value: draft.middle,
+        onChanged: (v) => draft.middle = v,
+      ),
       _text(icon: null, label: 'Suffixe', value: draft.suffix, onChanged: (v) => draft.suffix = v),
-      _text(icon: null, label: 'Surnom', value: draft.nickname, onChanged: (v) => draft.nickname = v),
+      _text(
+        icon: null,
+        label: 'Surnom',
+        value: draft.nickname,
+        onChanged: (v) => draft.nickname = v,
+      ),
       _text(
         icon: null,
         label: 'Prénom phonétique',
@@ -446,8 +459,11 @@ class _ContactEditPageState extends ConsumerState<ContactEditPage> {
             width: 40,
             child: Padding(
               padding: const EdgeInsets.only(top: 20),
-              child: Icon(Icons.sticky_note_2_outlined,
-                  size: 22, color: context.appColors.textMuted),
+              child: Icon(
+                Icons.sticky_note_2_outlined,
+                size: 22,
+                color: context.appColors.textMuted,
+              ),
             ),
           ),
           Expanded(
@@ -469,8 +485,8 @@ class _ContactEditPageState extends ConsumerState<ContactEditPage> {
   /// a un, le libellé du type sinon.
   String _labelOf<T>(FieldDraft<T> field, T customValue, String Function(T) labelOf) =>
       field.type == customValue && field.customLabel.trim().isNotEmpty
-          ? field.customLabel.trim()
-          : labelOf(field.type);
+      ? field.customLabel.trim()
+      : labelOf(field.type);
 
   Future<String?> _askCustomLabel(String initial) async {
     final controller = TextEditingController(text: initial);

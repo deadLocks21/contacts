@@ -35,8 +35,9 @@ void main() {
     test('annonce le temps restant avant purge', () async {
       await harness.contacts.save(aContact(first: 'Marie', deletedAt: testNow));
 
-      final entries = await ListTrashUseCase(harness.contacts)
-          .execute(settings: settings, now: testNow.add(const Duration(days: 18)));
+      final entries = await ListTrashUseCase(
+        harness.contacts,
+      ).execute(settings: settings, now: testNow.add(const Duration(days: 18)));
 
       expect(entries.single.daysLeft, 12);
       expect(entries.single.countdown, 'Suppression définitive dans 12 jours');
@@ -68,8 +69,10 @@ void main() {
         aContact(first: 'Récent', deletedAt: testNow.subtract(const Duration(days: 3))),
       ]);
 
-      final purged = await PurgeExpiredTrashUseCase(harness.contacts, harness.photos)
-          .execute(now: testNow);
+      final purged = await PurgeExpiredTrashUseCase(
+        harness.contacts,
+        harness.photos,
+      ).execute(now: testNow);
 
       expect(purged, 1);
       expect((await harness.contacts.listTrashed()).single.name.first, 'Récent');
@@ -116,8 +119,9 @@ void main() {
       );
       await harness.contacts.saveAll([ancienne, recente]);
 
-      final id = await MergeContactsUseCase(harness.contacts)
-          .execute([ancienne.id.value, recente.id.value], now: testNow);
+      final id = await MergeContactsUseCase(
+        harness.contacts,
+      ).execute([ancienne.id.value, recente.id.value], now: testNow);
 
       final all = await harness.contacts.listAll();
       expect(all.length, 1);
@@ -145,8 +149,10 @@ void main() {
       final marie = aContact(first: 'Marie');
       await harness.contacts.saveAll([marie, aContact(first: 'Marc')]);
 
-      final vcf = await ExportVCardUseCase(harness.contacts, harness.labels)
-          .execute(ids: [marie.id.value]);
+      final vcf = await ExportVCardUseCase(
+        harness.contacts,
+        harness.labels,
+      ).execute(ids: [marie.id.value]);
 
       expect(vcf, contains('FN:Marie'));
       expect(vcf, isNot(contains('FN:Marc')));
@@ -156,19 +162,24 @@ void main() {
       await harness.contacts.save(aContact(first: 'Déjà là'));
       const source = 'BEGIN:VCARD\r\nVERSION:3.0\r\nFN:Nouveau Venu\r\nEND:VCARD\r\n';
 
-      final report =
-          await ImportVCardUseCase(harness.contacts, harness.labels).execute(source, now: testNow);
+      final report = await ImportVCardUseCase(
+        harness.contacts,
+        harness.labels,
+      ).execute(source, now: testNow);
 
       expect(report.imported, 1);
       expect((await harness.contacts.listAll()).length, 2);
     });
 
     test('crée les étiquettes citées qui n\'existent pas encore', () async {
-      const source = 'BEGIN:VCARD\r\nVERSION:3.0\r\nFN:Marie\r\nCATEGORIES:Travail,Amis\r\n'
+      const source =
+          'BEGIN:VCARD\r\nVERSION:3.0\r\nFN:Marie\r\nCATEGORIES:Travail,Amis\r\n'
           'END:VCARD\r\n';
 
-      final report =
-          await ImportVCardUseCase(harness.contacts, harness.labels).execute(source, now: testNow);
+      final report = await ImportVCardUseCase(
+        harness.contacts,
+        harness.labels,
+      ).execute(source, now: testNow);
 
       expect(report.labelsCreated, 2);
       final labels = await harness.labels.listAll();
@@ -182,8 +193,10 @@ void main() {
       const source =
           'BEGIN:VCARD\r\nVERSION:3.0\r\nFN:Marie\r\nCATEGORIES:travail\r\nEND:VCARD\r\n';
 
-      final report =
-          await ImportVCardUseCase(harness.contacts, harness.labels).execute(source, now: testNow);
+      final report = await ImportVCardUseCase(
+        harness.contacts,
+        harness.labels,
+      ).execute(source, now: testNow);
 
       expect(report.labelsCreated, 0);
       expect((await harness.labels.listAll()).length, 1);
@@ -193,7 +206,12 @@ void main() {
       final label = ContactLabel.create('Famille', now: testNow);
       await harness.labels.save(label);
       await harness.contacts.saveAll([
-        aContact(first: 'Sophie', last: 'Lambert', phones: ['06 34 56 12 78'], labelIds: {label.id}),
+        aContact(
+          first: 'Sophie',
+          last: 'Lambert',
+          phones: ['06 34 56 12 78'],
+          labelIds: {label.id},
+        ),
         aContact(first: 'Marc', last: 'Lambert', emails: ['marc@lambert.fr']),
       ]);
 
@@ -210,4 +228,3 @@ void main() {
     });
   });
 }
-

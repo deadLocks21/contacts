@@ -23,11 +23,7 @@ final contactListProvider = ContactListFamily._();
 
 final class ContactListProvider
     extends
-        $FunctionalProvider<
-          AsyncValue<ContactListDto>,
-          ContactListDto,
-          FutureOr<ContactListDto>
-        >
+        $FunctionalProvider<AsyncValue<ContactListDto>, ContactListDto, FutureOr<ContactListDto>>
     with $FutureModifier<ContactListDto>, $FutureProvider<ContactListDto> {
   /// Toutes les vues du carnet observent [storeChangesProvider] : une écriture,
   /// d'où qu'elle vienne, rafraîchit la liste, la fiche ouverte et les compteurs
@@ -56,18 +52,13 @@ final class ContactListProvider
 
   @$internal
   @override
-  $FutureProviderElement<ContactListDto> $createElement(
-    $ProviderPointer pointer,
-  ) => $FutureProviderElement(pointer);
+  $FutureProviderElement<ContactListDto> $createElement($ProviderPointer pointer) =>
+      $FutureProviderElement(pointer);
 
   @override
   FutureOr<ContactListDto> create(Ref ref) {
     final argument = this.argument as ({String? labelId, bool starredOnly});
-    return contactList(
-      ref,
-      labelId: argument.labelId,
-      starredOnly: argument.starredOnly,
-    );
+    return contactList(ref, labelId: argument.labelId, starredOnly: argument.starredOnly);
   }
 
   @override
@@ -90,10 +81,7 @@ String _$contactListHash() => r'd621f31e721e858f16b8fd46175a2aca7c582daa';
 
 final class ContactListFamily extends $Family
     with
-        $FunctionalFamilyOverride<
-          FutureOr<ContactListDto>,
-          ({String? labelId, bool starredOnly})
-        > {
+        $FunctionalFamilyOverride<FutureOr<ContactListDto>, ({String? labelId, bool starredOnly})> {
   ContactListFamily._()
     : super(
         retry: null,
@@ -109,10 +97,7 @@ final class ContactListFamily extends $Family
   /// La liste d'accueil, éventuellement restreinte à une étiquette ou aux favoris.
 
   ContactListProvider call({String? labelId, bool starredOnly = false}) =>
-      ContactListProvider._(
-        argument: (labelId: labelId, starredOnly: starredOnly),
-        from: this,
-      );
+      ContactListProvider._(argument: (labelId: labelId, starredOnly: starredOnly), from: this);
 
   @override
   String toString() => r'contactListProvider';
@@ -132,20 +117,16 @@ final class ContactDetailProvider
           ContactDetailDto?,
           FutureOr<ContactDetailDto?>
         >
-    with
-        $FutureModifier<ContactDetailDto?>,
-        $FutureProvider<ContactDetailDto?> {
+    with $FutureModifier<ContactDetailDto?>, $FutureProvider<ContactDetailDto?> {
   /// La fiche détaillée d'un contact. `null` = la fiche n'existe plus.
-  ContactDetailProvider._({
-    required ContactDetailFamily super.from,
-    required String super.argument,
-  }) : super(
-         retry: null,
-         name: r'contactDetailProvider',
-         isAutoDispose: true,
-         dependencies: null,
-         $allTransitiveDependencies: null,
-       );
+  ContactDetailProvider._({required ContactDetailFamily super.from, required String super.argument})
+    : super(
+        retry: null,
+        name: r'contactDetailProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
 
   @override
   String debugGetCreateSourceHash() => _$contactDetailHash();
@@ -159,9 +140,8 @@ final class ContactDetailProvider
 
   @$internal
   @override
-  $FutureProviderElement<ContactDetailDto?> $createElement(
-    $ProviderPointer pointer,
-  ) => $FutureProviderElement(pointer);
+  $FutureProviderElement<ContactDetailDto?> $createElement($ProviderPointer pointer) =>
+      $FutureProviderElement(pointer);
 
   @override
   FutureOr<ContactDetailDto?> create(Ref ref) {
@@ -213,11 +193,7 @@ final labelListProvider = LabelListProvider._();
 
 final class LabelListProvider
     extends
-        $FunctionalProvider<
-          AsyncValue<List<LabelDto>>,
-          List<LabelDto>,
-          FutureOr<List<LabelDto>>
-        >
+        $FunctionalProvider<AsyncValue<List<LabelDto>>, List<LabelDto>, FutureOr<List<LabelDto>>>
     with $FutureModifier<List<LabelDto>>, $FutureProvider<List<LabelDto>> {
   /// Les étiquettes et leur nombre de contacts (tiroir de navigation).
   LabelListProvider._()
@@ -236,9 +212,8 @@ final class LabelListProvider
 
   @$internal
   @override
-  $FutureProviderElement<List<LabelDto>> $createElement(
-    $ProviderPointer pointer,
-  ) => $FutureProviderElement(pointer);
+  $FutureProviderElement<List<LabelDto>> $createElement($ProviderPointer pointer) =>
+      $FutureProviderElement(pointer);
 
   @override
   FutureOr<List<LabelDto>> create(Ref ref) {
@@ -262,20 +237,16 @@ final class SearchResultsProvider
           List<ContactSummaryDto>,
           FutureOr<List<ContactSummaryDto>>
         >
-    with
-        $FutureModifier<List<ContactSummaryDto>>,
-        $FutureProvider<List<ContactSummaryDto>> {
+    with $FutureModifier<List<ContactSummaryDto>>, $FutureProvider<List<ContactSummaryDto>> {
   /// Résultats de recherche pour [query]. Requête vide = liste vide.
-  SearchResultsProvider._({
-    required SearchResultsFamily super.from,
-    required String super.argument,
-  }) : super(
-         retry: null,
-         name: r'searchResultsProvider',
-         isAutoDispose: true,
-         dependencies: null,
-         $allTransitiveDependencies: null,
-       );
+  SearchResultsProvider._({required SearchResultsFamily super.from, required String super.argument})
+    : super(
+        retry: null,
+        name: r'searchResultsProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
 
   @override
   String debugGetCreateSourceHash() => _$searchResultsHash();
@@ -289,9 +260,8 @@ final class SearchResultsProvider
 
   @$internal
   @override
-  $FutureProviderElement<List<ContactSummaryDto>> $createElement(
-    $ProviderPointer pointer,
-  ) => $FutureProviderElement(pointer);
+  $FutureProviderElement<List<ContactSummaryDto>> $createElement($ProviderPointer pointer) =>
+      $FutureProviderElement(pointer);
 
   @override
   FutureOr<List<ContactSummaryDto>> create(Ref ref) {
@@ -327,8 +297,7 @@ final class SearchResultsFamily extends $Family
 
   /// Résultats de recherche pour [query]. Requête vide = liste vide.
 
-  SearchResultsProvider call(String query) =>
-      SearchResultsProvider._(argument: query, from: this);
+  SearchResultsProvider call(String query) => SearchResultsProvider._(argument: query, from: this);
 
   @override
   String toString() => r'searchResultsProvider';
@@ -348,9 +317,7 @@ final class DuplicateGroupsProvider
           List<DuplicateGroupDto>,
           FutureOr<List<DuplicateGroupDto>>
         >
-    with
-        $FutureModifier<List<DuplicateGroupDto>>,
-        $FutureProvider<List<DuplicateGroupDto>> {
+    with $FutureModifier<List<DuplicateGroupDto>>, $FutureProvider<List<DuplicateGroupDto>> {
   /// Les groupes de doublons de « Fusionner et corriger ».
   DuplicateGroupsProvider._()
     : super(
@@ -368,9 +335,8 @@ final class DuplicateGroupsProvider
 
   @$internal
   @override
-  $FutureProviderElement<List<DuplicateGroupDto>> $createElement(
-    $ProviderPointer pointer,
-  ) => $FutureProviderElement(pointer);
+  $FutureProviderElement<List<DuplicateGroupDto>> $createElement($ProviderPointer pointer) =>
+      $FutureProviderElement(pointer);
 
   @override
   FutureOr<List<DuplicateGroupDto>> create(Ref ref) {
@@ -394,9 +360,7 @@ final class TrashEntriesProvider
           List<TrashEntryDto>,
           FutureOr<List<TrashEntryDto>>
         >
-    with
-        $FutureModifier<List<TrashEntryDto>>,
-        $FutureProvider<List<TrashEntryDto>> {
+    with $FutureModifier<List<TrashEntryDto>>, $FutureProvider<List<TrashEntryDto>> {
   /// Le contenu de la corbeille, avec le compte à rebours de chaque fiche.
   TrashEntriesProvider._()
     : super(
@@ -414,9 +378,8 @@ final class TrashEntriesProvider
 
   @$internal
   @override
-  $FutureProviderElement<List<TrashEntryDto>> $createElement(
-    $ProviderPointer pointer,
-  ) => $FutureProviderElement(pointer);
+  $FutureProviderElement<List<TrashEntryDto>> $createElement($ProviderPointer pointer) =>
+      $FutureProviderElement(pointer);
 
   @override
   FutureOr<List<TrashEntryDto>> create(Ref ref) {

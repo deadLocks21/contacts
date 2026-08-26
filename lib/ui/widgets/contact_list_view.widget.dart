@@ -86,7 +86,8 @@ class _ContactListViewState extends ConsumerState<ContactListView> {
               if (widget.header != null) SliverToBoxAdapter(child: widget.header),
               SliverFillRemaining(
                 hasScrollBody: false,
-                child: widget.emptyState ??
+                child:
+                    widget.emptyState ??
                     const EmptyState(
                       icon: Icons.person_outline,
                       title: 'Aucun contact',
@@ -105,27 +106,32 @@ class _ContactListViewState extends ConsumerState<ContactListView> {
               controller: _scrollController,
               slivers: [
                 if (widget.header != null) SliverToBoxAdapter(child: widget.header),
-                SliverList.builder(
-                  itemCount: rows.length,
-                  itemBuilder: (context, index) {
-                    final row = rows[index];
-                    return switch (row) {
-                      _HeaderRow(:final label) => SizedBox(
-                        height: _headerHeight,
-                        child: SectionHeader(label),
-                      ),
-                      _ContactRow(:final contact) => SizedBox(
-                        height: _tileHeight,
-                        child: ContactTile(
-                          contact: contact,
-                          selected: selection.contains(contact.id),
-                          onTap: () => _onTap(contact, selection.isNotEmpty),
-                          onLongPress: () =>
-                              ref.read(contactSelectionProvider.notifier).toggle(contact.id),
+                SliverPadding(
+                  // Réserve la colonne de l'index : sans elle, les noms longs
+                  // et l'étoile des favoris passeraient dessous.
+                  padding: const EdgeInsets.only(right: 24),
+                  sliver: SliverList.builder(
+                    itemCount: rows.length,
+                    itemBuilder: (context, index) {
+                      final row = rows[index];
+                      return switch (row) {
+                        _HeaderRow(:final label) => SizedBox(
+                          height: _headerHeight,
+                          child: SectionHeader(label),
                         ),
-                      ),
-                    };
-                  },
+                        _ContactRow(:final contact) => SizedBox(
+                          height: _tileHeight,
+                          child: ContactTile(
+                            contact: contact,
+                            selected: selection.contains(contact.id),
+                            onTap: () => _onTap(contact, selection.isNotEmpty),
+                            onLongPress: () =>
+                                ref.read(contactSelectionProvider.notifier).toggle(contact.id),
+                          ),
+                        ),
+                      };
+                    },
+                  ),
                 ),
                 SliverToBoxAdapter(
                   child: Padding(
@@ -140,9 +146,11 @@ class _ContactListViewState extends ConsumerState<ContactListView> {
               ],
             ),
             Positioned(
-              top: 8,
+              // Sous la barre de recherche : l'index ne doit pas recouvrir le
+              // menu ni l'avatar du compte.
+              top: 72,
               bottom: 96,
-              right: 0,
+              right: 2,
               child: AlphabetIndex(
                 letters: list.alphabet,
                 onSelected: (letter) => _jumpTo(letter, list),

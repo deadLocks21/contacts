@@ -25,8 +25,9 @@ class ListLabelsUseCase {
     final dtos = [
       for (final l in labels) LabelDto.fromDomain(l, contactCount: counts[l.id.value] ?? 0),
     ];
-    dtos.sort((a, b) =>
-        TextNormalizer.normalize(a.name).compareTo(TextNormalizer.normalize(b.name)));
+    dtos.sort(
+      (a, b) => TextNormalizer.normalize(a.name).compareTo(TextNormalizer.normalize(b.name)),
+    );
     return dtos;
   }
 }

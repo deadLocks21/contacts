@@ -9,11 +9,7 @@ import 'package:contacts/core/domain/model/enums.dart';
 /// Les résultats sont classés par pertinence — un nom qui *commence* par la
 /// requête passe devant une société qui la contient au milieu.
 abstract final class ContactSearch {
-  static List<Contact> run(
-    List<Contact> contacts,
-    String query, {
-    required NameFormat nameFormat,
-  }) {
+  static List<Contact> run(List<Contact> contacts, String query, {required NameFormat nameFormat}) {
     final tokens = TextNormalizer.tokenize(query);
     if (tokens.isEmpty) return const [];
 

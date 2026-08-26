@@ -20,9 +20,7 @@ Future<void> main() async {
   try {
     final database = await openContactsDatabase();
     container = ProviderContainer(
-      overrides: [
-        localRecordStoreProvider.overrideWithValue(SqfliteLocalRecordStore(database)),
-      ],
+      overrides: [localRecordStoreProvider.overrideWithValue(SqfliteLocalRecordStore(database))],
     );
   } catch (_) {
     container = ProviderContainer();

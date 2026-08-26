@@ -44,10 +44,7 @@ class ContactsSearchBar extends StatelessWidget {
                   onPressed: onMenuPressed ?? onTap,
                 ),
                 Expanded(
-                  child: Text(
-                    hint,
-                    style: TextStyle(color: colors.textMuted, fontSize: 16),
-                  ),
+                  child: Text(hint, style: TextStyle(color: colors.textMuted, fontSize: 16)),
                 ),
                 if (trailing != null) trailing! else const SizedBox(width: 12),
               ],

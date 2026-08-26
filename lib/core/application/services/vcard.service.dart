@@ -47,7 +47,9 @@ abstract final class VCard {
     }
 
     final n = contact.name;
-    out.add('N:${[n.last, n.first, n.middle, n.prefix, n.suffix].map((p) => _escape(p ?? '')).join(';')}');
+    out.add(
+      'N:${[n.last, n.first, n.middle, n.prefix, n.suffix].map((p) => _escape(p ?? '')).join(';')}',
+    );
     final fn = contact.displayName(NameFormat.prenomNom);
     if (fn.isNotEmpty) out.add('FN:${_escape(fn)}');
     if (n.nickname != null) out.add('NICKNAME:${_escape(n.nickname!)}');
@@ -60,26 +62,44 @@ abstract final class VCard {
     if (contact.jobTitle != null) out.add('TITLE:${_escape(contact.jobTitle!)}');
 
     for (final p in contact.phones) {
-      write('TEL', _escape(p.value),
-          params: ['TYPE=${_phoneToWire(p.type)}'],
-          customLabel: p.type == PhoneType.personnalise ? p.customLabel : null);
+      write(
+        'TEL',
+        _escape(p.value),
+        params: ['TYPE=${_phoneToWire(p.type)}'],
+        customLabel: p.type == PhoneType.personnalise ? p.customLabel : null,
+      );
     }
     for (final e in contact.emails) {
-      write('EMAIL', _escape(e.value),
-          params: ['TYPE=${_emailToWire(e.type)}'],
-          customLabel: e.type == EmailType.personnalise ? e.customLabel : null);
+      write(
+        'EMAIL',
+        _escape(e.value),
+        params: ['TYPE=${_emailToWire(e.type)}'],
+        customLabel: e.type == EmailType.personnalise ? e.customLabel : null,
+      );
     }
     for (final a in contact.addresses) {
-      final parts = [a.poBox, '', a.street, a.city, a.region, a.postcode, a.country]
-          .map((p) => _escape(p ?? ''))
-          .join(';');
-      write('ADR', parts,
-          params: ['TYPE=${_addressToWire(a.type)}'],
-          customLabel: a.type == AddressType.personnalise ? a.customLabel : null);
+      final parts = [
+        a.poBox,
+        '',
+        a.street,
+        a.city,
+        a.region,
+        a.postcode,
+        a.country,
+      ].map((p) => _escape(p ?? '')).join(';');
+      write(
+        'ADR',
+        parts,
+        params: ['TYPE=${_addressToWire(a.type)}'],
+        customLabel: a.type == AddressType.personnalise ? a.customLabel : null,
+      );
     }
     for (final w in contact.websites) {
-      write('URL', _escape(w.value),
-          customLabel: w.type == WebsiteType.personnalise ? w.customLabel : null);
+      write(
+        'URL',
+        _escape(w.value),
+        customLabel: w.type == WebsiteType.personnalise ? w.customLabel : null,
+      );
     }
     for (final e in contact.events) {
       final date = e.year == null
@@ -173,41 +193,49 @@ abstract final class VCard {
         itemized[itemKey] = (property: upper, params: params, value: value);
         continue;
       }
-      _apply(upper, params, value,
-          name: () => name,
-          setName: (n) => name = n,
-          phones: phones,
-          emails: emails,
-          addresses: addresses,
-          websites: websites,
-          events: events,
-          labelNames: labelNames,
-          setCompany: (v) => company = v,
-          setDepartment: (v) => department = v,
-          setJobTitle: (v) => jobTitle = v,
-          setNotes: (v) => notes = v,
-          setFullName: (v) => fullName = v,
-          setStarred: (v) => starred = v);
+      _apply(
+        upper,
+        params,
+        value,
+        name: () => name,
+        setName: (n) => name = n,
+        phones: phones,
+        emails: emails,
+        addresses: addresses,
+        websites: websites,
+        events: events,
+        labelNames: labelNames,
+        setCompany: (v) => company = v,
+        setDepartment: (v) => department = v,
+        setJobTitle: (v) => jobTitle = v,
+        setNotes: (v) => notes = v,
+        setFullName: (v) => fullName = v,
+        setStarred: (v) => starred = v,
+      );
     }
 
     for (final entry in itemized.entries) {
       final custom = customLabels[entry.key];
-      _apply(entry.value.property, entry.value.params, entry.value.value,
-          customLabel: custom,
-          name: () => name,
-          setName: (n) => name = n,
-          phones: phones,
-          emails: emails,
-          addresses: addresses,
-          websites: websites,
-          events: events,
-          labelNames: labelNames,
-          setCompany: (v) => company = v,
-          setDepartment: (v) => department = v,
-          setJobTitle: (v) => jobTitle = v,
-          setNotes: (v) => notes = v,
-          setFullName: (v) => fullName = v,
-          setStarred: (v) => starred = v);
+      _apply(
+        entry.value.property,
+        entry.value.params,
+        entry.value.value,
+        customLabel: custom,
+        name: () => name,
+        setName: (n) => name = n,
+        phones: phones,
+        emails: emails,
+        addresses: addresses,
+        websites: websites,
+        events: events,
+        labelNames: labelNames,
+        setCompany: (v) => company = v,
+        setDepartment: (v) => department = v,
+        setJobTitle: (v) => jobTitle = v,
+        setNotes: (v) => notes = v,
+        setFullName: (v) => fullName = v,
+        setStarred: (v) => starred = v,
+      );
     }
 
     // `FN` seul (fiche sans `N`) : on le coupe en prénom + nom pour que le
@@ -265,13 +293,9 @@ abstract final class VCard {
       case 'N':
         final p = value.split(';').map(_unescape).toList();
         String? at(int i) => i < p.length && p[i].trim().isNotEmpty ? p[i].trim() : null;
-        setName(name().copyWith(
-          last: at(0),
-          first: at(1),
-          middle: at(2),
-          prefix: at(3),
-          suffix: at(4),
-        ));
+        setName(
+          name().copyWith(last: at(0), first: at(1), middle: at(2), prefix: at(3), suffix: at(4)),
+        );
       case 'FN':
         setFullName(_unescape(value));
       case 'NICKNAME':
@@ -288,20 +312,24 @@ abstract final class VCard {
         setJobTitle(_unescape(value));
       case 'TEL':
         if (_unescape(value).trim().isEmpty) return;
-        phones.add(PhoneNumber(
-          id: UuidValue.generate(),
-          value: _unescape(value).trim(),
-          type: customLabel != null ? PhoneType.personnalise : _phoneFromWire(types),
-          customLabel: customLabel,
-        ));
+        phones.add(
+          PhoneNumber(
+            id: UuidValue.generate(),
+            value: _unescape(value).trim(),
+            type: customLabel != null ? PhoneType.personnalise : _phoneFromWire(types),
+            customLabel: customLabel,
+          ),
+        );
       case 'EMAIL':
         if (_unescape(value).trim().isEmpty) return;
-        emails.add(EmailAddress(
-          id: UuidValue.generate(),
-          value: _unescape(value).trim(),
-          type: customLabel != null ? EmailType.personnalise : _emailFromWire(types),
-          customLabel: customLabel,
-        ));
+        emails.add(
+          EmailAddress(
+            id: UuidValue.generate(),
+            value: _unescape(value).trim(),
+            type: customLabel != null ? EmailType.personnalise : _emailFromWire(types),
+            customLabel: customLabel,
+          ),
+        );
       case 'ADR':
         final p = value.split(';').map(_unescape).toList();
         String? at(int i) => i < p.length && p[i].trim().isNotEmpty ? p[i].trim() : null;
@@ -319,12 +347,14 @@ abstract final class VCard {
         if (!address.isEmpty) addresses.add(address);
       case 'URL':
         if (_unescape(value).trim().isEmpty) return;
-        websites.add(Website(
-          id: UuidValue.generate(),
-          value: _unescape(value).trim(),
-          type: customLabel != null ? WebsiteType.personnalise : WebsiteType.profil,
-          customLabel: customLabel,
-        ));
+        websites.add(
+          Website(
+            id: UuidValue.generate(),
+            value: _unescape(value).trim(),
+            type: customLabel != null ? WebsiteType.personnalise : WebsiteType.profil,
+            customLabel: customLabel,
+          ),
+        );
       case 'BDAY':
         final event = _parseDate(value, EventType.anniversaire, null);
         if (event != null) events.add(event);
@@ -400,7 +430,9 @@ abstract final class VCard {
       if (eq < 0) {
         types.add(p.toUpperCase()); // vCard 2.1 : `TEL;CELL:`
       } else if (p.substring(0, eq).toUpperCase() == 'TYPE') {
-        types.addAll(p.substring(eq + 1).replaceAll('"', '').split(',').map((t) => t.toUpperCase()));
+        types.addAll(
+          p.substring(eq + 1).replaceAll('"', '').split(',').map((t) => t.toUpperCase()),
+        );
       }
     }
     return types;

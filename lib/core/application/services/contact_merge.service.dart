@@ -57,34 +57,27 @@ abstract final class ContactMerge {
       jobTitle: firstOf((c) => c.jobTitle),
       department: firstOf((c) => c.department),
       photoPath: firstOf((c) => c.photoPath),
-      phones: _dedupe(
-        [for (final c in ordered) ...c.phones],
-        (PhoneNumber p) => p.digits.isEmpty ? p.value : p.digits,
-      ),
-      emails: _dedupe(
-        [for (final c in ordered) ...c.emails],
-        (EmailAddress e) => TextNormalizer.normalize(e.value),
-      ),
-      addresses: _dedupe(
-        [for (final c in ordered) ...c.addresses],
-        (PostalAddress a) => TextNormalizer.normalize(a.formatted),
-      ),
-      websites: _dedupe(
-        [for (final c in ordered) ...c.websites],
-        (Website w) => TextNormalizer.normalize(w.value),
-      ),
-      events: _dedupe(
-        [for (final c in ordered) ...c.events],
-        (ContactEvent e) => '${e.type.wire}:${e.year}-${e.month}-${e.day}',
-      ),
-      relations: _dedupe(
-        [for (final c in ordered) ...c.relations],
-        (Relation r) => '${r.type.wire}:${TextNormalizer.normalize(r.value)}',
-      ),
-      chats: _dedupe(
-        [for (final c in ordered) ...c.chats],
-        (ChatAddress c) => '${c.type.wire}:${TextNormalizer.normalize(c.value)}',
-      ),
+      phones: _dedupe([
+        for (final c in ordered) ...c.phones,
+      ], (PhoneNumber p) => p.digits.isEmpty ? p.value : p.digits),
+      emails: _dedupe([
+        for (final c in ordered) ...c.emails,
+      ], (EmailAddress e) => TextNormalizer.normalize(e.value)),
+      addresses: _dedupe([
+        for (final c in ordered) ...c.addresses,
+      ], (PostalAddress a) => TextNormalizer.normalize(a.formatted)),
+      websites: _dedupe([
+        for (final c in ordered) ...c.websites,
+      ], (Website w) => TextNormalizer.normalize(w.value)),
+      events: _dedupe([
+        for (final c in ordered) ...c.events,
+      ], (ContactEvent e) => '${e.type.wire}:${e.year}-${e.month}-${e.day}'),
+      relations: _dedupe([
+        for (final c in ordered) ...c.relations,
+      ], (Relation r) => '${r.type.wire}:${TextNormalizer.normalize(r.value)}'),
+      chats: _dedupe([
+        for (final c in ordered) ...c.chats,
+      ], (ChatAddress c) => '${c.type.wire}:${TextNormalizer.normalize(c.value)}'),
       notes: notes.isEmpty ? null : notes.join('\n'),
       labelIds: {for (final c in ordered) ...c.labelIds},
       starred: ordered.any((c) => c.starred),

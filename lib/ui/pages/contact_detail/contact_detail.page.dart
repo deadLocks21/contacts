@@ -50,10 +50,9 @@ class ContactDetailPage extends ConsumerWidget {
                   contact.starred ? Icons.star : Icons.star_outline,
                   color: contact.starred ? colors.star : null,
                 ),
-                onPressed: () => ref
-                    .read(contactsServiceProvider)
-                    .toggleStar
-                    .execute([contact.id], starred: !contact.starred),
+                onPressed: () => ref.read(contactsServiceProvider).toggleStar.execute([
+                  contact.id,
+                ], starred: !contact.starred),
               ),
               IconButton(
                 tooltip: 'Partager',
@@ -170,8 +169,7 @@ class _TrashBanner extends ConsumerWidget {
           Row(
             children: [
               TextButton(
-                onPressed: () =>
-                    ref.read(organizeServiceProvider).restore.execute([contact.id]),
+                onPressed: () => ref.read(organizeServiceProvider).restore.execute([contact.id]),
                 child: const Text('Restaurer'),
               ),
               TextButton(
@@ -180,10 +178,7 @@ class _TrashBanner extends ConsumerWidget {
                   await ref.read(organizeServiceProvider).deleteForever.execute([contact.id]);
                   if (router.canPop()) router.pop();
                 },
-                child: Text(
-                  'Supprimer définitivement',
-                  style: TextStyle(color: colors.danger),
-                ),
+                child: Text('Supprimer définitivement', style: TextStyle(color: colors.danger)),
               ),
             ],
           ),
@@ -260,10 +255,10 @@ class _OverflowMenu extends ConsumerWidget {
               partiallyApplied: const {},
             );
           case 'voicemail':
-            await ref.read(contactsServiceProvider).setOptions.execute(
-                  contact.id,
-                  sendToVoicemail: !contact.sendToVoicemail,
-                );
+            await ref
+                .read(contactsServiceProvider)
+                .setOptions
+                .execute(contact.id, sendToVoicemail: !contact.sendToVoicemail);
           case 'delete':
             if (!context.mounted) return;
             final confirmed = await confirmMoveToTrash(
@@ -286,8 +281,7 @@ class _OverflowMenu extends ConsumerWidget {
                 : 'Renvoyer vers la messagerie vocale',
           ),
         ),
-        if (!contact.isTrashed)
-          const PopupMenuItem(value: 'delete', child: Text('Supprimer')),
+        if (!contact.isTrashed) const PopupMenuItem(value: 'delete', child: Text('Supprimer')),
       ],
     );
   }

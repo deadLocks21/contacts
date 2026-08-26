@@ -13,12 +13,7 @@ part of 'repository_providers.dart';
 final contactRepositoryProvider = ContactRepositoryProvider._();
 
 final class ContactRepositoryProvider
-    extends
-        $FunctionalProvider<
-          ContactRepository,
-          ContactRepository,
-          ContactRepository
-        >
+    extends $FunctionalProvider<ContactRepository, ContactRepository, ContactRepository>
     with $Provider<ContactRepository> {
   ContactRepositoryProvider._()
     : super(
@@ -36,9 +31,8 @@ final class ContactRepositoryProvider
 
   @$internal
   @override
-  $ProviderElement<ContactRepository> $createElement(
-    $ProviderPointer pointer,
-  ) => $ProviderElement(pointer);
+  $ProviderElement<ContactRepository> $createElement($ProviderPointer pointer) =>
+      $ProviderElement(pointer);
 
   @override
   ContactRepository create(Ref ref) {
@@ -60,8 +54,7 @@ String _$contactRepositoryHash() => r'3761e0be2674678b4111b62d659faa2f4c6b4c64';
 final labelRepositoryProvider = LabelRepositoryProvider._();
 
 final class LabelRepositoryProvider
-    extends
-        $FunctionalProvider<LabelRepository, LabelRepository, LabelRepository>
+    extends $FunctionalProvider<LabelRepository, LabelRepository, LabelRepository>
     with $Provider<LabelRepository> {
   LabelRepositoryProvider._()
     : super(

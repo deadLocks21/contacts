@@ -9,11 +9,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 /// Demande un nom et crée l'étiquette. Renvoie son identifiant, ou `null` si
 /// l'utilisateur a annulé.
 Future<String?> createLabelDialog(BuildContext context, WidgetRef ref) async {
-  final name = await _promptLabelName(
-    context,
-    title: 'Créer une étiquette',
-    confirmLabel: 'Créer',
-  );
+  final name = await _promptLabelName(context, title: 'Créer une étiquette', confirmLabel: 'Créer');
   if (name == null || !context.mounted) return null;
 
   try {

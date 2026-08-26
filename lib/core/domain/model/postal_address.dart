@@ -46,10 +46,9 @@ class PostalAddress {
     customLabel: customLabel,
   );
 
-  String get label =>
-      type == AddressType.personnalise && (customLabel?.trim().isNotEmpty ?? false)
-          ? customLabel!.trim()
-          : type.label;
+  String get label => type == AddressType.personnalise && (customLabel?.trim().isNotEmpty ?? false)
+      ? customLabel!.trim()
+      : type.label;
 
   bool get isEmpty => formatted.isEmpty;
 
@@ -95,7 +94,11 @@ class PostalAddress {
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      other is PostalAddress && runtimeType == other.runtimeType && id == other.id && formatted == other.formatted && type == other.type;
+      other is PostalAddress &&
+          runtimeType == other.runtimeType &&
+          id == other.id &&
+          formatted == other.formatted &&
+          type == other.type;
 
   @override
   int get hashCode => Object.hash(id, formatted, type);

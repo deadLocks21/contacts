@@ -23,7 +23,9 @@ void main() {
         jobTitle: 'Conseillère',
         phones: [PhoneNumber.create('06 12 34 56 78')],
         emails: [EmailAddress.create('marie@bnp.fr', type: EmailType.professionnel)],
-        addresses: [PostalAddress.create(street: '5 rue de Paris', postcode: '75001', city: 'Paris')],
+        addresses: [
+          PostalAddress.create(street: '5 rue de Paris', postcode: '75001', city: 'Paris'),
+        ],
         events: [ContactEvent.create(day: 14, month: 3, year: 1987)],
         starred: true,
         createdAt: testNow,
@@ -97,8 +99,11 @@ void main() {
         id: UuidValue.generate(),
         name: const ContactName(first: 'Pierre'),
         phones: [
-          PhoneNumber.create('06 45 78 91 23',
-              type: PhoneType.personnalise, customLabel: 'Maison de campagne'),
+          PhoneNumber.create(
+            '06 45 78 91 23',
+            type: PhoneType.personnalise,
+            customLabel: 'Maison de campagne',
+          ),
         ],
         createdAt: testNow,
         updatedAt: testNow,
@@ -130,17 +135,23 @@ void main() {
     });
 
     test('déplie les lignes de continuation', () {
-      const source = 'BEGIN:VCARD\r\nVERSION:3.0\r\nNOTE:Une note vraiment tr\r\n'
+      const source =
+          'BEGIN:VCARD\r\nVERSION:3.0\r\nNOTE:Une note vraiment tr\r\n'
           ' es longue\r\nFN:Test\r\nEND:VCARD\r\n';
 
-      expect(VCard.parse(source, now: testNow).single.contact.notes,
-          'Une note vraiment tres longue');
+      expect(
+        VCard.parse(source, now: testNow).single.contact.notes,
+        'Une note vraiment tres longue',
+      );
     });
 
     test('lit plusieurs fiches d\'un même fichier et remonte les étiquettes', () {
       final label = ContactLabel.create('Amis', now: testNow);
       final source = VCard.export(
-        [aContact(first: 'A', labelIds: {label.id}), aContact(first: 'B')],
+        [
+          aContact(first: 'A', labelIds: {label.id}),
+          aContact(first: 'B'),
+        ],
         labels: [label],
       );
 

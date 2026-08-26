@@ -33,10 +33,7 @@ class SelectionAppBar extends ConsumerWidget implements PreferredSizeWidget {
           icon: const Icon(Icons.star_outline),
           tooltip: 'Ajouter aux favoris',
           onPressed: () async {
-            await ref
-                .read(contactsServiceProvider)
-                .toggleStar
-                .execute(selection, starred: true);
+            await ref.read(contactsServiceProvider).toggleStar.execute(selection, starred: true);
             notifier.clear();
           },
         ),

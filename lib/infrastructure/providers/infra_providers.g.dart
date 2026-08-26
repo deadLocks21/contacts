@@ -18,12 +18,7 @@ final localRecordStoreProvider = LocalRecordStoreProvider._();
 /// `main()` par l'implémentation sqflite sur mobile et desktop.
 
 final class LocalRecordStoreProvider
-    extends
-        $FunctionalProvider<
-          LocalRecordStore,
-          LocalRecordStore,
-          LocalRecordStore
-        >
+    extends $FunctionalProvider<LocalRecordStore, LocalRecordStore, LocalRecordStore>
     with $Provider<LocalRecordStore> {
   /// Store local — implémentation mémoire par défaut, **surchargée** dans
   /// `main()` par l'implémentation sqflite sur mobile et desktop.
@@ -73,8 +68,7 @@ final storeChangesProvider = StoreChangesProvider._();
 /// pour se recalculer. Le flux porte une révision monotone, sans quoi Riverpod
 /// ne renotifierait qu'au premier changement.
 
-final class StoreChangesProvider
-    extends $FunctionalProvider<AsyncValue<int>, int, Stream<int>>
+final class StoreChangesProvider extends $FunctionalProvider<AsyncValue<int>, int, Stream<int>>
     with $FutureModifier<int>, $StreamProvider<int> {
   /// Émet à chaque écriture du store : les providers de données s'y abonnent
   /// pour se recalculer. Le flux porte une révision monotone, sans quoi Riverpod
@@ -115,8 +109,7 @@ final photoStoreProvider = PhotoStoreProvider._();
 /// Sur le web il n'y a pas de système de fichiers à alimenter : le chemin
 /// choisi (une URL blob) est conservé tel quel.
 
-final class PhotoStoreProvider
-    extends $FunctionalProvider<PhotoStore, PhotoStore, PhotoStore>
+final class PhotoStoreProvider extends $FunctionalProvider<PhotoStore, PhotoStore, PhotoStore>
     with $Provider<PhotoStore> {
   /// Sur le web il n'y a pas de système de fichiers à alimenter : le chemin
   /// choisi (une URL blob) est conservé tel quel.
@@ -146,10 +139,7 @@ final class PhotoStoreProvider
 
   /// {@macro riverpod.override_with_value}
   Override overrideWithValue(PhotoStore value) {
-    return $ProviderOverride(
-      origin: this,
-      providerOverride: $SyncValueProvider<PhotoStore>(value),
-    );
+    return $ProviderOverride(origin: this, providerOverride: $SyncValueProvider<PhotoStore>(value));
   }
 }
 
@@ -159,12 +149,7 @@ String _$photoStoreHash() => r'1e409647a7bbbee519e84ee049d6faf2d8651e81';
 final settingsRepositoryProvider = SettingsRepositoryProvider._();
 
 final class SettingsRepositoryProvider
-    extends
-        $FunctionalProvider<
-          SettingsRepository,
-          SettingsRepository,
-          SettingsRepository
-        >
+    extends $FunctionalProvider<SettingsRepository, SettingsRepository, SettingsRepository>
     with $Provider<SettingsRepository> {
   SettingsRepositoryProvider._()
     : super(
@@ -182,9 +167,8 @@ final class SettingsRepositoryProvider
 
   @$internal
   @override
-  $ProviderElement<SettingsRepository> $createElement(
-    $ProviderPointer pointer,
-  ) => $ProviderElement(pointer);
+  $ProviderElement<SettingsRepository> $createElement($ProviderPointer pointer) =>
+      $ProviderElement(pointer);
 
   @override
   SettingsRepository create(Ref ref) {
@@ -200,5 +184,4 @@ final class SettingsRepositoryProvider
   }
 }
 
-String _$settingsRepositoryHash() =>
-    r'0c75fa85006f6ddd4b7da68fc7b9c0d1593b8452';
+String _$settingsRepositoryHash() => r'0c75fa85006f6ddd4b7da68fc7b9c0d1593b8452';

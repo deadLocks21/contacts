@@ -45,8 +45,7 @@ final class SettingsControllerProvider
   SettingsController create() => SettingsController();
 }
 
-String _$settingsControllerHash() =>
-    r'0889a9fdbf518b2f16f92ac7609a70d23cf7527f';
+String _$settingsControllerHash() => r'0889a9fdbf518b2f16f92ac7609a70d23cf7527f';
 
 /// Réglages d'affichage, relus au démarrage puis tenus en mémoire.
 ///

@@ -32,9 +32,16 @@ void main() {
     });
 
     test('réunit les numéros sans doublon, quelle que soit leur écriture', () {
-      final a = aContact(first: 'Julien', phones: ['06 88 21 45 63'], createdAt: DateTime.utc(2024));
-      final b = aContact(first: 'Julien', phones: ['0688214563', '07 11 22 33 44'],
-          createdAt: DateTime.utc(2026));
+      final a = aContact(
+        first: 'Julien',
+        phones: ['06 88 21 45 63'],
+        createdAt: DateTime.utc(2024),
+      );
+      final b = aContact(
+        first: 'Julien',
+        phones: ['0688214563', '07 11 22 33 44'],
+        createdAt: DateTime.utc(2026),
+      );
 
       final merged = ContactMerge.merge([a, b], now: testNow);
 

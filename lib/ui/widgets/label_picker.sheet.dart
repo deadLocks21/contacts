@@ -124,11 +124,7 @@ class _LabelPickerSheetState extends ConsumerState<_LabelPickerSheet> {
       // Une case restée partielle n'a pas été touchée : on n'y retouche pas non
       // plus, sinon valider la feuille modifierait des fiches sans le dire.
       if (_partial.contains(label.id)) continue;
-      await apply.execute(
-        widget.contactIds,
-        label.id,
-        apply: _checked.contains(label.id),
-      );
+      await apply.execute(widget.contactIds, label.id, apply: _checked.contains(label.id));
     }
     navigator.pop();
   }

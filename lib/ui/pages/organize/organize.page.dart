@@ -91,10 +91,7 @@ class OrganizePage extends ConsumerWidget {
 
   Future<void> _import(BuildContext context, WidgetRef ref) async {
     final messenger = ScaffoldMessenger.of(context);
-    final picked = await FilePicker.platform.pickFiles(
-      type: FileType.any,
-      withData: true,
-    );
+    final picked = await FilePicker.platform.pickFiles(type: FileType.any, withData: true);
     final file = picked?.files.firstOrNull;
     if (file == null) return;
 
@@ -110,7 +107,7 @@ class OrganizePage extends ConsumerWidget {
             '${report.imported} contact${report.imported > 1 ? 's' : ''} importé'
             '${report.imported > 1 ? 's' : ''}'
             '${report.labelsCreated > 0 ? ' · ${report.labelsCreated} étiquette'
-                '${report.labelsCreated > 1 ? 's créées' : ' créée'}' : ''}',
+                      '${report.labelsCreated > 1 ? 's créées' : ' créée'}' : ''}',
           ),
         ),
       );
@@ -132,9 +129,7 @@ class OrganizePage extends ConsumerWidget {
     final directory = Directory.systemTemp;
     final file = File('${directory.path}/contacts.vcf');
     await file.writeAsString(vcf);
-    await SharePlus.instance.share(
-      ShareParams(files: [XFile(file.path)], subject: 'contacts.vcf'),
-    );
+    await SharePlus.instance.share(ShareParams(files: [XFile(file.path)], subject: 'contacts.vcf'));
   }
 }
 
@@ -151,10 +146,7 @@ class _MergeSuggestion extends StatelessWidget {
     return Container(
       margin: const EdgeInsets.fromLTRB(16, 12, 16, 4),
       padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: colors.accentSoft,
-        borderRadius: BorderRadius.circular(16),
-      ),
+      decoration: BoxDecoration(color: colors.accentSoft, borderRadius: BorderRadius.circular(16)),
       child: Row(
         children: [
           Icon(Icons.merge_type, color: colors.onAccentSoft),
@@ -166,10 +158,7 @@ class _MergeSuggestion extends StatelessWidget {
                 Text(
                   '$groupCount doublon${groupCount > 1 ? 's' : ''} détecté'
                   '${groupCount > 1 ? 's' : ''}',
-                  style: TextStyle(
-                    color: colors.onAccentSoft,
-                    fontWeight: FontWeight.w600,
-                  ),
+                  style: TextStyle(color: colors.onAccentSoft, fontWeight: FontWeight.w600),
                 ),
                 const SizedBox(height: 2),
                 Text(

@@ -8,20 +8,18 @@ class Website {
   final WebsiteType type;
   final String? customLabel;
 
-  Website({
-    required this.id,
-    required this.value,
-    this.type = WebsiteType.profil,
-    this.customLabel,
-  }) : assert(value.trim().isNotEmpty, 'website cannot be empty');
+  Website({required this.id, required this.value, this.type = WebsiteType.profil, this.customLabel})
+    : assert(value.trim().isNotEmpty, 'website cannot be empty');
 
-  factory Website.create(String value, {WebsiteType type = WebsiteType.profil, String? customLabel}) =>
-      Website(id: UuidValue.generate(), value: value, type: type, customLabel: customLabel);
+  factory Website.create(
+    String value, {
+    WebsiteType type = WebsiteType.profil,
+    String? customLabel,
+  }) => Website(id: UuidValue.generate(), value: value, type: type, customLabel: customLabel);
 
-  String get label =>
-      type == WebsiteType.personnalise && (customLabel?.trim().isNotEmpty ?? false)
-          ? customLabel!.trim()
-          : type.label;
+  String get label => type == WebsiteType.personnalise && (customLabel?.trim().isNotEmpty ?? false)
+      ? customLabel!.trim()
+      : type.label;
 
   /// URL navigable : on préfixe en `https://` ce qui a été saisi sans schéma.
   Uri get uri => Uri.parse(value.contains('://') ? value : 'https://$value');

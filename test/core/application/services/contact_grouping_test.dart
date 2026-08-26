@@ -41,8 +41,9 @@ void main() {
     });
 
     test('n\'épingle rien quand la vue est déjà filtrée', () {
-      final sections = ContactGrouping.sections([_summary('Alice', starred: true)],
-          pinFavorites: false);
+      final sections = ContactGrouping.sections([
+        _summary('Alice', starred: true),
+      ], pinFavorites: false);
       expect(sections.single.header, 'A');
     });
 

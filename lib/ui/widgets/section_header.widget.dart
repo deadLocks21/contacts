@@ -15,11 +15,7 @@ class SectionHeader extends StatelessWidget {
       padding: const EdgeInsets.fromLTRB(72, 16, 16, 8),
       child: Text(
         label,
-        style: TextStyle(
-          fontSize: 14,
-          fontWeight: FontWeight.w500,
-          color: colors.textMuted,
-        ),
+        style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500, color: colors.textMuted),
       ),
     );
   }
