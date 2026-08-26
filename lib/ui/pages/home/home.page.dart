@@ -1,5 +1,6 @@
 import 'package:contacts/ui/pages/home/widgets/contacts_filter_bar.widget.dart';
 import 'package:contacts/ui/pages/home/widgets/contacts_search_bar.widget.dart';
+import 'package:contacts/infrastructure/providers/repository_providers.dart';
 import 'package:contacts/ui/providers/contact_data_providers.dart';
 import 'package:contacts/ui/providers/contact_view.provider.dart';
 import 'package:contacts/ui/providers/selection.provider.dart';
@@ -63,7 +64,7 @@ class HomePage extends ConsumerWidget {
                     ],
                   )
                 : null,
-            emptyState: _emptyState(context, view),
+            emptyState: _emptyState(context, ref, view),
           ),
         ),
         floatingActionButton: selection.isNotEmpty
@@ -82,9 +83,24 @@ class HomePage extends ConsumerWidget {
     );
   }
 
-  /// L'écran vide dit *pourquoi* la liste est vide : un carnet neuf et un
-  /// filtre trop étroit n'appellent pas la même action.
-  Widget _emptyState(BuildContext context, ContactViewState view) {
+  /// L'écran vide dit *pourquoi* la liste est vide : un accès refusé, un
+  /// carnet neuf et un filtre trop étroit n'appellent pas la même action.
+  Widget _emptyState(BuildContext context, WidgetRef ref, ContactViewState view) {
+    // Sans permission, le carnet du système rend une liste vide : l'annoncer
+    // comme un carnet sans contact serait un mensonge.
+    if (ref.watch(contactsPermissionProvider).value == false) {
+      return EmptyState(
+        icon: Icons.lock_outline,
+        title: 'Accès aux contacts requis',
+        message:
+            'Contacts affiche et modifie le carnet d\'adresses de cet appareil. '
+            'Autorisez l\'accès pour voir vos contacts.',
+        action: FilledButton(
+          onPressed: () => ref.read(contactsPermissionProvider.notifier).retry(),
+          child: const Text('Autoriser'),
+        ),
+      );
+    }
     if (!view.isFiltered) {
       return const EmptyState(
         icon: Icons.person_outline,

@@ -1,9 +1,11 @@
 import 'dart:async';
 
 import 'package:contacts/core/domain/services/contact.repository.dart';
+import 'package:contacts/core/domain/services/contacts_access.service.dart';
 import 'package:contacts/core/domain/services/label.repository.dart';
 import 'package:contacts/core/domain/services/trash.repository.dart';
 import 'package:contacts/infrastructure/contacts/flutter_contacts.contact.repository.dart';
+import 'package:contacts/infrastructure/contacts/flutter_contacts.contacts_access.service.dart';
 import 'package:contacts/infrastructure/contacts/local.contact.repository.dart';
 import 'package:contacts/infrastructure/labels/flutter_contacts.label.repository.dart';
 import 'package:contacts/infrastructure/labels/local.label.repository.dart';
@@ -34,6 +36,25 @@ LabelRepository labelRepository(Ref ref) {
     return repository;
   }
   return LocalLabelRepository(ref.watch(localRecordStoreProvider));
+}
+
+@Riverpod(keepAlive: true)
+ContactsAccess contactsAccess(Ref ref) => ref.watch(useDeviceContactsProvider)
+    ? const FlutterContactsAccess()
+    : const AlwaysGrantedContactsAccess();
+
+/// Autorisation de lire le carnet, demandée au démarrage. `false` = l'écran
+/// d'accueil propose d'ouvrir l'accès au lieu d'annoncer un carnet vide.
+@Riverpod(keepAlive: true)
+class ContactsPermission extends _$ContactsPermission {
+  @override
+  Future<bool> build() => ref.watch(contactsAccessProvider).request();
+
+  /// Redemande l'accès — le bouton « Autoriser » de l'écran d'accueil.
+  Future<void> retry() async {
+    state = const AsyncLoading();
+    state = AsyncData(await ref.read(contactsAccessProvider).request());
+  }
 }
 
 /// La corbeille est toujours locale : le carnet du système n'en a pas.

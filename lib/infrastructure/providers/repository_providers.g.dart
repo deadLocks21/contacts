@@ -98,6 +98,100 @@ final class LabelRepositoryProvider
 
 String _$labelRepositoryHash() => r'4b1918241ba4f6de86880c4c49c8d064d57b3527';
 
+@ProviderFor(contactsAccess)
+final contactsAccessProvider = ContactsAccessProvider._();
+
+final class ContactsAccessProvider
+    extends $FunctionalProvider<ContactsAccess, ContactsAccess, ContactsAccess>
+    with $Provider<ContactsAccess> {
+  ContactsAccessProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'contactsAccessProvider',
+        isAutoDispose: false,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$contactsAccessHash();
+
+  @$internal
+  @override
+  $ProviderElement<ContactsAccess> $createElement($ProviderPointer pointer) =>
+      $ProviderElement(pointer);
+
+  @override
+  ContactsAccess create(Ref ref) {
+    return contactsAccess(ref);
+  }
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(ContactsAccess value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<ContactsAccess>(value),
+    );
+  }
+}
+
+String _$contactsAccessHash() => r'0e85940923d2062d7f2e53080f45dd1dd57e05d6';
+
+/// Autorisation de lire le carnet, demandée au démarrage. `false` = l'écran
+/// d'accueil propose d'ouvrir l'accès au lieu d'annoncer un carnet vide.
+
+@ProviderFor(ContactsPermission)
+final contactsPermissionProvider = ContactsPermissionProvider._();
+
+/// Autorisation de lire le carnet, demandée au démarrage. `false` = l'écran
+/// d'accueil propose d'ouvrir l'accès au lieu d'annoncer un carnet vide.
+final class ContactsPermissionProvider extends $AsyncNotifierProvider<ContactsPermission, bool> {
+  /// Autorisation de lire le carnet, demandée au démarrage. `false` = l'écran
+  /// d'accueil propose d'ouvrir l'accès au lieu d'annoncer un carnet vide.
+  ContactsPermissionProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'contactsPermissionProvider',
+        isAutoDispose: false,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$contactsPermissionHash();
+
+  @$internal
+  @override
+  ContactsPermission create() => ContactsPermission();
+}
+
+String _$contactsPermissionHash() => r'3429c791a5619ab6a003328cf02ef746fd11c626';
+
+/// Autorisation de lire le carnet, demandée au démarrage. `false` = l'écran
+/// d'accueil propose d'ouvrir l'accès au lieu d'annoncer un carnet vide.
+
+abstract class _$ContactsPermission extends $AsyncNotifier<bool> {
+  FutureOr<bool> build();
+  @$mustCallSuper
+  @override
+  void runBuild() {
+    final ref = this.ref as $Ref<AsyncValue<bool>, bool>;
+    final element =
+        ref.element
+            as $ClassProviderElement<
+              AnyNotifier<AsyncValue<bool>, bool>,
+              AsyncValue<bool>,
+              Object?,
+              Object?
+            >;
+    element.handleCreate(ref, build);
+  }
+}
+
 /// La corbeille est toujours locale : le carnet du système n'en a pas.
 
 @ProviderFor(trashRepository)

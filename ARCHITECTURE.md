@@ -37,12 +37,29 @@ UI → Application → Domain ← Infrastructure
 - Chaque interface a une impl réelle **et** une impl `InMemory*` (tests, repli).
 - **Tests** : miroir de `lib/` avec les `InMemory*` comme doublures (pas de mockito).
 
-## Persistance
+## Source de vérité
 
-- **Source de vérité locale** : `sqflite` (init FFI sur desktop). Toutes les lectures viennent
-  du local ; l'implémentation mémoire prend le relais si la base ne s'ouvre pas, et sert de
-  doublure aux tests.
-- IDs = **UUID générés côté client**.
-- Suppression **logique** : un contact supprimé part à la corbeille (`deleted_at`) et n'est
-  purgé qu'au bout de 30 jours (comme Google Contacts).
-- Réglages (tri, format de nom, thème) dans `shared_preferences`.
+- **Le carnet d'adresses du système** (`ContactsContract` sur Android, `Contacts` sur iOS), lu
+  et écrit via `flutter_contacts` : les fiches sont celles que voient le composeur, la
+  messagerie et toutes les autres apps. L'app n'a pas de base de contacts à elle.
+- Les **étiquettes** sont les *groupes* du carnet (`Groups` / `CNGroup`). Les groupes
+  techniques d'Android (« My Contacts », « Starred in Android ») sont masqués, comme le fait
+  Google Contacts.
+- Les **identifiants** viennent du carnet : aucun format garanti (cf. `EntityId`).
+- Hors mobile (desktop, tests), les implémentations `Local*` tiennent lieu de carnet, adossées
+  au store local et alimentées par `DemoSeed`.
+
+## Ce que l'app stocke quand même
+
+- **La corbeille** : le carnet du système n'en a pas. Une fiche supprimée y est recopiée
+  (`sqflite`, init FFI sur desktop) puis retirée du carnet, et réinsérée à la restauration —
+  le système lui alloue alors un nouvel identifiant. Purge au bout de 30 jours, au démarrage.
+- **Les réglages** (tri, format de nom, thème) dans `shared_preferences`.
+
+## Limites assumées de l'adossement
+
+- Les **relations** (« Conjoint : Marie ») n'ont pas d'équivalent exposé par `flutter_contacts` :
+  elles voyagent en messagerie au libellé préfixé plutôt que d'être perdues (cf.
+  `relationLabelPrefix`).
+- Restaurer depuis la corbeille **change l'identifiant** de la fiche : l'ancien a disparu du
+  carnet avec elle.

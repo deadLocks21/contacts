@@ -34,6 +34,13 @@ class FlutterContactsLabelRepository implements LabelRepository {
   @override
   Stream<int> get changes => _controller.stream;
 
+  /// Groupes techniques du carnet Android, que Google Contacts ne montre pas :
+  /// « My Contacts » est le groupe d'appartenance par défaut, et « Starred in
+  /// Android » le miroir de l'étoile des favoris, déjà exposée ailleurs. Les
+  /// afficher comme étiquettes donnerait deux cases à cocher sans effet
+  /// compréhensible.
+  static const _systemGroups = {'my contacts', 'starred in android'};
+
   @override
   Future<List<ContactLabel>> listAll() async {
     if (!await fc.FlutterContacts.requestPermission(readonly: true)) return const [];
@@ -41,7 +48,7 @@ class FlutterContactsLabelRepository implements LabelRepository {
     final now = DateTime.now();
     return [
       for (final g in groups)
-        if (g.name.trim().isNotEmpty)
+        if (g.name.trim().isNotEmpty && !_systemGroups.contains(g.name.trim().toLowerCase()))
           ContactLabel(id: EntityId(g.id), name: g.name, createdAt: now, updatedAt: now),
     ];
   }

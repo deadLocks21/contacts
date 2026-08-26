@@ -1,7 +1,9 @@
 # Contacts
 
-Réplique de l'application **Google Contacts** (Android) en Flutter, entièrement
-locale : aucun compte, aucun serveur, le carnet ne quitte pas l'appareil.
+Réplique de l'application **Google Contacts** (Android) en Flutter, adossée au
+**carnet d'adresses du système** : les fiches affichées et modifiées sont les
+vrais contacts de l'appareil, ceux que voient le composeur et la messagerie.
+Aucun compte, aucun serveur — rien ne quitte l'appareil.
 
 Architecture hexagonale layer-first, identique à `songbook/app`, `motorz/app` et
 `kidflix/app` — voir [ARCHITECTURE.md](ARCHITECTURE.md).
@@ -29,7 +31,8 @@ Architecture hexagonale layer-first, identique à `songbook/app`, `motorz/app` e
   fusion sans perte d'information.
 - Import et export vCard 3.0 (libellés personnalisés et étiquettes compris).
 - Corbeille : 30 jours de rétention, restauration, purge automatique au
-  démarrage.
+  démarrage. Le carnet du système n'ayant pas de corbeille, la fiche y est
+  recopiée localement avant d'en être retirée.
 - Paramètres : tri, format des noms, thème clair/sombre/système.
 
 **Étiquettes**
@@ -42,8 +45,9 @@ Architecture hexagonale layer-first, identique à `songbook/app`, `motorz/app` e
 flutter run
 ```
 
-Au tout premier démarrage, un carnet de démonstration est écrit — il ne
-réapparaît jamais ensuite.
+Sur mobile, l'app demande l'accès au carnet d'adresses au premier lancement.
+Sur desktop, où il n'y a pas de carnet système, elle tourne sur un carnet
+simulé écrit au premier démarrage — de quoi travailler l'UI sans téléphone.
 
 ## Qualité
 

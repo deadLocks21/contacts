@@ -17,6 +17,9 @@ part 'bootstrap_providers.g.dart';
 @Riverpod(keepAlive: true)
 Future<void> bootstrap(Ref ref) async {
   await ref.watch(settingsControllerProvider.future);
+  // L'accès au carnet se demande avant le premier affichage : la liste ne
+  // doit jamais s'afficher vide en attendant une réponse.
+  await ref.watch(contactsPermissionProvider.future);
   await ref.watch(organizeServiceProvider).purgeExpired.execute();
   // Le carnet de démonstration n'a de sens que sur le carnet simulé : sur un
   // téléphone, ce sont les vrais contacts de l'utilisateur qui s'affichent, et

@@ -61,4 +61,4 @@ final class BootstrapProvider extends $FunctionalProvider<AsyncValue<void>, void
   }
 }
 
-String _$bootstrapHash() => r'4980bbe7dcc5c31ac7af166673c1d81dddc6b3a9';
+String _$bootstrapHash() => r'd216786305e98a5b363f757150a5ca0fbfb759d4';
