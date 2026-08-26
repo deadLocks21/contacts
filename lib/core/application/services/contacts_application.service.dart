@@ -1,5 +1,6 @@
 import 'package:contacts/core/application/usecases/get_contact.usecase.dart';
 import 'package:contacts/core/application/usecases/list_contacts.usecase.dart';
+import 'package:contacts/core/application/usecases/list_highlights.usecase.dart';
 import 'package:contacts/core/application/usecases/load_contact_draft.usecase.dart';
 import 'package:contacts/core/application/usecases/move_to_trash.usecase.dart';
 import 'package:contacts/core/application/usecases/save_contact.usecase.dart';
@@ -13,6 +14,7 @@ import 'package:contacts/core/application/usecases/toggle_star.usecase.dart';
 class ContactsApplicationService {
   const ContactsApplicationService({
     required this.list,
+    required this.highlights,
     required this.get,
     required this.loadDraft,
     required this.save,
@@ -24,6 +26,7 @@ class ContactsApplicationService {
   });
 
   final ListContactsUseCase list;
+  final ListHighlightsUseCase highlights;
   final GetContactUseCase get;
   final LoadContactDraftUseCase loadDraft;
   final SaveContactUseCase save;

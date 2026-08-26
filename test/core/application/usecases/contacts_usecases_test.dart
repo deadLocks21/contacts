@@ -22,7 +22,7 @@ void main() {
   const settings = AppSettings.defaults;
 
   group('ListContactsUseCase', () {
-    test('découpe la liste en sections, favoris en tête', () async {
+    test('découpe la liste en sections alphabétiques', () async {
       await harness.contacts.saveAll([
         aContact(first: 'Bruno', last: 'Alric'),
         aContact(first: 'Alice', last: 'Zola', starred: true),
@@ -31,7 +31,7 @@ void main() {
       final list = await ListContactsUseCase(harness.contacts).execute(settings: settings);
 
       expect(list.total, 2);
-      expect(list.sections.first.header, 'Favoris');
+      expect([for (final s in list.sections) s.header], ['A', 'B']);
       expect(list.alphabet, ['A', 'B']);
     });
 
@@ -74,7 +74,7 @@ void main() {
       expect([for (final c in list.all) c.displayName], ['Collègue']);
     });
 
-    test('la vue « Favoris » ne réépingle pas de section Favoris', () async {
+    test('la vue « Favoris » ne garde que les fiches marquées', () async {
       await harness.contacts.saveAll([
         aContact(first: 'Marqué', starred: true),
         aContact(first: 'Autre'),
@@ -84,8 +84,22 @@ void main() {
         harness.contacts,
       ).execute(settings: settings, starredOnly: true);
 
-      expect(list.total, 1);
-      expect(list.sections.single.isFavorites, isFalse);
+      expect([for (final c in list.all) c.displayName], ['Marqué']);
+    });
+
+    test('les puces de filtre se cumulent', () async {
+      await harness.contacts.saveAll([
+        aContact(first: 'Avec tout', phones: ['0612345678'], emails: ['a@b.fr']),
+        aContact(first: 'Sans e-mail', phones: ['0612345679']),
+        aContact(first: 'Sans rien'),
+      ]);
+
+      final list = await ListContactsUseCase(harness.contacts).execute(
+        settings: settings,
+        filters: {ContactFilter.avecTelephone, ContactFilter.avecEmail},
+      );
+
+      expect([for (final c in list.all) c.displayName], ['Avec tout']);
     });
   });
 

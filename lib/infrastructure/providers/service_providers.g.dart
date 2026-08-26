@@ -60,7 +60,7 @@ final class ContactsServiceProvider
   }
 }
 
-String _$contactsServiceHash() => r'9d1f871a7ee73c7cba5bc513c21264b23505cef1';
+String _$contactsServiceHash() => r'c43aad22e706008f4af8a57959c6211470ce14ae';
 
 @ProviderFor(labelsService)
 final labelsServiceProvider = LabelsServiceProvider._();

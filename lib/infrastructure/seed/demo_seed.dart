@@ -39,7 +39,7 @@ class DemoSeed {
     }
 
     Contact contact({
-      required String first,
+      String? first,
       String? last,
       String? company,
       String? jobTitle,
@@ -257,9 +257,8 @@ class DemoSeed {
         phones: [PhoneNumber.create('06 09 55 41 27')],
         notes: 'Covoiturage Rennes → Paris le vendredi.',
       ),
+      // Fiche d'entreprise : pas de nom de personne, seule la société parle.
       contact(
-        first: 'Garage',
-        last: 'Delaunay',
         company: 'Garage Delaunay',
         agedDays: 12,
         phones: [PhoneNumber.create('03 20 55 12 89', type: PhoneType.professionnel)],

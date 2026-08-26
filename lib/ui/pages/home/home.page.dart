@@ -1,18 +1,19 @@
+import 'package:contacts/ui/pages/home/widgets/contacts_filter_bar.widget.dart';
 import 'package:contacts/ui/pages/home/widgets/contacts_search_bar.widget.dart';
 import 'package:contacts/ui/providers/contact_data_providers.dart';
+import 'package:contacts/ui/providers/contact_view.provider.dart';
 import 'package:contacts/ui/providers/selection.provider.dart';
 import 'package:contacts/ui/router/app_router.dart';
 import 'package:contacts/ui/theme/app_colors.dart';
-import 'package:contacts/ui/widgets/app_shell.widget.dart';
-import 'package:contacts/ui/widgets/contact_avatar.widget.dart';
 import 'package:contacts/ui/widgets/contact_list_view.widget.dart';
+import 'package:contacts/ui/widgets/empty_state.widget.dart';
 import 'package:contacts/ui/widgets/selection_app_bar.widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
-/// L'écran d'accueil : barre de recherche, liste alphabétique, bouton
-/// « Créer un contact ».
+/// L'onglet « Contacts » : recherche, sélecteur de vue et filtres, puis la
+/// liste alphabétique.
 class HomePage extends ConsumerWidget {
   const HomePage({super.key});
 
@@ -20,7 +21,16 @@ class HomePage extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final colors = context.appColors;
     final selection = ref.watch(contactSelectionProvider);
-    final list = ref.watch(contactListProvider()).value;
+    final view = ref.watch(contactViewProvider);
+    final list = ref
+        .watch(
+          contactListProvider(
+            labelId: view.labelId,
+            starredOnly: view.starredOnly,
+            filters: view.filters,
+          ),
+        )
+        .value;
 
     return PopScope(
       // Le retour système referme d'abord le mode sélection : quitter l'app
@@ -30,37 +40,65 @@ class HomePage extends ConsumerWidget {
         if (!didPop) ref.read(contactSelectionProvider.notifier).clear();
       },
       child: Scaffold(
+        backgroundColor: colors.background,
         appBar: selection.isEmpty
             ? null
             : SelectionAppBar(allIds: [for (final c in list?.all ?? const []) c.id]),
         body: SafeArea(
           child: ContactListView(
+            labelId: view.labelId,
+            starredOnly: view.starredOnly,
+            filters: view.filters,
             header: selection.isEmpty
-                ? Padding(
-                    padding: const EdgeInsets.only(top: 8, bottom: 8),
-                    child: ContactsSearchBar(
-                      hint: 'Rechercher des contacts',
-                      onMenuPressed: AppShellScope.maybeOf(context)?.openDrawer,
-                      onTap: () => context.push(AppRoutes.search),
-                      trailing: const Padding(
-                        padding: EdgeInsets.only(right: 12),
-                        child: ContactAvatar(initials: 'T', colorKey: 'moi', size: 32),
-                      ),
-                    ),
+                ? Column(
+                    children: [
+                      ContactsSearchBar(onTap: () => context.push(AppRoutes.search)),
+                      const ContactsFilterBar(),
+                    ],
                   )
                 : null,
+            emptyState: _emptyState(context, view),
           ),
         ),
         floatingActionButton: selection.isNotEmpty
             ? null
-            : FloatingActionButton.extended(
+            : FloatingActionButton(
                 key: const Key('createContactFab'),
-                onPressed: () => context.push(AppRoutes.newContact),
-                icon: const Icon(Icons.person_add_alt_1),
-                label: const Text('Créer un contact'),
+                tooltip: 'Créer un contact',
+                onPressed: () => context.push(
+                  view.labelId == null
+                      ? AppRoutes.newContact
+                      : '${AppRoutes.newContact}?etiquette=${view.labelId}',
+                ),
+                child: const Icon(Icons.add),
               ),
-        backgroundColor: colors.background,
       ),
+    );
+  }
+
+  /// L'écran vide dit *pourquoi* la liste est vide : un carnet neuf et un
+  /// filtre trop étroit n'appellent pas la même action.
+  Widget _emptyState(BuildContext context, ContactViewState view) {
+    if (!view.isFiltered) {
+      return const EmptyState(
+        icon: Icons.person_outline,
+        title: 'Aucun contact',
+        message: 'Appuyez sur « + » pour créer votre premier contact.',
+      );
+    }
+    if (view.starredOnly) {
+      return const EmptyState(
+        icon: Icons.star_outline,
+        title: 'Aucun favori',
+        message: 'Ouvrez un contact et appuyez sur l\'étoile pour le retrouver ici.',
+      );
+    }
+    return EmptyState(
+      icon: Icons.filter_list_off,
+      title: 'Aucun contact ne correspond',
+      message: view.labelName == null
+          ? 'Aucune fiche ne satisfait les filtres actifs.'
+          : 'Aucune fiche ne porte l\'étiquette « ${view.labelName} » avec ces filtres.',
     );
   }
 }

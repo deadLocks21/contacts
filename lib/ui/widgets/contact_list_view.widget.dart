@@ -1,5 +1,6 @@
 import 'package:contacts/core/application/dtos/contact_list.dto.dart';
 import 'package:contacts/core/application/dtos/contact_summary.dto.dart';
+import 'package:contacts/core/domain/model/enums.dart';
 import 'package:contacts/ui/providers/contact_data_providers.dart';
 import 'package:contacts/ui/providers/selection.provider.dart';
 import 'package:contacts/ui/router/app_router.dart';
@@ -28,12 +29,14 @@ class ContactListView extends ConsumerStatefulWidget {
     super.key,
     this.labelId,
     this.starredOnly = false,
+    this.filters = const {},
     this.header,
     this.emptyState,
   });
 
   final String? labelId;
   final bool starredOnly;
+  final Set<ContactFilter> filters;
 
   /// Contenu défilant posé au-dessus de la liste (la barre de recherche).
   final Widget? header;
@@ -70,7 +73,11 @@ class _ContactListViewState extends ConsumerState<ContactListView> {
     final colors = context.appColors;
     final selection = ref.watch(contactSelectionProvider);
     final listAsync = ref.watch(
-      contactListProvider(labelId: widget.labelId, starredOnly: widget.starredOnly),
+      contactListProvider(
+        labelId: widget.labelId,
+        starredOnly: widget.starredOnly,
+        filters: widget.filters,
+      ),
     );
 
     return listAsync.when(
@@ -146,9 +153,9 @@ class _ContactListViewState extends ConsumerState<ContactListView> {
               ],
             ),
             Positioned(
-              // Sous la barre de recherche : l'index ne doit pas recouvrir le
-              // menu ni l'avatar du compte.
-              top: 72,
+              // Sous la barre de recherche et la barre de filtres : l'index ne
+              // doit recouvrir ni l'avatar du compte ni les boutons de filtre.
+              top: 136,
               bottom: 96,
               right: 2,
               child: AlphabetIndex(

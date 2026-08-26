@@ -55,7 +55,7 @@ final class ContactSelectionProvider extends $NotifierProvider<ContactSelection,
   }
 }
 
-String _$contactSelectionHash() => r'f40294eeebddb3243811288f486b8306afbd3307';
+String _$contactSelectionHash() => r'91d6fcf58a358169d74681386713ff2315adca4b';
 
 /// Sélection multiple de la liste de contacts.
 ///

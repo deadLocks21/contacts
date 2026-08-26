@@ -1,30 +1,14 @@
 import 'package:contacts/core/application/dtos/contact_section.dto.dart';
 import 'package:contacts/core/application/dtos/contact_summary.dto.dart';
 
-/// Découpe la liste de contacts en sections affichables.
+/// Découpe la liste de contacts en sections alphabétiques.
 ///
-/// Google Contacts épingle les favoris en tête, puis range le reste par
-/// initiale. Les sections « # » (ce qui ne commence pas par une lettre)
-/// ferment la liste.
+/// Les sections « # » (ce qui ne commence pas par une lettre) ferment la
+/// liste. Les favoris ne sont pas épinglés ici : ils ont leur propre place
+/// dans l'onglet « Faits marquants ».
 abstract final class ContactGrouping {
-  /// En-tête de la section épinglée des favoris.
-  static const favoritesHeader = 'Favoris';
-
-  static List<ContactSectionDto> sections(
-    List<ContactSummaryDto> contacts, {
-    bool pinFavorites = true,
-  }) {
+  static List<ContactSectionDto> sections(List<ContactSummaryDto> contacts) {
     final sorted = [...contacts]..sort(compare);
-    final sections = <ContactSectionDto>[];
-
-    if (pinFavorites) {
-      final favorites = sorted.where((c) => c.starred).toList();
-      if (favorites.isNotEmpty) {
-        sections.add(
-          ContactSectionDto(header: favoritesHeader, contacts: favorites, isFavorites: true),
-        );
-      }
-    }
 
     final grouped = <String, List<ContactSummaryDto>>{};
     for (final contact in sorted) {
@@ -32,10 +16,7 @@ abstract final class ContactGrouping {
     }
 
     final keys = grouped.keys.toList()..sort(_compareSectionKeys);
-    for (final key in keys) {
-      sections.add(ContactSectionDto(header: key, contacts: grouped[key]!));
-    }
-    return sections;
+    return [for (final key in keys) ContactSectionDto(header: key, contacts: grouped[key]!)];
   }
 
   /// Ordre alphabétique sur la clé normalisée, l'identifiant départageant les
@@ -54,9 +35,8 @@ abstract final class ContactGrouping {
   }
 
   /// Index alphabétique latéral : les lettres réellement présentes, dans
-  /// l'ordre où elles apparaissent (favoris exclus).
+  /// l'ordre où elles apparaissent.
   static List<String> alphabetIndex(List<ContactSectionDto> sections) => [
-    for (final s in sections)
-      if (!s.isFavorites) s.header,
+    for (final s in sections) s.header,
   ];
 }

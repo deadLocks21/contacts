@@ -11,6 +11,7 @@ import 'package:contacts/core/application/usecases/get_contact.usecase.dart';
 import 'package:contacts/core/application/usecases/import_vcard.usecase.dart';
 import 'package:contacts/core/application/usecases/list_contacts.usecase.dart';
 import 'package:contacts/core/application/usecases/list_duplicates.usecase.dart';
+import 'package:contacts/core/application/usecases/list_highlights.usecase.dart';
 import 'package:contacts/core/application/usecases/list_labels.usecase.dart';
 import 'package:contacts/core/application/usecases/list_trash.usecase.dart';
 import 'package:contacts/core/application/usecases/load_contact_draft.usecase.dart';
@@ -40,6 +41,7 @@ ContactsApplicationService contactsService(Ref ref) {
   final labels = ref.watch(labelRepositoryProvider);
   return ContactsApplicationService(
     list: ListContactsUseCase(contacts),
+    highlights: ListHighlightsUseCase(contacts),
     get: GetContactUseCase(contacts, labels),
     loadDraft: LoadContactDraftUseCase(contacts),
     save: SaveContactUseCase(contacts),

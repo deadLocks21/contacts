@@ -8,22 +8,25 @@ part of 'app_router.dart';
 
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // ignore_for_file: type=lint, type=warning
-/// Router unique. Les deux onglets du bas (« Contacts » et « Organiser ») sont
-/// portés par un `StatefulShellRoute` : chacun garde sa pile et sa position de
-/// défilement quand on passe de l'un à l'autre, comme dans Google Contacts.
+/// Router unique. Les trois onglets du bas (« Contacts », « Faits marquants »
+/// et « Organiser ») sont portés par un `StatefulShellRoute` : chacun garde sa
+/// pile et sa position de défilement quand on passe de l'un à l'autre, comme
+/// dans Google Contacts.
 
 @ProviderFor(goRouter)
 final goRouterProvider = GoRouterProvider._();
 
-/// Router unique. Les deux onglets du bas (« Contacts » et « Organiser ») sont
-/// portés par un `StatefulShellRoute` : chacun garde sa pile et sa position de
-/// défilement quand on passe de l'un à l'autre, comme dans Google Contacts.
+/// Router unique. Les trois onglets du bas (« Contacts », « Faits marquants »
+/// et « Organiser ») sont portés par un `StatefulShellRoute` : chacun garde sa
+/// pile et sa position de défilement quand on passe de l'un à l'autre, comme
+/// dans Google Contacts.
 
 final class GoRouterProvider extends $FunctionalProvider<GoRouter, GoRouter, GoRouter>
     with $Provider<GoRouter> {
-  /// Router unique. Les deux onglets du bas (« Contacts » et « Organiser ») sont
-  /// portés par un `StatefulShellRoute` : chacun garde sa pile et sa position de
-  /// défilement quand on passe de l'un à l'autre, comme dans Google Contacts.
+  /// Router unique. Les trois onglets du bas (« Contacts », « Faits marquants »
+  /// et « Organiser ») sont portés par un `StatefulShellRoute` : chacun garde sa
+  /// pile et sa position de défilement quand on passe de l'un à l'autre, comme
+  /// dans Google Contacts.
   GoRouterProvider._()
     : super(
         from: null,
@@ -53,4 +56,4 @@ final class GoRouterProvider extends $FunctionalProvider<GoRouter, GoRouter, GoR
   }
 }
 
-String _$goRouterHash() => r'f7d03c7d18c745b91a2c338048478a3ee72c5cc1';
+String _$goRouterHash() => r'ac8267ac3a2e1b3287651d3f69c31755e3489370';

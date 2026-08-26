@@ -28,23 +28,24 @@ void main() {
   });
 
   group('ContactGrouping', () {
-    test('épingle les favoris en tête, puis range par initiale', () {
+    test('range par initiale, accents repliés sur leur lettre de base', () {
       final sections = ContactGrouping.sections([
         _summary('Bruno'),
-        _summary('Alice', starred: true),
+        _summary('Alice'),
         _summary('Élodie'),
       ]);
 
-      expect(sections.first.header, 'Favoris');
-      expect(sections.first.contacts.single.displayName, 'Alice');
-      expect([for (final s in sections.skip(1)) s.header], ['A', 'B', 'E']);
+      expect([for (final s in sections) s.header], ['A', 'B', 'E']);
     });
 
-    test('n\'épingle rien quand la vue est déjà filtrée', () {
+    test('ne met pas les favoris à part — ils ont leur propre onglet', () {
       final sections = ContactGrouping.sections([
         _summary('Alice', starred: true),
-      ], pinFavorites: false);
-      expect(sections.single.header, 'A');
+        _summary('Bruno'),
+      ]);
+
+      expect([for (final s in sections) s.header], ['A', 'B']);
+      expect(sections.first.contacts.single.displayName, 'Alice');
     });
 
     test('renvoie la section « # » en dernier', () {
@@ -52,9 +53,9 @@ void main() {
       expect([for (final s in sections) s.header], ['Z', '#']);
     });
 
-    test('l\'index latéral ignore la section des favoris', () {
-      final sections = ContactGrouping.sections([_summary('Alice', starred: true)]);
-      expect(ContactGrouping.alphabetIndex(sections), ['A']);
+    test('l\'index latéral reprend les lettres présentes', () {
+      final sections = ContactGrouping.sections([_summary('Alice'), _summary('Zoé')]);
+      expect(ContactGrouping.alphabetIndex(sections), ['A', 'Z']);
     });
   });
 }

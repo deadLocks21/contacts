@@ -2,8 +2,10 @@ import 'package:contacts/core/application/dtos/contact_detail.dto.dart';
 import 'package:contacts/core/application/dtos/contact_list.dto.dart';
 import 'package:contacts/core/application/dtos/contact_summary.dto.dart';
 import 'package:contacts/core/application/dtos/duplicate_group.dto.dart';
+import 'package:contacts/core/application/dtos/highlights.dto.dart';
 import 'package:contacts/core/application/dtos/label.dto.dart';
 import 'package:contacts/core/application/dtos/trash_entry.dto.dart';
+import 'package:contacts/core/domain/model/enums.dart';
 import 'package:contacts/infrastructure/providers/infra_providers.dart';
 import 'package:contacts/infrastructure/providers/service_providers.dart';
 import 'package:contacts/infrastructure/providers/settings_providers.dart';
@@ -15,9 +17,15 @@ part 'contact_data_providers.g.dart';
 /// d'où qu'elle vienne, rafraîchit la liste, la fiche ouverte et les compteurs
 /// sans que l'écran qui a écrit ait à prévenir les autres.
 
-/// La liste d'accueil, éventuellement restreinte à une étiquette ou aux favoris.
+/// La liste d'accueil, éventuellement restreinte à une étiquette, aux favoris
+/// ou aux puces de filtre actives.
 @riverpod
-Future<ContactListDto> contactList(Ref ref, {String? labelId, bool starredOnly = false}) {
+Future<ContactListDto> contactList(
+  Ref ref, {
+  String? labelId,
+  bool starredOnly = false,
+  Set<ContactFilter> filters = const {},
+}) {
   ref.watch(storeChangesProvider);
   return ref
       .watch(contactsServiceProvider)
@@ -26,7 +34,18 @@ Future<ContactListDto> contactList(Ref ref, {String? labelId, bool starredOnly =
         settings: ref.watch(currentSettingsProvider),
         labelId: labelId,
         starredOnly: starredOnly,
+        filters: filters,
       );
+}
+
+/// Le contenu de l'onglet « Faits marquants ».
+@riverpod
+Future<HighlightsDto> highlights(Ref ref) {
+  ref.watch(storeChangesProvider);
+  return ref
+      .watch(contactsServiceProvider)
+      .highlights
+      .execute(settings: ref.watch(currentSettingsProvider));
 }
 
 /// La fiche détaillée d'un contact. `null` = la fiche n'existe plus.
@@ -39,7 +58,7 @@ Future<ContactDetailDto?> contactDetail(Ref ref, String contactId) {
       .execute(contactId, settings: ref.watch(currentSettingsProvider));
 }
 
-/// Les étiquettes et leur nombre de contacts (tiroir de navigation).
+/// Les étiquettes et leur nombre de contacts.
 @riverpod
 Future<List<LabelDto>> labelList(Ref ref) {
   ref.watch(storeChangesProvider);

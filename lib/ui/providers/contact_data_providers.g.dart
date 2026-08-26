@@ -11,7 +11,8 @@ part of 'contact_data_providers.dart';
 /// Toutes les vues du carnet observent [storeChangesProvider] : une écriture,
 /// d'où qu'elle vienne, rafraîchit la liste, la fiche ouverte et les compteurs
 /// sans que l'écran qui a écrit ait à prévenir les autres.
-/// La liste d'accueil, éventuellement restreinte à une étiquette ou aux favoris.
+/// La liste d'accueil, éventuellement restreinte à une étiquette, aux favoris
+/// ou aux puces de filtre actives.
 
 @ProviderFor(contactList)
 final contactListProvider = ContactListFamily._();
@@ -19,7 +20,8 @@ final contactListProvider = ContactListFamily._();
 /// Toutes les vues du carnet observent [storeChangesProvider] : une écriture,
 /// d'où qu'elle vienne, rafraîchit la liste, la fiche ouverte et les compteurs
 /// sans que l'écran qui a écrit ait à prévenir les autres.
-/// La liste d'accueil, éventuellement restreinte à une étiquette ou aux favoris.
+/// La liste d'accueil, éventuellement restreinte à une étiquette, aux favoris
+/// ou aux puces de filtre actives.
 
 final class ContactListProvider
     extends
@@ -28,10 +30,11 @@ final class ContactListProvider
   /// Toutes les vues du carnet observent [storeChangesProvider] : une écriture,
   /// d'où qu'elle vienne, rafraîchit la liste, la fiche ouverte et les compteurs
   /// sans que l'écran qui a écrit ait à prévenir les autres.
-  /// La liste d'accueil, éventuellement restreinte à une étiquette ou aux favoris.
+  /// La liste d'accueil, éventuellement restreinte à une étiquette, aux favoris
+  /// ou aux puces de filtre actives.
   ContactListProvider._({
     required ContactListFamily super.from,
-    required ({String? labelId, bool starredOnly}) super.argument,
+    required ({String? labelId, bool starredOnly, Set<ContactFilter> filters}) super.argument,
   }) : super(
          retry: null,
          name: r'contactListProvider',
@@ -57,8 +60,14 @@ final class ContactListProvider
 
   @override
   FutureOr<ContactListDto> create(Ref ref) {
-    final argument = this.argument as ({String? labelId, bool starredOnly});
-    return contactList(ref, labelId: argument.labelId, starredOnly: argument.starredOnly);
+    final argument =
+        this.argument as ({String? labelId, bool starredOnly, Set<ContactFilter> filters});
+    return contactList(
+      ref,
+      labelId: argument.labelId,
+      starredOnly: argument.starredOnly,
+      filters: argument.filters,
+    );
   }
 
   @override
@@ -72,16 +81,20 @@ final class ContactListProvider
   }
 }
 
-String _$contactListHash() => r'd621f31e721e858f16b8fd46175a2aca7c582daa';
+String _$contactListHash() => r'83803c5fe9c1e58e98905894d580d39f46bddd5f';
 
 /// Toutes les vues du carnet observent [storeChangesProvider] : une écriture,
 /// d'où qu'elle vienne, rafraîchit la liste, la fiche ouverte et les compteurs
 /// sans que l'écran qui a écrit ait à prévenir les autres.
-/// La liste d'accueil, éventuellement restreinte à une étiquette ou aux favoris.
+/// La liste d'accueil, éventuellement restreinte à une étiquette, aux favoris
+/// ou aux puces de filtre actives.
 
 final class ContactListFamily extends $Family
     with
-        $FunctionalFamilyOverride<FutureOr<ContactListDto>, ({String? labelId, bool starredOnly})> {
+        $FunctionalFamilyOverride<
+          FutureOr<ContactListDto>,
+          ({String? labelId, bool starredOnly, Set<ContactFilter> filters})
+        > {
   ContactListFamily._()
     : super(
         retry: null,
@@ -94,14 +107,59 @@ final class ContactListFamily extends $Family
   /// Toutes les vues du carnet observent [storeChangesProvider] : une écriture,
   /// d'où qu'elle vienne, rafraîchit la liste, la fiche ouverte et les compteurs
   /// sans que l'écran qui a écrit ait à prévenir les autres.
-  /// La liste d'accueil, éventuellement restreinte à une étiquette ou aux favoris.
+  /// La liste d'accueil, éventuellement restreinte à une étiquette, aux favoris
+  /// ou aux puces de filtre actives.
 
-  ContactListProvider call({String? labelId, bool starredOnly = false}) =>
-      ContactListProvider._(argument: (labelId: labelId, starredOnly: starredOnly), from: this);
+  ContactListProvider call({
+    String? labelId,
+    bool starredOnly = false,
+    Set<ContactFilter> filters = const {},
+  }) => ContactListProvider._(
+    argument: (labelId: labelId, starredOnly: starredOnly, filters: filters),
+    from: this,
+  );
 
   @override
   String toString() => r'contactListProvider';
 }
+
+/// Le contenu de l'onglet « Faits marquants ».
+
+@ProviderFor(highlights)
+final highlightsProvider = HighlightsProvider._();
+
+/// Le contenu de l'onglet « Faits marquants ».
+
+final class HighlightsProvider
+    extends $FunctionalProvider<AsyncValue<HighlightsDto>, HighlightsDto, FutureOr<HighlightsDto>>
+    with $FutureModifier<HighlightsDto>, $FutureProvider<HighlightsDto> {
+  /// Le contenu de l'onglet « Faits marquants ».
+  HighlightsProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'highlightsProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$highlightsHash();
+
+  @$internal
+  @override
+  $FutureProviderElement<HighlightsDto> $createElement($ProviderPointer pointer) =>
+      $FutureProviderElement(pointer);
+
+  @override
+  FutureOr<HighlightsDto> create(Ref ref) {
+    return highlights(ref);
+  }
+}
+
+String _$highlightsHash() => r'e998fab06e8b89a225a2f81756d5a8b870f88828';
 
 /// La fiche détaillée d'un contact. `null` = la fiche n'existe plus.
 
@@ -184,18 +242,18 @@ final class ContactDetailFamily extends $Family
   String toString() => r'contactDetailProvider';
 }
 
-/// Les étiquettes et leur nombre de contacts (tiroir de navigation).
+/// Les étiquettes et leur nombre de contacts.
 
 @ProviderFor(labelList)
 final labelListProvider = LabelListProvider._();
 
-/// Les étiquettes et leur nombre de contacts (tiroir de navigation).
+/// Les étiquettes et leur nombre de contacts.
 
 final class LabelListProvider
     extends
         $FunctionalProvider<AsyncValue<List<LabelDto>>, List<LabelDto>, FutureOr<List<LabelDto>>>
     with $FutureModifier<List<LabelDto>>, $FutureProvider<List<LabelDto>> {
-  /// Les étiquettes et leur nombre de contacts (tiroir de navigation).
+  /// Les étiquettes et leur nombre de contacts.
   LabelListProvider._()
     : super(
         from: null,

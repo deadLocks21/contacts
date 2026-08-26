@@ -250,3 +250,21 @@ enum NameFormat {
     NameFormat.nomPrenom => "D'abord le nom de famille",
   };
 }
+
+/// Filtres rapides de la liste — les puces que Google Contacts déplie sous la
+/// barre de recherche.
+enum ContactFilter {
+  avecTelephone,
+  avecEmail,
+  avecSociete;
+
+  String get wire => name;
+  static ContactFilter? fromWire(String? w) =>
+      w == null ? null : ContactFilter.values.where((e) => e.name == w).firstOrNull;
+
+  String get label => switch (this) {
+    ContactFilter.avecTelephone => 'Contacts avec téléphone',
+    ContactFilter.avecEmail => 'Contacts avec e-mail',
+    ContactFilter.avecSociete => 'Entreprise',
+  };
+}

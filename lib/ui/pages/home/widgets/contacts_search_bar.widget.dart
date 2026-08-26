@@ -1,4 +1,5 @@
 import 'package:contacts/ui/theme/app_colors.dart';
+import 'package:contacts/ui/widgets/contact_avatar.widget.dart';
 import 'package:flutter/material.dart';
 
 /// La barre de recherche en pilule de l'écran d'accueil.
@@ -7,26 +8,15 @@ import 'package:flutter/material.dart';
 /// recherche. Google fait de même — appuyer ici ouvre une page dédiée, ce qui
 /// évite un clavier au-dessus d'une liste qui ne se filtre pas encore.
 class ContactsSearchBar extends StatelessWidget {
-  const ContactsSearchBar({
-    super.key,
-    required this.hint,
-    required this.onTap,
-    this.onMenuPressed,
-    this.leadingIcon = Icons.menu,
-    this.trailing,
-  });
+  const ContactsSearchBar({super.key, required this.onTap});
 
-  final String hint;
   final VoidCallback onTap;
-  final VoidCallback? onMenuPressed;
-  final IconData leadingIcon;
-  final Widget? trailing;
 
   @override
   Widget build(BuildContext context) {
     final colors = context.appColors;
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 8),
+      padding: const EdgeInsets.fromLTRB(12, 8, 12, 8),
       child: Material(
         color: colors.surfaceField,
         borderRadius: BorderRadius.circular(28),
@@ -35,18 +25,25 @@ class ContactsSearchBar extends StatelessWidget {
           borderRadius: BorderRadius.circular(28),
           onTap: onTap,
           child: SizedBox(
-            height: 48,
+            height: 52,
             child: Row(
               children: [
-                IconButton(
-                  icon: Icon(leadingIcon, color: colors.textMuted),
-                  tooltip: 'Menu de navigation',
-                  onPressed: onMenuPressed ?? onTap,
-                ),
+                const SizedBox(width: 16),
+                Icon(Icons.search, color: colors.textMuted),
+                const SizedBox(width: 16),
                 Expanded(
-                  child: Text(hint, style: TextStyle(color: colors.textMuted, fontSize: 16)),
+                  child: Text(
+                    'Rechercher des contacts',
+                    style: TextStyle(color: colors.textMuted, fontSize: 16),
+                  ),
                 ),
-                if (trailing != null) trailing! else const SizedBox(width: 12),
+                // L'avatar du compte : dans Google Contacts il ouvre le
+                // sélecteur de compte, ici les paramètres — c'est le seul
+                // réglage que l'app locale ait à proposer.
+                const Padding(
+                  padding: EdgeInsets.only(right: 8),
+                  child: ContactAvatar(initials: 'T', colorKey: 'mon compte', size: 36),
+                ),
               ],
             ),
           ),

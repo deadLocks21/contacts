@@ -100,19 +100,11 @@ final class StoreChangesProvider extends $FunctionalProvider<AsyncValue<int>, in
 
 String _$storeChangesHash() => r'b513add5175e724332e5117c11dcbf2c1569f7da';
 
-/// Sur le web il n'y a pas de système de fichiers à alimenter : le chemin
-/// choisi (une URL blob) est conservé tel quel.
-
 @ProviderFor(photoStore)
 final photoStoreProvider = PhotoStoreProvider._();
 
-/// Sur le web il n'y a pas de système de fichiers à alimenter : le chemin
-/// choisi (une URL blob) est conservé tel quel.
-
 final class PhotoStoreProvider extends $FunctionalProvider<PhotoStore, PhotoStore, PhotoStore>
     with $Provider<PhotoStore> {
-  /// Sur le web il n'y a pas de système de fichiers à alimenter : le chemin
-  /// choisi (une URL blob) est conservé tel quel.
   PhotoStoreProvider._()
     : super(
         from: null,
@@ -143,7 +135,7 @@ final class PhotoStoreProvider extends $FunctionalProvider<PhotoStore, PhotoStor
   }
 }
 
-String _$photoStoreHash() => r'1e409647a7bbbee519e84ee049d6faf2d8651e81';
+String _$photoStoreHash() => r'aa992fa70ca1684cfe509e0503f3bd1b9052b92a';
 
 @ProviderFor(settingsRepository)
 final settingsRepositoryProvider = SettingsRepositoryProvider._();
