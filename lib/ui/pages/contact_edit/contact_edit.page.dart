@@ -172,7 +172,7 @@ class _ContactEditPageState extends ConsumerState<ContactEditPage> {
   }
 
   Future<void> _pickPhoto(ContactDraft draft) async {
-    final source = await showModalBottomSheet<ImageSource>(
+    final action = await showModalBottomSheet<_PhotoAction>(
       context: context,
       builder: (context) => SafeArea(
         child: Column(
@@ -181,28 +181,34 @@ class _ContactEditPageState extends ConsumerState<ContactEditPage> {
             ListTile(
               leading: const Icon(Icons.photo_library_outlined),
               title: const Text('Choisir une photo'),
-              onTap: () => Navigator.pop(context, ImageSource.gallery),
+              onTap: () => Navigator.pop(context, _PhotoAction.galerie),
             ),
             ListTile(
               leading: const Icon(Icons.photo_camera_outlined),
               title: const Text('Prendre une photo'),
-              onTap: () => Navigator.pop(context, ImageSource.camera),
+              onTap: () => Navigator.pop(context, _PhotoAction.appareilPhoto),
             ),
             if (draft.photoPath != null)
               ListTile(
                 leading: const Icon(Icons.delete_outline),
                 title: const Text('Supprimer la photo'),
-                onTap: () => Navigator.pop(context),
+                onTap: () => Navigator.pop(context, _PhotoAction.supprimer),
               ),
           ],
         ),
       ),
     );
-    if (source == null) {
-      // Fermeture sans choix : c'est aussi le chemin de « Supprimer la photo ».
+    // `null` = feuille refermée sans choisir : à distinguer de « Supprimer la
+    // photo », qui est bien une décision.
+    if (action == null) return;
+
+    if (action == _PhotoAction.supprimer) {
+      draft.photoPath = null;
+      _touch();
       return;
     }
 
+    final source = action == _PhotoAction.galerie ? ImageSource.gallery : ImageSource.camera;
     final picked = await ImagePicker().pickImage(source: source, maxWidth: 1024, imageQuality: 85);
     if (picked == null) return;
     final stored = await ref
@@ -561,3 +567,6 @@ class _ContactEditPageState extends ConsumerState<ContactEditPage> {
     }
   }
 }
+
+/// Ce que l'utilisateur choisit dans la feuille de photo.
+enum _PhotoAction { galerie, appareilPhoto, supprimer }
