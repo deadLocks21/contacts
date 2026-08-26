@@ -1,5 +1,7 @@
+import 'package:contacts/core/domain/model/contact.dart';
 import 'package:contacts/core/domain/model/contact_name.dart';
 import 'package:contacts/core/domain/model/enums.dart';
+import 'package:contacts/core/domain/model/uuid_value.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
@@ -42,6 +44,40 @@ void main() {
       const monoNom = ContactName(last: 'Martin');
       expect(monoNom.sortKey(ContactSortOrder.prenom), 'Martin');
       expect(monoNom.sortKey(ContactSortOrder.nom), 'Martin');
+    });
+  });
+
+  group('Contact', () {
+    Contact build({ContactName name = ContactName.empty, String? company, String? jobTitle}) =>
+        Contact(
+          id: UuidValue.generate(),
+          name: name,
+          company: company,
+          jobTitle: jobTitle,
+          createdAt: DateTime.utc(2026),
+          updatedAt: DateTime.utc(2026),
+        );
+
+    test('une fiche sans nom se présente par sa société', () {
+      final contact = build(company: 'Garage Delaunay');
+
+      expect(contact.displayName(NameFormat.prenomNom), 'Garage Delaunay');
+      expect(contact.initials, 'G');
+    });
+
+    test('ne répète pas la société quand elle sert déjà de nom', () {
+      expect(build(company: 'Garage Delaunay').subtitle, '');
+      expect(build(company: 'Garage Delaunay', jobTitle: 'Carrosserie').subtitle, 'Carrosserie');
+    });
+
+    test('annonce poste et société pour une personne', () {
+      final contact = build(
+        name: const ContactName(first: 'Camille', last: 'Bernard'),
+        company: 'Atelier Bernard',
+        jobTitle: 'Architecte',
+      );
+
+      expect(contact.subtitle, 'Architecte, Atelier Bernard');
     });
   });
 }

@@ -107,9 +107,15 @@ class Contact {
     return fallbacks.firstWhere((f) => f != null && f.isNotEmpty, orElse: () => '') ?? '';
   }
 
-  /// Second ligne de la liste et de la recherche : « Poste, Société ».
-  String get subtitle =>
-      [jobTitle?.trim(), company?.trim()].where((p) => p != null && p.isNotEmpty).join(', ');
+  /// Deuxième ligne de la liste et de la fiche : « Poste, Société ».
+  ///
+  /// La société en est retirée quand c'est elle qui sert de nom (fiche
+  /// d'entreprise, sans personne derrière) : la répéter juste en dessous
+  /// n'apprendrait rien.
+  String get subtitle => [
+    jobTitle?.trim(),
+    if (!name.isEmpty) company?.trim(),
+  ].where((p) => p != null && p.isNotEmpty).join(', ');
 
   /// Initiales de l'avatar ; retombe sur la société pour un contact sans nom.
   String get initials {
