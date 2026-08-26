@@ -1,5 +1,4 @@
 import 'package:contacts/core/domain/model/contact_label.dart';
-import 'package:contacts/ui/widgets/contact_tile.widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
