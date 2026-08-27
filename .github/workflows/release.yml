@@ -7,31 +7,22 @@
 #   1) prepare        Calcule la version (depuis le tag ou pubspec.yaml).
 #
 #   2) Builds parallèle (gate strict) :
-#        build-android      → AAB signé (artifact → Play Store, pas attaché à la
-#                             GitHub Release) + APK universel (sideload, attaché)
-#      Si UN SEUL plante, aucun upload store n'est tenté.
+#        build-android      → APK universel signé (sideload, attaché à la Release)
+#      Si UN SEUL plante, la Release n'est pas créée.
 #
 #   3) build-gate     Job sentinelle qui vérifie que TOUS les builds sont verts.
 #                     C'est le point d'extension : ajouter ici chaque nouveau
 #                     job `build-*`.
 #
-#   4) release        Crée la GitHub Release dès le gate franchi — sans attendre
-#                     les stores (qui coûtent jusqu'à 90 min de processing côté
-#                     Apple, et un temps de review variable côté Google).
-#                     Assets attachés : l'APK universel et le `mapping.txt`.
-#                     PAS l'AAB (non installable directement, déjà publié sur le
-#                     Play Store) — cf. le contrat de nommage documenté dans le job.
+#   4) release        Crée la GitHub Release dès le gate franchi. C'est le
+#                     terminus du pipeline : pas de publication sur les stores.
+#                     Asset attaché : l'APK universel, et lui seul.
 #                     Notes = changelog semantic-release relu depuis le corps
-#                     du commit `chore(release)` taggé (PAS le message
-#                     générique de `release_notes_android.json`, réservé au store).
-#
-#   5) Publishes parallèle (déclenchés APRÈS la GitHub Release) :
-#        publish-android → Play Store piste "internal"
+#                     du commit `chore(release)` taggé.
 #
 # Secrets requis (Settings → Secrets and variables → Actions) :
 #   ANDROID_KEYSTORE_BASE64, ANDROID_KEYSTORE_PASSWORD,
 #   ANDROID_KEY_ALIAS, ANDROID_KEY_PASSWORD,
-#   GCLOUD_SERVICE_ACCOUNT_CREDENTIALS,
 #   SIGNOZ_INGEST_URL, SIGNOZ_INGESTION_KEY
 name: Release
 
@@ -91,9 +82,11 @@ jobs:
     timeout-minutes: 30
 
     env:
-      PACKAGE_NAME: "fr.dtfh.contacts"
-      GCLOUD_SERVICE_ACCOUNT_CREDENTIALS: ${{ secrets.GCLOUD_SERVICE_ACCOUNT_CREDENTIALS }}
       VERSION: ${{ needs.prepare.outputs.version }}
+      # Pas de Play Store ici : le build number ne peut plus être déduit du
+      # dernier build publié, on prend le compteur de run GitHub — monotone
+      # par dépôt, donc suffisant pour distinguer deux APK de même version.
+      BUILD_NUMBER: ${{ github.run_number }}
 
     steps:
       - uses: actions/checkout@v4
@@ -110,14 +103,6 @@ jobs:
           flutter-version: "3.41.7"
           channel: stable
           cache: true
-
-      - name: Setup Python (requis par codemagic-cli-tools)
-        uses: actions/setup-python@v5
-        with:
-          python-version: "3.12"
-
-      - name: Install codemagic-cli-tools
-        run: pip install codemagic-cli-tools
 
       - name: Décoder le keystore upload
         env:
@@ -140,42 +125,18 @@ jobs:
 
       - run: flutter pub get
 
-      - name: Compute build number from Google Play
-        run: |
-          LATEST_BUILD=$(google-play get-latest-build-number \
-            --package-name "$PACKAGE_NAME" \
-            --credentials "@env:GCLOUD_SERVICE_ACCOUNT_CREDENTIALS" \
-            --tracks production beta alpha internal 2>/dev/null || echo 0)
-          BUILD_NUMBER=$((${LATEST_BUILD:-0} + 1))
-          echo "Next Android build number: $BUILD_NUMBER"
-          echo "build_number=$BUILD_NUMBER" >> "$GITHUB_OUTPUT"
-        id: build-number
-
-      - name: Build App Bundle (.aab)
-        env:
-          SIGNOZ_INGEST_URL: ${{ secrets.SIGNOZ_INGEST_URL }}
-          SIGNOZ_INGESTION_KEY: ${{ secrets.SIGNOZ_INGESTION_KEY }}
-        run: |
-          flutter build appbundle --release \
-            --build-name="$VERSION" \
-            --build-number="${{ steps.build-number.outputs.build_number }}" \
-            --dart-define=APP_VERSION="$VERSION+${{ steps.build-number.outputs.build_number }}" \
-            --dart-define=SIGNOZ_INGEST_URL="$SIGNOZ_INGEST_URL" \
-            --dart-define=SIGNOZ_INGESTION_KEY="$SIGNOZ_INGESTION_KEY" \
-            --dart-define=SIGNOZ_ENV="$SIGNOZ_ENV"
-
       - name: Build APK (.apk)
         # APK universel attaché à la GitHub Release pour install directe /
-        # sideload. Le Play Store reçoit l'AAB (cf. job publish-android) ;
-        # l'APK ne sert qu'à la distribution hors store. Mêmes `--dart-define`.
+        # sideload — seul format produit, faute de canal store (l'AAB ne sert
+        # qu'au Play Store).
         env:
           SIGNOZ_INGEST_URL: ${{ secrets.SIGNOZ_INGEST_URL }}
           SIGNOZ_INGESTION_KEY: ${{ secrets.SIGNOZ_INGESTION_KEY }}
         run: |
           flutter build apk --release \
             --build-name="$VERSION" \
-            --build-number="${{ steps.build-number.outputs.build_number }}" \
-            --dart-define=APP_VERSION="$VERSION+${{ steps.build-number.outputs.build_number }}" \
+            --build-number="$BUILD_NUMBER" \
+            --dart-define=APP_VERSION="$VERSION+$BUILD_NUMBER" \
             --dart-define=SIGNOZ_INGEST_URL="$SIGNOZ_INGEST_URL" \
             --dart-define=SIGNOZ_INGESTION_KEY="$SIGNOZ_INGESTION_KEY" \
             --dart-define=SIGNOZ_ENV="$SIGNOZ_ENV"
@@ -188,14 +149,12 @@ jobs:
           mv build/app/outputs/flutter-apk/app-release.apk \
              "build/app/outputs/flutter-apk/contacts-android-${VERSION}.apk"
 
-      - name: Upload AAB + APK + mapping artifact
+      - name: Upload APK artifact
         uses: actions/upload-artifact@v4
         with:
           name: contacts-android
           path: |
-            build/app/outputs/bundle/release/*.aab
             build/app/outputs/flutter-apk/*.apk
-            build/app/outputs/mapping/release/mapping.txt
           retention-days: 14
           if-no-files-found: error
 
@@ -221,8 +180,8 @@ jobs:
 
   release:
     name: Create GitHub Release
-    # Déclenchée dès que le gate est franchi. La GitHub Release sort AVANT les
-    # publications stores, qui en dépendent (publish-* → needs: release).
+    # Déclenchée dès que le gate est franchi, et terminus du pipeline : rien
+    # n'est publié sur les stores.
     # NB : `prepare` DOIT rester dans needs — needs.<job>.outputs n'est exposé
     # qu'aux dépendances directes ; sans lui, needs.prepare.outputs.version est
     # vide et le titre devient « Contacts v ».
@@ -252,9 +211,7 @@ jobs:
         # semantic-release (côté GitLab CI) génère déjà le changelog
         # conventionnel et l'écrit dans le CORPS du commit
         # `chore(release): X.Y.Z` — celui-là même sur lequel pointe le tag
-        # `vX.Y.Z` qui déclenche ce workflow. On le relit ici plutôt que de
-        # publier le message générique de `release_notes_android.json` (qui
-        # reste réservé au store, cf. job publish-android).
+        # `vX.Y.Z` qui déclenche ce workflow.
         run: |
           set -euo pipefail
 
@@ -291,16 +248,10 @@ jobs:
           # minuscules, sans numéro de run (la version du tag suffit à situer le
           # binaire).
           #
-          # L'AAB n'est volontairement PAS attaché : il n'est pas installable par
-          # un utilisateur (il ne sert qu'au Play Store) et il est déjà publié
-          # par le job publish-android. L'APK universel, lui, reste attaché pour
-          # le sideload.
-          #
-          # `mapping.txt` EST attaché volontairement : R8 est actif (le plugin
-          # Gradle de Flutter l'active par défaut en release), et cette table de
-          # désobfuscation est le seul moyen de relire les stack traces des
-          # crashs de la version publiée. C'est le seul asset non installable
-          # qu'on garde — il ne pèse rien à côté des binaires.
+          # SEUL l'APK est attaché : on ne publie rien d'autre, ni AAB (non
+          # installable, réservé au Play Store) ni `mapping.txt` (table de
+          # désobfuscation R8 — utile pour relire les stack traces, mais qu'on
+          # ne veut pas diffuser publiquement ici).
           #
           # On n'attache par ailleurs que les assets réellement présents :
           # passer un argument vide à `gh release create` fait échouer la commande.
@@ -310,8 +261,7 @@ jobs:
             [ -n "$f" ] || continue
             echo "  - $f"
             ASSETS+=("$f")
-          done < <(find artifacts -type f \
-            \( -name '*.apk' -o -name 'mapping.txt' \) | sort)
+          done < <(find artifacts -type f -name '*.apk' | sort)
 
           if [ ${#ASSETS[@]} -eq 0 ]; then
             echo "ERROR: no release assets found"
@@ -333,45 +283,3 @@ jobs:
             --title "Contacts v$VERSION" \
             --notes-file notes.md \
             "${ASSETS[@]}"
-
-  # ═══════════════════════════════════════════════════════════════════════
-  # PUBLISHES — Uploads stores (déclenchés APRÈS la GitHub Release)
-  # ═══════════════════════════════════════════════════════════════════════
-
-  publish-android:
-    name: Publish Android to Play Store
-    needs: [release]
-    # ubuntu-latest : `google-play bundles publish` utilise l'API Google
-    # directement (pas de dépendance macOS).
-    runs-on: ubuntu-latest
-    timeout-minutes: 20
-
-    env:
-      GCLOUD_SERVICE_ACCOUNT_CREDENTIALS: ${{ secrets.GCLOUD_SERVICE_ACCOUNT_CREDENTIALS }}
-
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Setup Python (requis par codemagic-cli-tools)
-        uses: actions/setup-python@v5
-        with:
-          python-version: "3.12"
-
-      - name: Install codemagic-cli-tools
-        run: pip install codemagic-cli-tools
-
-      - name: Download Android artifact
-        uses: actions/download-artifact@v4
-        with:
-          name: contacts-android
-          path: artifacts/
-
-      - name: Publish to Play Store (internal track)
-        run: |
-          AAB_PATH=$(find artifacts -type f -name '*.aab' | head -1)
-          echo "Uploading: $AAB_PATH"
-          google-play bundles publish \
-            --credentials "@env:GCLOUD_SERVICE_ACCOUNT_CREDENTIALS" \
-            --bundle "$AAB_PATH" \
-            --track internal \
-            --release-notes "@file:release_notes_android.json"
