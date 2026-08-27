@@ -10,6 +10,7 @@ import 'package:contacts/infrastructure/contacts/local.contact.repository.dart';
 import 'package:contacts/infrastructure/labels/flutter_contacts.label.repository.dart';
 import 'package:contacts/infrastructure/labels/local.label.repository.dart';
 import 'package:contacts/infrastructure/providers/infra_providers.dart';
+import 'package:contacts/infrastructure/providers/logger.service_provider.dart';
 import 'package:contacts/infrastructure/trash/local.trash.repository.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
@@ -21,7 +22,7 @@ part 'repository_providers.g.dart';
 @Riverpod(keepAlive: true)
 ContactRepository contactRepository(Ref ref) {
   if (ref.watch(useDeviceContactsProvider)) {
-    final repository = FlutterContactsContactRepository();
+    final repository = FlutterContactsContactRepository(ref.watch(loggerProvider));
     ref.onDispose(repository.dispose);
     return repository;
   }
@@ -31,7 +32,7 @@ ContactRepository contactRepository(Ref ref) {
 @Riverpod(keepAlive: true)
 LabelRepository labelRepository(Ref ref) {
   if (ref.watch(useDeviceContactsProvider)) {
-    final repository = FlutterContactsLabelRepository();
+    final repository = FlutterContactsLabelRepository(ref.watch(loggerProvider));
     ref.onDispose(repository.dispose);
     return repository;
   }
@@ -53,7 +54,11 @@ class ContactsPermission extends _$ContactsPermission {
   /// Redemande l'accès — le bouton « Autoriser » de l'écran d'accueil.
   Future<void> retry() async {
     state = const AsyncLoading();
-    state = AsyncData(await ref.read(contactsAccessProvider).request());
+    final granted = await ref.read(contactsAccessProvider).request();
+    // Un second refus se distingue du premier : c'est le signe que l'accès a
+    // été coupé dans les réglages du système, où l'app ne peut plus rien.
+    await ref.read(loggerProvider).info('contacts.permission.retried', attrs: {'granted': granted});
+    state = AsyncData(granted);
   }
 }
 

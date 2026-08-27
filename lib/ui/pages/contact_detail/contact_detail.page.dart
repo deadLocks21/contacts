@@ -82,28 +82,28 @@ class ContactDetailPage extends ConsumerWidget {
                   ContactFieldRows(
                     icon: Icons.call_outlined,
                     fields: contact.phones,
-                    onTap: (field) => dial(field.rawValue),
+                    onTap: (field) => dial(ref, field.rawValue),
                     trailingBuilder: (field) => IconButton(
                       tooltip: 'Envoyer un SMS',
                       icon: Icon(Icons.chat_bubble_outline, size: 20, color: colors.accent),
-                      onPressed: () => sendSms(field.rawValue),
+                      onPressed: () => sendSms(ref, field.rawValue),
                     ),
                   ),
                   ContactFieldRows(
                     icon: Icons.mail_outline,
                     fields: contact.emails,
-                    onTap: (field) => sendEmail(field.rawValue),
+                    onTap: (field) => sendEmail(ref, field.rawValue),
                   ),
                   ContactFieldRows(
                     icon: Icons.location_on_outlined,
                     fields: contact.addresses,
-                    onTap: (field) => openMap(field.rawValue),
+                    onTap: (field) => openMap(ref, field.rawValue),
                   ),
                   ContactFieldRows(icon: Icons.cake_outlined, fields: contact.events),
                   ContactFieldRows(
                     icon: Icons.link,
                     fields: contact.websites,
-                    onTap: (field) => openUrl(field.rawValue),
+                    onTap: (field) => openUrl(ref, field.rawValue),
                   ),
                   ContactFieldRows(icon: Icons.people_outline, fields: contact.relations),
                   ContactFieldRows(icon: Icons.forum_outlined, fields: contact.chats),

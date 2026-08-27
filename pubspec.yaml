@@ -32,6 +32,9 @@ dependencies:
   path: ^1.9.1
   shared_preferences: ^2.5.4
 
+  # Journal applicatif — expédition OTLP/HTTP vers Signoz
+  http: ^1.6.0
+
   # Divers
   uuid: ^4.5.1
   intl: ^0.20.2

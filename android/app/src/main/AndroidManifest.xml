@@ -2,6 +2,12 @@
     <!-- Le carnet d'adresses du système est la source de vérité de l'app. -->
     <uses-permission android:name="android.permission.READ_CONTACTS"/>
     <uses-permission android:name="android.permission.WRITE_CONTACTS"/>
+    <!-- Le seul usage du réseau : l'envoi du journal applicatif à Signoz, et
+         seulement si le build a reçu un SIGNOZ_INGEST_URL. Sans cette ligne,
+         les builds de release en seraient incapables — les manifestes `debug`
+         et `profile` la portent déjà, ce qui rend la panne invisible en
+         développement. Le carnet, lui, ne quitte pas l'appareil. -->
+    <uses-permission android:name="android.permission.INTERNET"/>
     <application
         android:label="Contacts"
         android:name="${applicationName}"

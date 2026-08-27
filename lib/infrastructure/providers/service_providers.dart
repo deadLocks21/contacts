@@ -27,6 +27,7 @@ import 'package:contacts/core/application/usecases/set_contact_options.usecase.d
 import 'package:contacts/core/application/usecases/toggle_star.usecase.dart';
 import 'package:contacts/core/application/usecases/update_settings.usecase.dart';
 import 'package:contacts/infrastructure/providers/infra_providers.dart';
+import 'package:contacts/infrastructure/providers/logger.service_provider.dart';
 import 'package:contacts/infrastructure/providers/repository_providers.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
@@ -38,16 +39,17 @@ part 'service_providers.g.dart';
 ContactsApplicationService contactsService(Ref ref) {
   final contacts = ref.watch(contactRepositoryProvider);
   final labels = ref.watch(labelRepositoryProvider);
+  final logger = ref.watch(loggerProvider);
   return ContactsApplicationService(
     list: ListContactsUseCase(contacts),
     highlights: ListHighlightsUseCase(contacts),
     get: GetContactUseCase(contacts, labels),
     loadDraft: LoadContactDraftUseCase(contacts),
-    save: SaveContactUseCase(contacts),
+    save: SaveContactUseCase(contacts, logger),
     search: SearchContactsUseCase(contacts),
-    toggleStar: ToggleStarUseCase(contacts),
-    moveToTrash: MoveToTrashUseCase(contacts, ref.watch(trashRepositoryProvider)),
-    setOptions: SetContactOptionsUseCase(contacts),
+    toggleStar: ToggleStarUseCase(contacts, logger),
+    moveToTrash: MoveToTrashUseCase(contacts, ref.watch(trashRepositoryProvider), logger),
+    setOptions: SetContactOptionsUseCase(contacts, logger),
   );
 }
 
@@ -55,12 +57,13 @@ ContactsApplicationService contactsService(Ref ref) {
 LabelsApplicationService labelsService(Ref ref) {
   final contacts = ref.watch(contactRepositoryProvider);
   final labels = ref.watch(labelRepositoryProvider);
+  final logger = ref.watch(loggerProvider);
   return LabelsApplicationService(
     list: ListLabelsUseCase(labels, contacts),
-    create: CreateLabelUseCase(labels),
-    rename: RenameLabelUseCase(labels),
-    delete: DeleteLabelUseCase(labels, contacts),
-    apply: ApplyLabelUseCase(contacts),
+    create: CreateLabelUseCase(labels, logger),
+    rename: RenameLabelUseCase(labels, logger),
+    delete: DeleteLabelUseCase(labels, contacts, logger),
+    apply: ApplyLabelUseCase(contacts, logger),
   );
 }
 
@@ -69,15 +72,16 @@ OrganizeApplicationService organizeService(Ref ref) {
   final contacts = ref.watch(contactRepositoryProvider);
   final labels = ref.watch(labelRepositoryProvider);
   final trash = ref.watch(trashRepositoryProvider);
+  final logger = ref.watch(loggerProvider);
   return OrganizeApplicationService(
     listDuplicates: ListDuplicatesUseCase(contacts),
-    merge: MergeContactsUseCase(contacts),
-    importVCard: ImportVCardUseCase(contacts, labels),
-    exportVCard: ExportVCardUseCase(contacts, labels),
+    merge: MergeContactsUseCase(contacts, logger),
+    importVCard: ImportVCardUseCase(contacts, labels, logger),
+    exportVCard: ExportVCardUseCase(contacts, labels, logger),
     listTrash: ListTrashUseCase(trash),
-    restore: RestoreFromTrashUseCase(contacts, trash),
-    deleteForever: DeleteForeverUseCase(trash),
-    purgeExpired: PurgeExpiredTrashUseCase(trash),
+    restore: RestoreFromTrashUseCase(contacts, trash, logger),
+    deleteForever: DeleteForeverUseCase(trash, logger),
+    purgeExpired: PurgeExpiredTrashUseCase(trash, logger),
   );
 }
 
@@ -86,6 +90,6 @@ SettingsApplicationService settingsService(Ref ref) {
   final repository = ref.watch(settingsRepositoryProvider);
   return SettingsApplicationService(
     load: LoadSettingsUseCase(repository),
-    update: UpdateSettingsUseCase(repository),
+    update: UpdateSettingsUseCase(repository, ref.watch(loggerProvider)),
   );
 }

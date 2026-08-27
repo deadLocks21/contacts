@@ -3,6 +3,7 @@ import 'package:contacts/ui/theme/app_colors.dart';
 import 'package:contacts/ui/utils/contact_actions.dart';
 import 'package:contacts/ui/widgets/contact_avatar.widget.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 /// Haut de la fiche : grande pastille, nom, poste et société, puis la rangée
 /// d'actions rapides (appeler, message, vidéo, e-mail).
@@ -10,13 +11,13 @@ import 'package:flutter/material.dart';
 /// Une action sans donnée derrière elle est **grisée** plutôt que masquée :
 /// la rangée garde la même forme d'une fiche à l'autre, et l'absence de
 /// numéro se lit d'un coup d'œil.
-class ContactHeader extends StatelessWidget {
+class ContactHeader extends ConsumerWidget {
   const ContactHeader({super.key, required this.contact});
 
   final ContactDetailDto contact;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final colors = context.appColors;
     final phone = contact.primaryPhone;
     final email = contact.primaryEmail;
@@ -62,22 +63,22 @@ class ContactHeader extends StatelessWidget {
             _QuickAction(
               icon: Icons.call,
               label: 'Appeler',
-              onTap: phone == null ? null : () => dial(phone),
+              onTap: phone == null ? null : () => dial(ref, phone),
             ),
             _QuickAction(
               icon: Icons.chat_bubble_outline,
               label: 'Message',
-              onTap: phone == null ? null : () => sendSms(phone),
+              onTap: phone == null ? null : () => sendSms(ref, phone),
             ),
             _QuickAction(
               icon: Icons.videocam_outlined,
               label: 'Vidéo',
-              onTap: phone == null ? null : () => dial(phone),
+              onTap: phone == null ? null : () => dial(ref, phone),
             ),
             _QuickAction(
               icon: Icons.mail_outline,
               label: 'E-mail',
-              onTap: email == null ? null : () => sendEmail(email),
+              onTap: email == null ? null : () => sendEmail(ref, email),
             ),
           ],
         ),

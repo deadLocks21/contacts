@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:contacts/core/application/services/logger_application.service.dart';
 import 'package:contacts/core/domain/model/chat_address.dart';
 import 'package:contacts/core/domain/model/contact.dart';
 import 'package:contacts/core/domain/model/contact_event.dart';
@@ -21,18 +22,26 @@ import 'package:flutter_contacts/flutter_contacts.dart' as fc;
 /// messagerie et toutes les autres apps : l'app n'a pas de carnet à elle.
 ///
 /// Sans permission, [listAll] rend une liste vide plutôt que de lever : l'UI
-/// propose alors d'ouvrir l'accès, ce qui est plus utile qu'une erreur.
+/// propose alors d'ouvrir l'accès, ce qui est plus utile qu'une erreur. Ce
+/// silence-là est justement ce que le journal rattrape : une liste vide sans un
+/// mot ne se distingue pas d'un carnet vide.
 class FlutterContactsContactRepository implements ContactRepository {
-  FlutterContactsContactRepository() {
+  FlutterContactsContactRepository(this._logger) {
     // Le carnet change aussi depuis les autres apps : on relaie ses
     // notifications pour que la liste affichée ne mente jamais longtemps.
     _listener = () => _bump();
     fc.FlutterContacts.addListener(_listener);
   }
 
+  final LoggerApplicationService _logger;
   final _controller = StreamController<int>.broadcast();
   late final void Function() _listener;
   var _revision = 0;
+
+  /// Le refus d'accès n'est journalisé qu'une fois par état : sans ce garde-fou,
+  /// chaque rafraîchissement de la liste — il y en a un par écriture, d'où
+  /// qu'elle vienne — écrirait la même ligne.
+  var _permissionDenialLogged = false;
 
   void _bump() => _controller.add(++_revision);
 
@@ -44,60 +53,99 @@ class FlutterContactsContactRepository implements ContactRepository {
   @override
   Stream<int> get changes => _controller.stream;
 
-  Future<bool> _ensurePermission({bool readonly = false}) async {
+  Future<bool> _ensurePermission(String operation, {bool readonly = false}) async {
     final granted = await fc.FlutterContacts.requestPermission(readonly: readonly);
     if (granted) {
       // Les fiches d'un compte que le carnet masque par défaut restent des
       // contacts : les exclure ferait disparaître ce qu'une autre app a créé.
       fc.FlutterContacts.config.includeNonVisibleOnAndroid = true;
+      _permissionDenialLogged = false;
+      return true;
     }
-    return granted;
+    if (!_permissionDenialLogged) {
+      _permissionDenialLogged = true;
+      await _logger.warn(
+        'contacts.permission.denied',
+        attrs: {'operation': operation, 'readonly': readonly},
+      );
+    }
+    return false;
+  }
+
+  /// Journalise puis relance ce que le carnet du système refuse.
+  ///
+  /// Ces échecs-là — canal natif indisponible, fiche d'un compte en lecture
+  /// seule, quota du fournisseur — n'ont aucun équivalent hors appareil : sans
+  /// cette trace, ils n'existent que dans la console d'un téléphone qu'on n'a
+  /// pas sous la main.
+  Future<T> _guard<T>(
+    String operation,
+    Future<T> Function() body, {
+    Map<String, Object?> attrs = const {},
+  }) async {
+    try {
+      return await body();
+    } catch (e, st) {
+      await _logger.error(
+        'contacts.backend.failed',
+        attrs: {'operation': operation, ...attrs},
+        error: e,
+        stack: st,
+      );
+      rethrow;
+    }
   }
 
   @override
   Future<List<Contact>> listAll() async {
-    if (!await _ensurePermission(readonly: true)) return const [];
-    final contacts = await fc.FlutterContacts.getContacts(
-      withProperties: true,
-      withThumbnail: true,
-      withGroups: true,
-    );
-    return [for (final c in contacts) _toDomain(c)];
+    if (!await _ensurePermission('listAll', readonly: true)) return const [];
+    return _guard('listAll', () async {
+      final contacts = await fc.FlutterContacts.getContacts(
+        withProperties: true,
+        withThumbnail: true,
+        withGroups: true,
+      );
+      return [for (final c in contacts) _toDomain(c)];
+    });
   }
 
   @override
   Future<Contact?> getById(String id) async {
-    if (!await _ensurePermission(readonly: true)) return null;
-    final contact = await fc.FlutterContacts.getContact(
-      id,
-      withProperties: true,
-      withPhoto: true,
-      withGroups: true,
-    );
-    return contact == null ? null : _toDomain(contact);
+    if (!await _ensurePermission('getById', readonly: true)) return null;
+    return _guard('getById', attrs: {'contact.id': id}, () async {
+      final contact = await fc.FlutterContacts.getContact(
+        id,
+        withProperties: true,
+        withPhoto: true,
+        withGroups: true,
+      );
+      return contact == null ? null : _toDomain(contact);
+    });
   }
 
   @override
   Future<String> save(Contact contact) async {
-    if (!await _ensurePermission()) return contact.id.value;
+    if (!await _ensurePermission('save')) return contact.id.value;
 
-    // Une fiche peut porter un identifiant que le carnet ne connaît pas : soit
-    // elle vient d'être créée, soit elle revient de la corbeille. Dans les deux
-    // cas c'est une insertion, et c'est le système qui alloue l'identifiant.
-    final existing = await fc.FlutterContacts.getContact(
-      contact.id.value,
-      withProperties: true,
-      withGroups: true,
-    );
+    return _guard('save', attrs: {'contact.id': contact.id.value}, () async {
+      // Une fiche peut porter un identifiant que le carnet ne connaît pas : soit
+      // elle vient d'être créée, soit elle revient de la corbeille. Dans les deux
+      // cas c'est une insertion, et c'est le système qui alloue l'identifiant.
+      final existing = await fc.FlutterContacts.getContact(
+        contact.id.value,
+        withProperties: true,
+        withGroups: true,
+      );
 
-    if (existing == null) {
-      final inserted = await fc.FlutterContacts.insertContact(_toNative(contact, fc.Contact()));
+      if (existing == null) {
+        final inserted = await fc.FlutterContacts.insertContact(_toNative(contact, fc.Contact()));
+        _bump();
+        return inserted.id;
+      }
+      await fc.FlutterContacts.updateContact(_toNative(contact, existing));
       _bump();
-      return inserted.id;
-    }
-    await fc.FlutterContacts.updateContact(_toNative(contact, existing));
-    _bump();
-    return existing.id;
+      return existing.id;
+    });
   }
 
   @override
@@ -110,9 +158,11 @@ class FlutterContactsContactRepository implements ContactRepository {
   @override
   Future<void> delete(Iterable<String> ids) async {
     if (ids.isEmpty) return;
-    if (!await _ensurePermission()) return;
-    await fc.FlutterContacts.deleteContacts([for (final id in ids) fc.Contact(id: id)]);
-    _bump();
+    if (!await _ensurePermission('delete')) return;
+    await _guard('delete', attrs: {'contacts.count': ids.length}, () async {
+      await fc.FlutterContacts.deleteContacts([for (final id in ids) fc.Contact(id: id)]);
+      _bump();
+    });
   }
 
   // ------------------------------------------------------------- lecture

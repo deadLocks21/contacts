@@ -29,6 +29,7 @@ void main() {
       await MoveToTrashUseCase(
         harness.contacts,
         harness.trash,
+        harness.logger,
       ).execute([contact.id.value], now: testNow);
 
       expect(await harness.contacts.listAll(), isEmpty);
@@ -54,6 +55,7 @@ void main() {
       await RestoreFromTrashUseCase(
         harness.contacts,
         harness.trash,
+        harness.logger,
       ).execute([contact.id.value], now: testNow);
 
       final restored = (await harness.contacts.listAll()).single;
@@ -66,7 +68,7 @@ void main() {
       final contact = aContact(first: 'Marie', deletedAt: testNow);
       await harness.trash.put([contact]);
 
-      await DeleteForeverUseCase(harness.trash).execute([contact.id.value]);
+      await DeleteForeverUseCase(harness.trash, harness.logger).execute([contact.id.value]);
 
       expect(await harness.trash.listAll(), isEmpty);
       expect(await harness.contacts.listAll(), isEmpty);
@@ -78,7 +80,10 @@ void main() {
         aContact(first: 'Récent', deletedAt: testNow.subtract(const Duration(days: 3))),
       ]);
 
-      final purged = await PurgeExpiredTrashUseCase(harness.trash).execute(now: testNow);
+      final purged = await PurgeExpiredTrashUseCase(
+        harness.trash,
+        harness.logger,
+      ).execute(now: testNow);
 
       expect(purged, 1);
       expect((await harness.trash.listAll()).single.name.first, 'Récent');
@@ -127,6 +132,7 @@ void main() {
 
       final id = await MergeContactsUseCase(
         harness.contacts,
+        harness.logger,
       ).execute([ancienne.id.value, recente.id.value], now: testNow);
 
       final all = await harness.contacts.listAll();
@@ -142,7 +148,11 @@ void main() {
     test('exporte tout le carnet', () async {
       await harness.contacts.saveAll([aContact(first: 'Marie'), aContact(first: 'Marc')]);
 
-      final vcf = await ExportVCardUseCase(harness.contacts, harness.labels).execute();
+      final vcf = await ExportVCardUseCase(
+        harness.contacts,
+        harness.labels,
+        harness.logger,
+      ).execute();
 
       expect('BEGIN:VCARD'.allMatches(vcf).length, 2);
       expect(vcf, contains('FN:Marie'));
@@ -155,6 +165,7 @@ void main() {
       final vcf = await ExportVCardUseCase(
         harness.contacts,
         harness.labels,
+        harness.logger,
       ).execute(ids: [marie.id.value]);
 
       expect(vcf, contains('FN:Marie'));
@@ -168,6 +179,7 @@ void main() {
       final report = await ImportVCardUseCase(
         harness.contacts,
         harness.labels,
+        harness.logger,
       ).execute(source, now: testNow);
 
       expect(report.imported, 1);
@@ -182,6 +194,7 @@ void main() {
       final report = await ImportVCardUseCase(
         harness.contacts,
         harness.labels,
+        harness.logger,
       ).execute(source, now: testNow);
 
       expect(report.labelsCreated, 2);
@@ -199,6 +212,7 @@ void main() {
       final report = await ImportVCardUseCase(
         harness.contacts,
         harness.labels,
+        harness.logger,
       ).execute(source, now: testNow);
 
       expect(report.labelsCreated, 0);
@@ -218,9 +232,17 @@ void main() {
         aContact(first: 'Marc', last: 'Lambert', emails: ['marc@lambert.fr']),
       ]);
 
-      final vcf = await ExportVCardUseCase(harness.contacts, harness.labels).execute();
+      final vcf = await ExportVCardUseCase(
+        harness.contacts,
+        harness.labels,
+        harness.logger,
+      ).execute();
       final vierge = Harness();
-      await ImportVCardUseCase(vierge.contacts, vierge.labels).execute(vcf, now: testNow);
+      await ImportVCardUseCase(
+        vierge.contacts,
+        vierge.labels,
+        harness.logger,
+      ).execute(vcf, now: testNow);
 
       final reimported = await vierge.contacts.listAll();
       expect(reimported.length, 2);

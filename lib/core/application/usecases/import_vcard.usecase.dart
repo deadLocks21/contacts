@@ -1,3 +1,4 @@
+import 'package:contacts/core/application/services/logger_application.service.dart';
 import 'package:contacts/core/application/services/text_normalizer.service.dart';
 import 'package:contacts/core/application/services/vcard.service.dart';
 import 'package:contacts/core/domain/model/contact_label.dart';
@@ -14,14 +15,29 @@ typedef ImportReport = ({int imported, int labelsCreated});
 /// et laisse « Fusionner et corriger » réconcilier les doublons éventuels.
 /// Les étiquettes citées (`CATEGORIES`) qui n'existent pas encore sont créées.
 class ImportVCardUseCase {
-  const ImportVCardUseCase(this._contacts, this._labels);
+  const ImportVCardUseCase(this._contacts, this._labels, this._logger);
 
   final ContactRepository _contacts;
   final LabelRepository _labels;
+  final LoggerApplicationService _logger;
 
   Future<ImportReport> execute(String source, {DateTime? now}) async {
     final at = now ?? DateTime.now();
-    final parsed = VCard.parse(source, now: at);
+    final List<ImportedContact> parsed;
+    try {
+      parsed = VCard.parse(source, now: at);
+    } catch (e, st) {
+      // Un fichier qui ne passe pas l'analyse est le premier motif de « l'import
+      // n'a rien fait » : la taille de la source aide à distinguer le fichier
+      // vide du fichier mal formé.
+      await _logger.warn(
+        'vcard.import.failed',
+        attrs: {'vcard.length': source.length},
+        error: e,
+        stack: st,
+      );
+      rethrow;
+    }
 
     final existing = await _labels.listAll();
     final byName = {for (final l in existing) TextNormalizer.normalize(l.name): l};
@@ -55,6 +71,10 @@ class ImportVCardUseCase {
     ];
     await _contacts.saveAll(contacts);
 
+    await _logger.info(
+      'vcard.imported',
+      attrs: {'contacts.count': contacts.length, 'labels.created': labelsCreated},
+    );
     return (imported: contacts.length, labelsCreated: labelsCreated);
   }
 }

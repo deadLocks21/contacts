@@ -12,15 +12,22 @@ UI → Application → Domain ← Infrastructure
    - ❌ Pas de Riverpod · ❌ pas de Flutter · ❌ pas d'HTTP. ✅ logique métier pure.
    - `model/` : entités (champs `final`, invariants par `assert`, `copyWith`/`==`/`hashCode`
      manuels), value objects (`UuidValue`, `ContactName`), enums avec `wire`/`fromWire`/`label`.
-   - `services/` : interfaces de ports (`*.repository.dart`, `*.service.dart`).
+   - `services/` : interfaces de ports (`*.repository.dart`, `*.service.dart`) —
+     dont `logger.service.dart`, le port du journal.
 2. **Application** (`lib/core/application/`) ne dépend que de Domain — Dart pur.
    - `dtos/` : DTOs (`fromDomain`/`toDomain`/`fromJson`/`toJson`, dates ISO-8601, enums via
      `.name`). **L'UI ne manipule que des DTOs.**
    - `usecases/` : un cas d'usage = une classe `NameUseCase` (ports en dépendances).
    - `services/` : orchestration applicative (regroupement alphabétique, détection de
-     doublons, fusion, vCard).
+     doublons, fusion, vCard) et `LoggerApplicationService`, la façade du journal
+     (`info`/`warn`/`error`, contexte fusionné) que prennent les cas d'usage qui écrivent.
 3. **Infrastructure** (`lib/infrastructure/`) ne dépend que de Domain. **Seul lieu de Riverpod.**
    - Implémentations concrètes (`sqflite.*`, `in_memory.*`, `shared_prefs.*`).
+   - `logger/` : adaptateurs du journal — `console.*` (développement), `signoz.*`
+     (OTLP/HTTP, avec accumulation en lots), `composite.*` (les deux à la fois),
+     `in_memory.*` (tests).
+   - `observability/` : `LoggingProviderObserver` (journalise tout provider qui échoue)
+     et `RouteTracker` (l'écran courant, attaché à chaque ligne).
    - `providers/` : providers Riverpod (`@riverpod`, `*.g.dart`) — assemblage des dépendances.
 4. **UI** (`lib/ui/`) ne dépend que d'Application (et des interfaces Domain via providers).
    - `pages/<feature>/*.page.dart`, `widgets/*.widget.dart`, `providers/*.provider.dart`.
@@ -36,6 +43,20 @@ UI → Application → Domain ← Infrastructure
   le codegen Riverpod. Lint : `flutter_lints` + `riverpod_lint`.
 - Chaque interface a une impl réelle **et** une impl `InMemory*` (tests, repli).
 - **Tests** : miroir de `lib/` avec les `InMemory*` comme doublures (pas de mockito).
+
+## Journal
+
+Le journal traverse les couches comme n'importe quel autre port : interface dans
+`domain/services/`, façade dans `application/services/`, adaptateurs dans
+`infrastructure/logger/`. Les cas d'usage qui **écrivent** le reçoivent en
+dépendance et disent ce qu'ils ont fait ; ceux qui lisent ne le prennent pas —
+leurs échecs passent tous par un provider, et `LoggingProviderObserver` les
+attrape à la racine. Un filet, pas quinze `try`/`catch`.
+
+`main()` branche le reste : `FlutterError.onError`, `PlatformDispatcher.onError`
+et l'expédition du tampon au passage en arrière-plan. Voir
+[README, « Observabilité »](README.md#observabilité) pour ce qui part, et ce qui
+ne part jamais.
 
 ## Source de vérité
 

@@ -15,7 +15,7 @@ void main() {
   setUp(() => harness = Harness());
 
   test('crée une étiquette et la retrouve triée alphabétiquement', () async {
-    final create = CreateLabelUseCase(harness.labels);
+    final create = CreateLabelUseCase(harness.labels, harness.logger);
     await create.execute('Travail', now: testNow);
     await create.execute('Amis', now: testNow);
 
@@ -25,7 +25,7 @@ void main() {
   });
 
   test('refuse un nom déjà pris, accents et casse ignorés', () async {
-    final create = CreateLabelUseCase(harness.labels);
+    final create = CreateLabelUseCase(harness.labels, harness.logger);
     await create.execute('Élèves', now: testNow);
 
     expect(
@@ -35,11 +35,15 @@ void main() {
   });
 
   test('compte les contacts de chaque étiquette', () async {
-    final id = await CreateLabelUseCase(harness.labels).execute('Travail', now: testNow);
+    final id = await CreateLabelUseCase(
+      harness.labels,
+      harness.logger,
+    ).execute('Travail', now: testNow);
     final contact = aContact(first: 'Marie');
     await harness.contacts.save(contact);
     await ApplyLabelUseCase(
       harness.contacts,
+      harness.logger,
     ).execute([contact.id.value], id, apply: true, now: testNow);
 
     final labels = await ListLabelsUseCase(harness.labels, harness.contacts).execute();
@@ -48,10 +52,13 @@ void main() {
   });
 
   test('retirer une étiquette d\'une fiche ne supprime pas la fiche', () async {
-    final id = await CreateLabelUseCase(harness.labels).execute('Travail', now: testNow);
+    final id = await CreateLabelUseCase(
+      harness.labels,
+      harness.logger,
+    ).execute('Travail', now: testNow);
     final contact = aContact(first: 'Marie');
     await harness.contacts.save(contact);
-    final apply = ApplyLabelUseCase(harness.contacts);
+    final apply = ApplyLabelUseCase(harness.contacts, harness.logger);
     await apply.execute([contact.id.value], id, apply: true, now: testNow);
 
     await apply.execute([contact.id.value], id, apply: false, now: testNow);
@@ -60,25 +67,33 @@ void main() {
   });
 
   test('renommer refuse de créer un homonyme', () async {
-    final create = CreateLabelUseCase(harness.labels);
+    final create = CreateLabelUseCase(harness.labels, harness.logger);
     final id = await create.execute('Travail', now: testNow);
     await create.execute('Amis', now: testNow);
 
     expect(
-      () => RenameLabelUseCase(harness.labels).execute(id, 'amis', now: testNow),
+      () => RenameLabelUseCase(harness.labels, harness.logger).execute(id, 'amis', now: testNow),
       throwsA(isA<LabelAlreadyExistsException>()),
     );
   });
 
   test('supprimer une étiquette conserve les contacts et retire la référence', () async {
-    final id = await CreateLabelUseCase(harness.labels).execute('Travail', now: testNow);
+    final id = await CreateLabelUseCase(
+      harness.labels,
+      harness.logger,
+    ).execute('Travail', now: testNow);
     final contact = aContact(first: 'Marie');
     await harness.contacts.save(contact);
     await ApplyLabelUseCase(
       harness.contacts,
+      harness.logger,
     ).execute([contact.id.value], id, apply: true, now: testNow);
 
-    await DeleteLabelUseCase(harness.labels, harness.contacts).execute(id, now: testNow);
+    await DeleteLabelUseCase(
+      harness.labels,
+      harness.contacts,
+      harness.logger,
+    ).execute(id, now: testNow);
 
     expect(await harness.labels.listAll(), isEmpty);
     final kept = await harness.contacts.getById(contact.id.value);

@@ -60,7 +60,7 @@ final class ContactsServiceProvider
   }
 }
 
-String _$contactsServiceHash() => r'bc6570719685beab0b3a4ce4a4e8123e40f47f1a';
+String _$contactsServiceHash() => r'0a1dba20935db3fcd3cbbb8fa498f270b12a5521';
 
 @ProviderFor(labelsService)
 final labelsServiceProvider = LabelsServiceProvider._();
@@ -106,7 +106,7 @@ final class LabelsServiceProvider
   }
 }
 
-String _$labelsServiceHash() => r'e38780c43f05b23493a3b2ad1c34ecb05e140927';
+String _$labelsServiceHash() => r'7fe6f95c3eb2033fb1a50c2309455dc202c6ee8c';
 
 @ProviderFor(organizeService)
 final organizeServiceProvider = OrganizeServiceProvider._();
@@ -152,7 +152,7 @@ final class OrganizeServiceProvider
   }
 }
 
-String _$organizeServiceHash() => r'ac19e33a22c80e14983d4e5d9c71ba5b920f3e5d';
+String _$organizeServiceHash() => r'd86eeeaf58270224055d2a1fe55bcf4d3017071e';
 
 @ProviderFor(settingsService)
 final settingsServiceProvider = SettingsServiceProvider._();
@@ -198,4 +198,4 @@ final class SettingsServiceProvider
   }
 }
 
-String _$settingsServiceHash() => r'4f8ec0fbbb1f138d0f014055865925cf10888451';
+String _$settingsServiceHash() => r'6ab3e77b7a6dce00af46a8e146b3e4c95b43407f';

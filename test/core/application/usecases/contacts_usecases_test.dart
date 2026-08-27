@@ -101,7 +101,10 @@ void main() {
         ..last = 'Dupont';
       draft.phones.first.value = '06 12 34 56 78';
 
-      final id = await SaveContactUseCase(harness.contacts).execute(draft, now: testNow);
+      final id = await SaveContactUseCase(
+        harness.contacts,
+        harness.logger,
+      ).execute(draft, now: testNow);
 
       final saved = await harness.contacts.getById(id);
       expect(saved!.name.first, 'Marie');
@@ -111,7 +114,10 @@ void main() {
     test('écarte les lignes laissées vides', () async {
       final draft = ContactDraft.blank()..first = 'Marie';
 
-      final id = await SaveContactUseCase(harness.contacts).execute(draft, now: testNow);
+      final id = await SaveContactUseCase(
+        harness.contacts,
+        harness.logger,
+      ).execute(draft, now: testNow);
 
       final saved = await harness.contacts.getById(id);
       expect(saved!.phones, isEmpty);
@@ -120,7 +126,10 @@ void main() {
 
     test('refuse un formulaire entièrement vide', () async {
       expect(
-        () => SaveContactUseCase(harness.contacts).execute(ContactDraft.blank(), now: testNow),
+        () => SaveContactUseCase(
+          harness.contacts,
+          harness.logger,
+        ).execute(ContactDraft.blank(), now: testNow),
         throwsA(isA<BlankContactException>()),
       );
     });
@@ -132,7 +141,7 @@ void main() {
       final draft =
           await LoadContactDraftUseCase(harness.contacts).execute(contactId: contact.id.value)
             ..company = '';
-      await SaveContactUseCase(harness.contacts).execute(draft, now: testNow);
+      await SaveContactUseCase(harness.contacts, harness.logger).execute(draft, now: testNow);
 
       expect((await harness.contacts.getById(contact.id.value))!.company, isNull);
     });
@@ -145,7 +154,7 @@ void main() {
         harness.contacts,
       ).execute(contactId: contact.id.value);
       draft.photo = null;
-      await SaveContactUseCase(harness.contacts).execute(draft, now: testNow);
+      await SaveContactUseCase(harness.contacts, harness.logger).execute(draft, now: testNow);
 
       expect((await harness.contacts.getById(contact.id.value))!.photo, isNull);
     });
@@ -157,7 +166,10 @@ void main() {
       final draft =
           await LoadContactDraftUseCase(harness.contacts).execute(contactId: contact.id.value)
             ..last = 'Dupont';
-      final id = await SaveContactUseCase(harness.contacts).execute(draft, now: testNow);
+      final id = await SaveContactUseCase(
+        harness.contacts,
+        harness.logger,
+      ).execute(draft, now: testNow);
 
       final saved = await harness.contacts.getById(id);
       expect(id, contact.id.value);
@@ -198,6 +210,7 @@ void main() {
 
       await ToggleStarUseCase(
         harness.contacts,
+        harness.logger,
       ).execute([a.id.value, b.id.value], starred: true, now: testNow);
 
       final all = await harness.contacts.listAll();

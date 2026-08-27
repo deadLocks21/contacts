@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:contacts/core/domain/exceptions/contact_exception.dart';
+import 'package:contacts/infrastructure/providers/logger.service_provider.dart';
 import 'package:contacts/infrastructure/providers/service_providers.dart';
 import 'package:contacts/ui/providers/contact_data_providers.dart';
 import 'package:contacts/ui/router/app_router.dart';
@@ -91,13 +92,29 @@ class OrganizePage extends ConsumerWidget {
 
   Future<void> _import(BuildContext context, WidgetRef ref) async {
     final messenger = ScaffoldMessenger.of(context);
+    final logger = ref.read(loggerProvider);
     final picked = await FilePicker.platform.pickFiles(type: FileType.any, withData: true);
     final file = picked?.files.firstOrNull;
     if (file == null) return;
 
     final path = file.path;
-    if (path == null) return;
-    final source = await File(path).readAsString();
+    if (path == null) {
+      // Le sélecteur rend parfois un fichier sans chemin (fournisseur distant,
+      // sandbox) : l'import s'arrête alors sans que rien ne l'explique.
+      await logger.warn('vcard.import.no_path');
+      return;
+    }
+
+    final String source;
+    try {
+      source = await File(path).readAsString();
+    } catch (e, st) {
+      // Fichier illisible ou pas en UTF-8 : un `.vcf` exporté par un vieil
+      // outil arrive encore en latin-1.
+      await logger.warn('vcard.import.unreadable', error: e, stack: st);
+      messenger.showSnackBar(const SnackBar(content: Text('Fichier illisible.')));
+      return;
+    }
 
     try {
       final report = await ref.read(organizeServiceProvider).importVCard.execute(source);
@@ -112,12 +129,14 @@ class OrganizePage extends ConsumerWidget {
         ),
       );
     } on VCardParseException catch (e) {
+      // Déjà journalisé par le cas d'usage, avec la taille de la source.
       messenger.showSnackBar(SnackBar(content: Text(e.message)));
     }
   }
 
   Future<void> _export(BuildContext context, WidgetRef ref) async {
     final messenger = ScaffoldMessenger.of(context);
+    final logger = ref.read(loggerProvider);
     final vcf = await ref.read(organizeServiceProvider).exportVCard.execute();
     if (vcf.trim().isEmpty) {
       messenger.showSnackBar(const SnackBar(content: Text('Aucun contact à exporter.')));
@@ -126,10 +145,19 @@ class OrganizePage extends ConsumerWidget {
 
     // On partage un vrai fichier .vcf : c'est le seul format que les autres
     // carnets d'adresses savent ouvrir.
-    final directory = Directory.systemTemp;
-    final file = File('${directory.path}/contacts.vcf');
-    await file.writeAsString(vcf);
-    await SharePlus.instance.share(ShareParams(files: [XFile(file.path)], subject: 'contacts.vcf'));
+    try {
+      final directory = Directory.systemTemp;
+      final file = File('${directory.path}/contacts.vcf');
+      await file.writeAsString(vcf);
+      await SharePlus.instance.share(
+        ShareParams(files: [XFile(file.path)], subject: 'contacts.vcf'),
+      );
+    } catch (e, st) {
+      // Écriture dans le dossier temporaire ou feuille de partage refusée :
+      // l'écran ne bouge pas, l'utilisateur croit que le bouton est mort.
+      await logger.error('vcard.export.share_failed', error: e, stack: st);
+      messenger.showSnackBar(const SnackBar(content: Text('Le partage a échoué.')));
+    }
   }
 }
 

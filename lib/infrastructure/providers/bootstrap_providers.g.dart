@@ -15,6 +15,11 @@ part of 'bootstrap_providers.dart';
 /// La purge se fait ici parce que c'est le seul moment où l'app peut constater
 /// l'expiration : sans tâche de fond, une fiche supprimée il y a 31 jours ne
 /// disparaît qu'au prochain lancement.
+///
+/// Chaque étape laisse une trace. Un démarrage est l'endroit où une panne se
+/// voit le moins — l'app affiche une roue qui tourne, puis une liste vide — et
+/// celui où elle coûte le plus cher. L'échec du provider lui-même est journalisé
+/// par [LoggingProviderObserver], inutile de le rattraper ici.
 
 @ProviderFor(bootstrap)
 final bootstrapProvider = BootstrapProvider._();
@@ -26,6 +31,11 @@ final bootstrapProvider = BootstrapProvider._();
 /// La purge se fait ici parce que c'est le seul moment où l'app peut constater
 /// l'expiration : sans tâche de fond, une fiche supprimée il y a 31 jours ne
 /// disparaît qu'au prochain lancement.
+///
+/// Chaque étape laisse une trace. Un démarrage est l'endroit où une panne se
+/// voit le moins — l'app affiche une roue qui tourne, puis une liste vide — et
+/// celui où elle coûte le plus cher. L'échec du provider lui-même est journalisé
+/// par [LoggingProviderObserver], inutile de le rattraper ici.
 
 final class BootstrapProvider extends $FunctionalProvider<AsyncValue<void>, void, FutureOr<void>>
     with $FutureModifier<void>, $FutureProvider<void> {
@@ -36,6 +46,11 @@ final class BootstrapProvider extends $FunctionalProvider<AsyncValue<void>, void
   /// La purge se fait ici parce que c'est le seul moment où l'app peut constater
   /// l'expiration : sans tâche de fond, une fiche supprimée il y a 31 jours ne
   /// disparaît qu'au prochain lancement.
+  ///
+  /// Chaque étape laisse une trace. Un démarrage est l'endroit où une panne se
+  /// voit le moins — l'app affiche une roue qui tourne, puis une liste vide — et
+  /// celui où elle coûte le plus cher. L'échec du provider lui-même est journalisé
+  /// par [LoggingProviderObserver], inutile de le rattraper ici.
   BootstrapProvider._()
     : super(
         from: null,
@@ -61,4 +76,4 @@ final class BootstrapProvider extends $FunctionalProvider<AsyncValue<void>, void
   }
 }
 
-String _$bootstrapHash() => r'd216786305e98a5b363f757150a5ca0fbfb759d4';
+String _$bootstrapHash() => r'c79d8f5412a454baea8452c07c07c28de15f4196';

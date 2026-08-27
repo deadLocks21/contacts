@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:contacts/core/application/services/logger_application.service.dart';
 import 'package:contacts/core/domain/model/contact_label.dart';
 import 'package:contacts/core/domain/model/entity_id.dart';
 import 'package:contacts/core/domain/services/label.repository.dart';
@@ -15,11 +16,12 @@ import 'package:flutter_contacts/flutter_contacts.dart' as fc;
 /// celles de la lecture : elles ne servent qu'à l'ordre d'affichage, lui-même
 /// alphabétique.
 class FlutterContactsLabelRepository implements LabelRepository {
-  FlutterContactsLabelRepository() {
+  FlutterContactsLabelRepository(this._logger) {
     _listener = () => _bump();
     fc.FlutterContacts.addListener(_listener);
   }
 
+  final LoggerApplicationService _logger;
   final _controller = StreamController<int>.broadcast();
   late final void Function() _listener;
   var _revision = 0;
@@ -41,16 +43,39 @@ class FlutterContactsLabelRepository implements LabelRepository {
   /// compréhensible.
   static const _systemGroups = {'my contacts', 'starred in android'};
 
+  /// Journalise puis relance ce que le carnet refuse. Les groupes échouent pour
+  /// leurs propres raisons — un compte qui n'accepte pas qu'on en crée, par
+  /// exemple — et « l'étiquette ne s'enregistre pas » n'a sinon aucune trace.
+  Future<T> _guard<T>(
+    String operation,
+    Future<T> Function() body, {
+    Map<String, Object?> attrs = const {},
+  }) async {
+    try {
+      return await body();
+    } catch (e, st) {
+      await _logger.error(
+        'labels.backend.failed',
+        attrs: {'operation': operation, ...attrs},
+        error: e,
+        stack: st,
+      );
+      rethrow;
+    }
+  }
+
   @override
   Future<List<ContactLabel>> listAll() async {
     if (!await fc.FlutterContacts.requestPermission(readonly: true)) return const [];
-    final groups = await fc.FlutterContacts.getGroups();
-    final now = DateTime.now();
-    return [
-      for (final g in groups)
-        if (g.name.trim().isNotEmpty && !_systemGroups.contains(g.name.trim().toLowerCase()))
-          ContactLabel(id: EntityId(g.id), name: g.name, createdAt: now, updatedAt: now),
-    ];
+    return _guard('listAll', () async {
+      final groups = await fc.FlutterContacts.getGroups();
+      final now = DateTime.now();
+      return [
+        for (final g in groups)
+          if (g.name.trim().isNotEmpty && !_systemGroups.contains(g.name.trim().toLowerCase()))
+            ContactLabel(id: EntityId(g.id), name: g.name, createdAt: now, updatedAt: now),
+      ];
+    });
   }
 
   @override
@@ -62,20 +87,24 @@ class FlutterContactsLabelRepository implements LabelRepository {
   @override
   Future<void> save(ContactLabel label) async {
     if (!await fc.FlutterContacts.requestPermission()) return;
-    final groups = await fc.FlutterContacts.getGroups();
-    final existing = groups.where((g) => g.id == label.id.value).firstOrNull;
-    if (existing == null) {
-      await fc.FlutterContacts.insertGroup(fc.Group('', label.name));
-    } else {
-      await fc.FlutterContacts.updateGroup(fc.Group(existing.id, label.name));
-    }
-    _bump();
+    await _guard('save', attrs: {'label.id': label.id.value}, () async {
+      final groups = await fc.FlutterContacts.getGroups();
+      final existing = groups.where((g) => g.id == label.id.value).firstOrNull;
+      if (existing == null) {
+        await fc.FlutterContacts.insertGroup(fc.Group('', label.name));
+      } else {
+        await fc.FlutterContacts.updateGroup(fc.Group(existing.id, label.name));
+      }
+      _bump();
+    });
   }
 
   @override
   Future<void> delete(String id) async {
     if (!await fc.FlutterContacts.requestPermission()) return;
-    await fc.FlutterContacts.deleteGroup(fc.Group(id, ''));
-    _bump();
+    await _guard('delete', attrs: {'label.id': id}, () async {
+      await fc.FlutterContacts.deleteGroup(fc.Group(id, ''));
+      _bump();
+    });
   }
 }

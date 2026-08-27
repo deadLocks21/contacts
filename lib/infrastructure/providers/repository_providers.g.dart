@@ -169,7 +169,7 @@ final class ContactsPermissionProvider extends $AsyncNotifierProvider<ContactsPe
   ContactsPermission create() => ContactsPermission();
 }
 
-String _$contactsPermissionHash() => r'3429c791a5619ab6a003328cf02ef746fd11c626';
+String _$contactsPermissionHash() => r'd36483df799e191b1535eb9f1fba1fbc5b0bd18e';
 
 /// Autorisation de lire le carnet, demandée au démarrage. `false` = l'écran
 /// d'accueil propose d'ouvrir l'accès au lieu d'annoncer un carnet vide.
